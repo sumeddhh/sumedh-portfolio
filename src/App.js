@@ -5,12 +5,70 @@ import CustomCursor from 'custom-cursor-react';
 import 'custom-cursor-react/dist/index.css';
 import { useState } from 'react';
 import SUMEDH from './assets/SUMEDH.png'
+import Particles from 'react-particles-js';
 
 const App = () => {
+
   const [activeTab, setActiveTab] = useState(1);
   return (
     <main
+      style={{ background: '#0c0c0c' }}
       className={activeTab === 1 ? 'nm8-1' : activeTab === 2 ? 'nm8-2' : activeTab === 3 ? 'nm8-3' : activeTab === 4 ? 'nm8-4' : ''}>
+      <div className="particles" style={{ zIndex: '1', position: 'absolute', width:'100vw',height:'100vh' }}>
+        <Particles
+          params={{
+            "particles": {
+              "number": {
+                "value":120,
+                "density": {
+                  "enable": false
+                }
+              },
+              "size": {
+                "value":4,
+                "random": true,
+                "anim": {
+                  "speed": 2,
+                  "size_min": 0.3
+                }
+              },
+              "line_linked": {
+                "enable": false
+              },
+              "move": {
+                "random": true,
+                "speed": 0.5,
+                "direction": "top",
+                "out_mode": "out"
+              }
+            },
+            "interactivity": {
+              "events": {
+                "onhover": {
+                  "enable": true,
+                  "mode": "bubble"
+                },
+                "onclick": {
+                  "enable": true,
+                  "mode": "repulse"
+                }
+              },
+              "modes": {
+                "bubble": {
+                  "distance": 250,
+                  "duration": 2,
+                  "size": 0,
+                  "opacity": 0
+                },
+                "repulse": {
+                  "distance": 200,
+                  "duration": 5
+                }
+              }
+            }
+          }} />
+        v3.3.0
+      </div>
       <section className="home flex relative">
         <div className="bg-grid flex-centered">
           <img src={BG_GRID} alt="BG_GRID" />
@@ -66,7 +124,7 @@ const App = () => {
                         <a target="_blank" rel="noreferrer" href="https://www.gritfeat.com/">GRITFEAT SOLUTIONS</a></span>
                     </div>
                     <div className="secondary-text text-right" style={{ width: '420px' }}>
-                      <p> I began my IT career with an internship program at ITGlance Pvt. Ltd.
+                      <p> I began my software development career with an internship program at ITGlance Pvt. Ltd.
                         After 6 months of internship, I joined GritFeat Solutions in winter 2020.</p>
                     </div>
                   </div>

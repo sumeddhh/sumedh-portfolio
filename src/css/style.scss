@@ -477,7 +477,7 @@ a {
     word-break: break-word;
   }
   .headline{
-    font-size: 3.8rem;
+    font-size: 3rem;
   }
   .nav{
     width: 120px !important;
@@ -488,6 +488,15 @@ a {
     font-size: 16px;
     .fw-600,.fw-900{
       display: none;
+    }
+  }
+  .secondary-text{
+    width: auto !important;
+  }
+  .particles{
+    #tsparticles{
+      height: 100vh !important;
+      width: 100vw !important;
     }
   }
 }
