@@ -1,8 +1,10 @@
-import './App.css';
+import HOME from './assets/HOME.jpg'
 
-const App = () =>{
-  return(
-    <h1>Welcome to my Portfolio...</h1>
+const App = () => {
+  return (
+    <>
+      <img style={{ maxWidth: '100%' }} src={HOME} alt="Homepage" />
+    </>
   )
 }
 
