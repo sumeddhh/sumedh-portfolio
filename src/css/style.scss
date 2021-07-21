@@ -1,0 +1,345 @@
+@import "./layout.scss";
+
+body {
+  font-family: $title-font;
+  color: $text-color;
+}
+
+.logo {
+  font-size: 2.4rem;
+  font-weight: bolder;
+}
+
+.logo-mini {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 1.6rem;
+}
+
+.btn {
+  padding: $sm $lg;
+  border-radius: $xl;
+  background: rgba(0, 0, 0, 0.12);
+  border: none;
+  color: $text-color;
+  transition: 0.4s ease-in-out;
+  cursor: pointer;
+  font-size: 1rem;
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.primary {
+    background: $primary-color;
+    color: $light-color;
+  }
+
+  &.secondary {
+    background: $secondary-color;
+    color: $light-color;
+  }
+
+  &.light {
+    background: $light-color;
+    color: $primary-color;
+  }
+
+  &.success {
+    background: $success-color;
+    color: $light-color;
+  }
+
+  &.danger {
+    background: $danger-color;
+    color: $light-color;
+  }
+
+  &.info {
+    background: $info-color;
+    color: $light-color;
+  }
+
+  &.warning {
+    background: $warning-color;
+    color: $light-color;
+  }
+
+  &.outlined.primary {
+    border: 1px solid $primary-color;
+    background: transparent;
+    color: $primary-color;
+
+    &:hover {
+      background: $primary-color;
+      color: $light-color;
+    }
+  }
+
+  &.outlined.secondary {
+    border: 1px solid $secondary-color;
+    background: transparent;
+    color: $secondary-color;
+
+    &:hover {
+      background: $secondary-color;
+      color: $light-color;
+    }
+  }
+
+  &.outlined.light {
+    border: 1px solid $light-color;
+    background: transparent;
+    color: $light-color;
+
+    &:hover {
+      background: $light-color;
+      color: $light-color;
+    }
+  }
+
+  &.outlined.success {
+    border: 1px solid $success-color;
+    background: transparent;
+    color: $success-color;
+
+    &:hover {
+      background: $success-color;
+      color: $light-color;
+    }
+  }
+
+  &.outlined.danger {
+    border: 1px solid $danger-color;
+    background: transparent;
+    color: $danger-color;
+
+    &:hover {
+      background: $danger-color;
+      color: $light-color;
+    }
+  }
+
+  &.outlined.info {
+    border: 1px solid $info-color;
+    background: transparent;
+    color: $info-color;
+
+    &:hover {
+      background: $info-color;
+      color: $light-color;
+    }
+  }
+
+  &.outlined.warning {
+    border: 1px solid $warning-color;
+    background: transparent;
+    color: $warning-color;
+
+    &:hover {
+      background: $warning-color;
+      color: $light-color;
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: $md;
+  display: flex;
+  flex-direction: column;
+
+  label {
+    font-size: 0.8rem;
+  }
+
+  input {
+    background: rgba(0, 0, 0, 0.12);
+    color: $text-color;
+    border-radius: $xs;
+    border: none;
+    padding: $sm;
+    &.rounded {
+      border-radius: 30px;
+      padding: $sm $lg;
+    }
+    &::placeholder {
+      font-family: $title-font;
+    }
+  }
+
+  .input-area {
+    display: flex;
+    align-items: center;
+    input {
+      flex: 1;
+    }
+  }
+
+  .error-text {
+    text-align: right;
+    color: $danger-color;
+  }
+}
+
+//backgrounds
+.bg-primary {
+  background-color: $primary-color;
+}
+
+.bg-secondary {
+  background-color: $secondary-color;
+}
+
+.bg-light {
+  background-color: $light-color;
+}
+
+.bg-success {
+  background-color: $success-color;
+}
+
+.bg-danger {
+  background-color: $danger-color;
+}
+
+.bg-info {
+  background-color: $info-color;
+}
+
+.bg-warning {
+  background-color: $warning-color;
+}
+
+//texts
+.text-primary {
+  color: $primary-color;
+}
+
+.text-secondary {
+  color: $secondary-color;
+}
+
+.text-light {
+  color: $light-color;
+}
+
+.text-success {
+  color: $success-color;
+}
+
+.text-danger {
+  color: $danger-color;
+}
+
+.text-info {
+  color: $info-color;
+}
+
+.text-warning {
+  color: $warning-color;
+}
+
+.title {
+  font-size: $title-size;
+  font-weight: bold;
+}
+
+.sub-title {
+  font-size: $accent-size;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+.bold {
+  font-weight: bold;
+}
+
+.bolder {
+  font-weight: bolder;
+}
+
+.card,
+%card {
+  border-radius: $sm;
+  padding: $md;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+}
+.relative{
+  position: relative;
+}
+.absolute{
+  position: absolute;
+}
+
+//scrollbar
+.pointer {
+  cursor: pointer;
+}
+section {
+  height: 100vh;
+  background-color: #cecece;
+  width: 100vw;
+  padding:6vh 7.5vw;
+}
+.headline {
+  font-family: "Bebas Neue";
+  font-size: 144px;
+  text-align: right;
+  line-height: 0.85em;
+  z-index: 1;
+}
+.secondary-text{
+  font-family: "Montserrat";
+}
+.fw-600{
+  font-weight: 600;
+}
+.fw-800{
+  font-weight: 800;
+}
+.bg-el-home {
+  height: 140px;
+  width: 140px;
+  border-radius: 100%;
+  background: white;
+  position: absolute;
+  animation: moveAround linear infinite 28s;
+}
+.bg-grid{
+  position: absolute;
+  z-index: 1;
+  left:0;
+  mix-blend-mode: darken;
+  filter: brightness(0.86);
+  img{
+    width: 60%;
+    height: 60%;
+  }
+}
+@keyframes moveAround {
+  from {
+    transform: rotate(0deg) translateX(240px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(240px) rotate(-360deg);
+  }
+}
