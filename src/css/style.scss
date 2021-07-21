@@ -283,10 +283,10 @@ body {
   padding: $md;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
 }
-.relative{
+.relative {
   position: relative;
 }
-.absolute{
+.absolute {
   position: absolute;
 }
 
@@ -298,7 +298,7 @@ section {
   height: 100vh;
   background-color: #0c0c0c;
   width: 100vw;
-  padding:6vh 7.5vw;
+  padding: 6vh 7.5vw;
 }
 
 .headline {
@@ -309,15 +309,15 @@ section {
   z-index: 1;
   color: rgb(58, 58, 58);
 }
-.secondary-text{
+.secondary-text {
   font-family: "Montserrat";
-  color:rgb(241, 241, 241);
+  color: rgb(241, 241, 241);
   z-index: 1;
 }
-.fw-600{
+.fw-600 {
   font-weight: 600;
 }
-.fw-800{
+.fw-800 {
   font-weight: 800;
 }
 .bg-el-home {
@@ -328,13 +328,13 @@ section {
   position: absolute;
   animation: moveAround linear infinite 28s;
 }
-.bg-grid{
+.bg-grid {
   position: absolute;
   z-index: 1;
-  left:0;
+  left: 0;
   mix-blend-mode: darken;
-  filter: brightness(0.86);
-  img{
+  filter: brightness(0.76);
+  img {
     width: 60%;
     height: 60%;
   }
@@ -348,18 +348,58 @@ section {
   }
 }
 
-.active{
+.active {
   border-bottom: 4px solid #fff;
 }
-.socials{
-  a{
-    text-decoration: none;
-    color: inherit;
+span{
+  transition: 0.4s all;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+.bkt:hover {
+  color: #c94848;
+}
+.gf:hover {
+  color: #7EBD41;
+}
+.socials {
+  .fb:hover {
+    color: #2d88ff;
   }
-  .fb:hover{
-    color:#2d88ff;
+  .li:hover {
+    color: #0a66c2;
   }
-  .li:hover{
-    color:#0a66c2;
+}
+
+
+.transitionDiv {
+  background: transparent;
+  margin: 0 auto;
+}
+
+@keyframes inAnimation {
+  0% {
+    opacity: 0;
+    visibility: hidden;
   }
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes outAnimation {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+._12c4J{
+  height: 100vh;
+  width: 100vw;
 }

@@ -1,5 +1,5 @@
 
-import { ArrowDownCircle } from 'react-feather';
+// import { ArrowDownCircle } from 'react-feather';
 import BG_GRID from './assets/BG_GRID.png'
 import CustomCursor from 'custom-cursor-react';
 import 'custom-cursor-react/dist/index.css';
@@ -20,11 +20,12 @@ const App = () => {
           </div>
           {/* <ArrowDownCircle size={77} className="pointer" /> */}
         </div>
-        <div className="container flex-centered full-height full-width relative">
+        <div className="container flex-centered full-height full-width relative transitionDiv">
           <div className="bg-el-home"></div>
           {
             activeTab === 1 ?
-              <div className="headline">
+              <div
+                className="headline">
                 WEB<br />
                 DEVELOPER<br />
                 BASED IN<br />
@@ -32,46 +33,53 @@ const App = () => {
               </div>
               :
               activeTab === 2 ?
-                <div className="headline">
+                <div
+
+                  className="headline">
                   I AM <br />
                   FROM<br />
-                  BHAKTAPUR
+                  <span className="bkt">
+                    <a target="_blank" rel="noreferrer" href="https://www.google.com/maps/place/Bhaktapur/data=!4m2!3m1!1s0x39eb1aae42806ba1:0x5449e079404e5e82?sa=X&ved=2ahUKEwjyxayZjPTxAhXf3jgGHZFnBYoQ8gEwAHoECAYQAQ">BHAKTAPUR
+                    </a></span>
                 </div>
                 :
                 activeTab === 3 ?
-                  <div className="headline">
+                  <div
+                    className="headline">
                     I CURRENTLY <br />
                     WORK AT<br />
-                    GRITFEAT SOLUTIONS
+                    <span className="gf">
+                      <a target="_blank" rel="noreferrer" href="https://www.gritfeat.com/">GRITFEAT SOLUTIONS</a></span>
                   </div>
                   :
                   activeTab === 4 ?
-                    <div className="headline socials">
+                    <div
+                      className="headline socials">
                       I'M REACHABLE<br />
-                      AT<br />
-                      <span className="fb pointer">
-                        <a href="https://www.facebook.com/sumeddhh/">FACEBOOK</a></span><br />
-                      <span className="li pointer">
-                        <a href="https://www.linkedin.com/in/sumedh-bajracharya-1193361b6">LINKEDIN</a></span><br />
+                      ON<br />
+                      <span className="fb">
+                        <a target="_blank" rel="noreferrer" href="https://www.facebook.com/sumeddhh/">FACEBOOK</a></span><br />
+                      <span className="li">
+                        <a target="_blank" rel="noreferrer" href="https://www.linkedin.com/in/sumedh-bajracharya-1193361b6">LINKEDIN</a></span><br />
                     </div> :
                     ''
           }
         </div>
         <div className="nav flex column items-end justify-end"
           style={{ fontSize: '1.4rem', width: '20%' }}>
-          <div className={activeTab === 1 ? 'active nav-item secondary-text fw-600 pt-md pointer' : 'nav-item secondary-text fw-600 pt-md pointer'}
+          <div className={activeTab === 1 ? 'active nav-item secondary-text fw-600 pt-md' : 'nav-item secondary-text fw-600 pt-md'}
             onClick={() => {
               setActiveTab(1)
             }}>HOME</div>
-          <div className={activeTab === 2 ? 'active nav-item secondary-text fw-600 pt-md pointer' : 'nav-item secondary-text fw-600 pt-md pointer'}
+          <div className={activeTab === 2 ? 'active nav-item secondary-text fw-600 pt-md' : 'nav-item secondary-text fw-600 pt-md'}
             onClick={() => {
               setActiveTab(2)
             }}>ABOUT</div>
-          <div className={activeTab === 3 ? 'active nav-item secondary-text fw-600 pt-md pointer' : 'nav-item secondary-text fw-600 pt-md pointer'}
+          <div className={activeTab === 3 ? 'active nav-item secondary-text fw-600 pt-md' : 'nav-item secondary-text fw-600 pt-md'}
             onClick={() => {
               setActiveTab(3)
             }}>WORK</div>
-          <div className={activeTab === 4 ? 'active nav-item secondary-text fw-600 pt-md pointer' : 'nav-item secondary-text fw-600 pt-md pointer'}
+          <div className={activeTab === 4 ? 'active nav-item secondary-text fw-600 pt-md' : 'nav-item secondary-text fw-600 pt-md'}
             onClick={() => {
               setActiveTab(4)
             }}>CONTACT</div>
@@ -79,14 +87,16 @@ const App = () => {
       </section>
       <CustomCursor
         customClass='custom-cursor'
-        dimensions={30}
+        dimensions={50}
         fill='#FFF'
         smoothness={{
-          movement: 0.2,
+          movement: 1,
           scale: 0.1,
           opacity: 0.2,
         }}
-        targetOpacity={0.5}
+        targetOpacity={1}
+        targets={['.nav-item', '.gf', '.li', '.fb', '.bkt']}
+        targetScale={1}
       />
     </main >
   )
