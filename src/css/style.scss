@@ -296,19 +296,23 @@ body {
 }
 section {
   height: 100vh;
-  background-color: #cecece;
+  background-color: #0c0c0c;
   width: 100vw;
   padding:6vh 7.5vw;
 }
+
 .headline {
   font-family: "Bebas Neue";
   font-size: 144px;
   text-align: right;
   line-height: 0.85em;
   z-index: 1;
+  color: rgb(58, 58, 58);
 }
 .secondary-text{
   font-family: "Montserrat";
+  color:rgb(241, 241, 241);
+  z-index: 1;
 }
 .fw-600{
   font-weight: 600;
@@ -320,7 +324,7 @@ section {
   height: 140px;
   width: 140px;
   border-radius: 100%;
-  background: white;
+  background: rgb(185, 185, 185);
   position: absolute;
   animation: moveAround linear infinite 28s;
 }
@@ -341,5 +345,21 @@ section {
   }
   to {
     transform: rotate(360deg) translateX(240px) rotate(-360deg);
+  }
+}
+
+.active{
+  border-bottom: 4px solid #fff;
+}
+.socials{
+  a{
+    text-decoration: none;
+    color: inherit;
+  }
+  .fb:hover{
+    color:#2d88ff;
+  }
+  .li:hover{
+    color:#0a66c2;
   }
 }
