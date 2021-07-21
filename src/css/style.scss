@@ -303,7 +303,7 @@ section {
 
 .headline {
   font-family: "Bebas Neue";
-  font-size: 144px;
+  font-size: 98px;
   text-align: right;
   line-height: 0.85em;
   z-index: 1;
@@ -357,33 +357,52 @@ a {
   text-decoration: none;
   color: inherit;
 }
-.bkt:hover {
-  color: #c94848;
+.np {
+  color: #eea23f;
+  &:hover{
+    color:white;
+  }
   // color: white;
 }
-.gf:hover {
+.bkt {
+  color: #c94848;
+  &:hover{
+    color:white;
+  }
+  // color: white;
+}
+.gf {
   color: #7ebd41;
+  &:hover{
+    color:white;
+  }
   // color: white;
 }
 .socials {
-  .fb:hover {
-    color: #2d88ff;
+  .fb {
+    color: #0a66c2;
+    &:hover{
+      color:white;
+    }
     // color: white;
   }
-  .li:hover {
+  .li {
     color: #0a66c2;
+    &:hover{
+      color:white;
+    }
     // color: white;
   }
 }
 
-@keyframes clipLeft {
-  from {
-    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
-  }
-  to {
-    clip-path: polygon(0 0, 100% 0%, 100% 100%, 0% 100%);
-  }
-}
+// @keyframes clipLeft {
+//   from {
+//     clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+//   }
+//   to {
+//     clip-path: polygon(0 0, 100% 0%, 100% 100%, 0% 100%);
+//   }
+// }
 
 ._12c4J {
   height: 100vh;
@@ -465,7 +484,7 @@ a {
     font-size: 14px !important;
   }
   .indicate-title{
-    width: 20px !important;
+    width: 22px !important;
     font-size: 16px;
     .fw-600,.fw-900{
       display: none;
