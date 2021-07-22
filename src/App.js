@@ -3,14 +3,35 @@
 import BG_GRID from './assets/BG_GRID.png'
 import CustomCursor from 'custom-cursor-react';
 import 'custom-cursor-react/dist/index.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Background from './components/Background';
 import Container from './components/Container';
 
 
 const App = () => {
 
-  const [activeTab, setActiveTab] = useState(1);
+
+  window.onkeydown = logKey;
+
+  function logKey(e) {
+    switch (e.key) {
+      case 'ArrowDown':
+        if (activeTab === 1 || activeTab === 2 || activeTab === 3 ) {
+          setActiveTab((activeTab + 1))
+        }
+        break;
+      case 'ArrowUp':
+        if (activeTab === 2 || activeTab === 3 || activeTab === 4) {
+          setActiveTab((activeTab - 1))
+        }
+        break;
+      default:
+        console.log('default');
+    }
+  }
+
+
+  let [activeTab, setActiveTab] = useState(1);
 
   return (
     <main

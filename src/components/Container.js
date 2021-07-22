@@ -10,13 +10,16 @@ const Container = (activeTab) => {
             {/* <div className="bg-el-home"></div> */}
             {
                 activeTab.props === 1 ?
-                    <div
-                        className="headline">
-                        WEB<br />
-                        DEVELOPER<br />
-                        BASED IN<br />
-                        <span className="np">
-                            <a target="_blank" rel="noreferrer" href="https://www.welcomenepal.com/">NEPAL</a></span>
+                    <div className="flex column items-center">
+                        <div
+                            className="headline" style={{ textAlign: 'center' }}>
+                            WEB<br />
+                            DEVELOPER<br />
+                            BASED IN<br />
+                            <span className="np">
+                                <a target="_blank" rel="noreferrer" href="https://www.welcomenepal.com/">NEPAL</a></span>
+                        </div>
+                        <div className="instruction"><span className="text">Use Up and Down Arrow Keys to Navigate</span></div>
                     </div>
                     :
                     activeTab.props === 2 ?
@@ -36,7 +39,7 @@ const Container = (activeTab) => {
                                 </div>
                             </div>
                             <div className="flex-centered" style={{ height: 'fitContent' }}>
-                                <img className="ml-xl"
+                                <img className="my-img ml-xl"
                                     style={{ zIndex: '0' }}
                                     src={SUMEDH} alt="SUMEDH" width="350px" height="350px" />
                             </div>
