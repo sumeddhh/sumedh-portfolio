@@ -307,14 +307,12 @@ section {
   text-align: right;
   z-index: 1;
   color: rgb(94, 94, 94);
-  transition: 0.4s all !important;
+  line-height: 90px;
 }
 .secondary-text {
   font-family: "Montserrat";
   color: rgb(94, 94, 94);
   z-index: 1;
-  transition: 0.4s all !important;
-
 }
 .fw-600 {
   font-weight: 600;
@@ -366,6 +364,9 @@ a {
   }
   // color: white;
 }
+.prj {
+  color: #7e3ba5;
+}
 .bkt {
   color: #c94848;
   &:hover {
@@ -375,9 +376,6 @@ a {
 }
 .gf {
   color: #7ebd41;
-  &:hover {
-    color: white;
-  }
   // color: white;
 }
 .socials {
@@ -450,13 +448,27 @@ a {
     content: "";
     height: 100vh;
     width: 1.3vw;
-    background: #7ebd41;
+    background: #7e3ba5;
     position: absolute;
     left: 0;
     z-index: 1;
   }
 }
 .nm8-4 {
+  &::before {
+    transition: 0.4s all;
+    animation: clipLeft ease-in-out 1s infinite;
+    animation-direction: alternate-reverse;
+    content: "";
+    height: 100vh;
+    width: 1.3vw;
+    background: #7ebd41;
+    position: absolute;
+    left: 0;
+    z-index: 1;
+  }
+}
+.nm8-5 {
   &::before {
     transition: 0.4s all;
     animation: clipLeft ease-in-out 1s infinite;
@@ -471,27 +483,49 @@ a {
   }
 }
 
+.nm8-contents {
+  animation: fade 0.5s linear;
+}
+@keyframes fade {
+  0% {
+    opacity: 0%;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 100%;
+    transform: translateY(0px);
+  }
+}
+
 @media screen and (max-width: 768px) {
   img {
     display: none;
+  }
+  .adjust-height {
+    height: inherit;
+    .headline {
+      height: 25%;
+    }
   }
   * {
     word-break: break-word;
   }
   .headline {
-    font-size: 3rem;
+    font-size: 2.6rem;
+    line-height: 1.1em;
   }
   .nav {
-    width: 120px !important;
+    width: 135px !important;
     font-size: 14px !important;
   }
-  .indicate-title {
-    width: 22px !important;
+  .container {
+    padding: 0px 20px;
+  }
+  li {
     font-size: 16px;
-    .fw-600,
-    .fw-900 {
-      display: none;
-    }
+  }
+  .indicate-title {
+    display: none;
   }
   .secondary-text {
     width: auto !important;
@@ -501,6 +535,10 @@ a {
       height: 100vh !important;
       width: 100vw !important;
     }
+  }
+
+  .instruction {
+    display: none;
   }
 }
 
@@ -513,8 +551,16 @@ p {
   font-weight: 200;
   padding: 8px 24px;
   background: rgba(255, 255, 255, 0.123);
-  border-radius: 20px;
+  border-radius: 40px;
   transition: 0.4s all;
   font-family: monospace;
   font-size: 17px;
+}
+
+li {
+  margin-bottom: 12px;
+  transition: 0.4s all;
+  &:hover {
+    color: white;
+  }
 }

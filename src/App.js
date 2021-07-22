@@ -9,19 +9,19 @@ import Container from './components/Container';
 
 
 const App = () => {
-
+  let [activeTab, setActiveTab] = useState(1);
 
   window.onkeydown = logKey;
 
   function logKey(e) {
     switch (e.key) {
       case 'ArrowDown':
-        if (activeTab === 1 || activeTab === 2 || activeTab === 3 ) {
+        if (activeTab === 1 || activeTab === 2 || activeTab === 3 || activeTab === 4) {
           setActiveTab((activeTab + 1))
         }
         break;
       case 'ArrowUp':
-        if (activeTab === 2 || activeTab === 3 || activeTab === 4) {
+        if (activeTab === 2 || activeTab === 3 || activeTab === 4 || activeTab === 5) {
           setActiveTab((activeTab - 1))
         }
         break;
@@ -31,12 +31,11 @@ const App = () => {
   }
 
 
-  let [activeTab, setActiveTab] = useState(1);
 
   return (
     <main
       style={{ background: '#0c0c0c' }}
-      className={activeTab === 1 ? 'nm8-1' : activeTab === 2 ? 'nm8-2' : activeTab === 3 ? 'nm8-3' : activeTab === 4 ? 'nm8-4' : ''}>
+      className={activeTab === 1 ? 'nm8-1' : activeTab === 2 ? 'nm8-2' : activeTab === 3 ? 'nm8-3' : activeTab === 4 ? 'nm8-4' : activeTab === 5 ? 'nm8-5' : ''}>
       <Background />
       <section className="home flex relative">
         <div className="bg-grid flex-centered">
@@ -63,10 +62,14 @@ const App = () => {
           <div className={activeTab === 3 ? 'active nav-item secondary-text fw-600 py-md' : 'nav-item secondary-text fw-600 py-md'}
             onClick={() => {
               setActiveTab(3)
-            }}>WORK</div>
+            }}>PROJECTS</div>
           <div className={activeTab === 4 ? 'active nav-item secondary-text fw-600 py-md' : 'nav-item secondary-text fw-600 py-md'}
             onClick={() => {
               setActiveTab(4)
+            }}>WORK</div>
+          <div className={activeTab === 5 ? 'active nav-item secondary-text fw-600 py-md' : 'nav-item secondary-text fw-600 py-md'}
+            onClick={() => {
+              setActiveTab(5)
             }}>CONTACT</div>
         </div>
       </section>
