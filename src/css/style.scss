@@ -303,11 +303,12 @@ section {
 
 .headline {
   font-family: "Bebas Neue";
-  font-size: 98px;
+  font-size: 88px;
   text-align: right;
   z-index: 1;
   color: rgb(94, 94, 94);
-  line-height: 90px;
+  line-height: 80px;
+  margin-top: 48px;
 }
 .secondary-text {
   font-family: "Montserrat";
@@ -520,6 +521,9 @@ a {
   }
   .container {
     padding: 0px 20px;
+  }
+  ul{
+    padding: 0;
   }
   li {
     font-size: 16px;

@@ -95,7 +95,6 @@ const Container = (activeTab) => {
                             activeTab.props === 4 && displayContent ?
                                 <div className="adjust-height flex column items-end justify-center nm8-contents" style={{ overflow: 'scroll' }}>
                                     <div
-                                        style={{ height: '260px' }}
                                         className="headline full-height">
                                         MY WORK<br />
                                         <div className="gf">
