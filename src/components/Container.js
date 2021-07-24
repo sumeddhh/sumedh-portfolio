@@ -19,8 +19,8 @@ const Container = (activeTab) => {
         return () => clearTimeout(intervalId);
     }, []);
     useEffect(() => {
-        setDisplayContent(false)
-        setTimeout(function () { setDisplayContent(true); }, 500);
+        setDisplayContent(true)
+        // setTimeout(function () { setDisplayContent(true); }, 10);
     }, [activeTab])
     return (
         <div className="container flex-centered full-height full-width relative transitionDiv">
