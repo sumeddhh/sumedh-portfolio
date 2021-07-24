@@ -10,6 +10,7 @@ const TEXTS = [
 
 const Container = (activeTab) => {
     const [index, setIndex] = useState(0);
+    const [hintDisplay, setHintDisplay] = useState(true);
     const [displayContent, setDisplayContent] = useState(false);
     useEffect(() => {
         const intervalId = setInterval(() =>
@@ -20,8 +21,14 @@ const Container = (activeTab) => {
     }, []);
     useEffect(() => {
         setDisplayContent(true)
+        if (
+            activeTab.props === 2
+        ) {
+            setHintDisplay(false)
+        }
         // setTimeout(function () { setDisplayContent(true); }, 10);
     }, [activeTab])
+
     return (
         <div className="container flex-centered full-height full-width relative transitionDiv">
 
@@ -40,7 +47,9 @@ const Container = (activeTab) => {
                             <span className="np">
                                 <a target="_blank" rel="noreferrer" href="https://www.welcomenepal.com/">NEPAL</a></span>
                         </div>
-                        <div className="instruction mt-xl"><span className="text">Use Up and Down Arrow Keys to Navigate</span></div>
+                        {hintDisplay ?
+                            <div className="instruction mt-xl"><span className="text">Use Up and Down Arrow Keys to Navigate</span></div>
+                            : ''}
                     </div>
                     :
                     activeTab.props === 2 && displayContent ?

@@ -78,7 +78,7 @@ const App = () => {
         dimensions={50}
         fill='#FFF'
         smoothness={{
-          movement: 1,
+          movement: 0.6,
           scale: 0.1,
           opacity: 0.2,
         }}
