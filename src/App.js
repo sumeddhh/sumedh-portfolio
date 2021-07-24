@@ -3,7 +3,7 @@
 import BG_GRID from './assets/BG_GRID.png'
 import CustomCursor from 'custom-cursor-react';
 import 'custom-cursor-react/dist/index.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Background from './components/Background';
 import Container from './components/Container';
 
@@ -34,6 +34,18 @@ const App = () => {
 
   return (
     <main
+      onWheel={(e) => {
+        if (e.deltaY > 0) {
+          if (activeTab !== 5) {
+            setActiveTab(activeTab + 1)
+          }
+        }
+        if (e.deltaY < 0) {
+          if (activeTab !== 1) {
+            setActiveTab(activeTab - 1)
+          }
+        }
+      }}
       style={{ background: '#0c0c0c' }}
       className={activeTab === 1 ? 'nm8-1' : activeTab === 2 ? 'nm8-2' : activeTab === 3 ? 'nm8-3' : activeTab === 4 ? 'nm8-4' : activeTab === 5 ? 'nm8-5' : ''}>
       <Background />
