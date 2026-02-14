@@ -188,16 +188,12 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
             return false;
         }
 
-        const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-        const isFirefox = /Firefox/.test(navigator.userAgent);
-
-        if (isWebkit || isFirefox) {
-            return false;
-        }
-
         const div = document.createElement('div');
         div.style.backdropFilter = `url(#${filterId})`;
 
+        // We return true if the browser accepts the url() syntax or if we want to force it
+        // Chrome/Edge/Brave on Android/PC usually pass this. 
+        // iOS Safari might reject the syntax, which will trigger the standard blur fallback.
         return div.style.backdropFilter !== '';
     };
 
