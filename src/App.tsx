@@ -238,7 +238,7 @@ function ProgressIndicator() {
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-[min(90vw,480px)]">
       <GlassSurface
         width="100%"
-        height={60}
+        height={48}
         borderRadius={50}
         backgroundOpacity={0.5}
         blur={24}
@@ -451,6 +451,7 @@ function HeroSection() {
       {/* Window Frame */}
       <div
         ref={windowRef}
+        style={{ borderRadius: '6rem' }}
         className="window-frame relative w-[86vw] h-[82vh] bg-[#050505] flex flex-col justify-between p-[6%]"
       >
         {/* DotGrid background */}
@@ -586,8 +587,10 @@ function SelectedWorkSection() {
       id="work"
       className="section-pinned bg-[#050505] flex items-center justify-center z-20"
     >
-      <div className="window-frame relative w-[86vw] h-auto min-h-[82vh] bg-[#050505] flex flex-col items-center justify-center p-6 md:p-12">
-        <h2 className="font-display text-4xl md:text-5xl font-semibold text-[#B9FF2C] mb-16 text-center">
+      <div
+        style={{ borderRadius: '6rem' }}
+        className="window-frame relative w-[86vw] h-auto min-h-[82vh] bg-[#050505] flex flex-col items-center justify-center p-6 md:p-12">
+        <h2 className="font-display text-4xl md:text-[5rem] font-semibold text-[#B9FF2C] mb-16 text-center">
           Highlighted <span className="text-white">Work</span>
         </h2>
 
@@ -721,6 +724,7 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
     >
       <div
         ref={windowRef}
+        style={{ borderRadius: '6rem' }}
         className="window-frame relative w-[86vw] h-[82vh] bg-[#050505] flex flex-col md:flex-row items-start md:items-center p-[6%] md:p-0 overflow-hidden"
       >
         {/* Portrait */}
@@ -744,12 +748,10 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
             About
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-6">
-            I'm a senior frontend engineer who cares about the space between design and code—performance,
-            accessibility, and interaction quality.
+            I'm a Senior Frontend Engineer focused on the intersection of design and code, with strong attention to performance, accessibility, and interaction quality.
           </p>
           <p className="text-white/70 text-lg leading-relaxed mb-8">
-            I've led UI for healthcare platforms, built design systems, and shipped products used by thousands.
-            With 4.5+ years of experience, I specialize in React, Next.js, and AI-powered solutions.
+            I've led UI development for healthcare platforms, built scalable design systems, and shipped products used by thousands. With over 4.5 years of experience, I specialize in React, Next.js, and AI-powered solutions.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
             <p className="text-white/60 text-sm">15+ production deployments</p>
@@ -891,18 +893,19 @@ function CapabilitiesSection() {
       id="capabilities"
       className="relative bg-[#050505] py-24 z-[70]"
     >
-      <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
+      <div
+        style={{ borderRadius: '6rem' }}
+        className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
         {/* Ghost Text */}
         <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none opacity-[0.4]">
-          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
+          <div className="font-display text-[5rem] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
             Capabilities
           </div>
         </div>
         <div ref={contentRef}>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-4">
-            Capabilities
-          </h2>
-          <div className="w-24 h-1 bg-[#B9FF2C] mb-12" />
+          <div className="font-display text-4xl md:text-[5rem] font-semibold text-white mb-4 text-center mb-20">
+            Stacks & <span className="text-[#B9FF2C]">Capabilities</span>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-x-16 gap-y-10">
             {capabilities.map((cap) => (
@@ -1001,7 +1004,9 @@ function ExperienceSection() {
       id="experience"
       className="relative bg-[#050505] py-24 z-[80]"
     >
-      <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
+      <div
+        style={{ borderRadius: '6rem' }}
+        className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
         {/* Ghost Text */}
         <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none opacity-[0.4]">
           <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
@@ -1009,9 +1014,9 @@ function ExperienceSection() {
           </div>
         </div>
         <div ref={contentRef}>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-12">
-            Experience
-          </h2>
+          <div className="font-display !text-[5rem] tracking-tight md:text-5xl font-semibold text-white text-center mb-12">
+            Work <span className="text-[#B9FF2C]">Experience</span>
+          </div>
 
           <div className="relative">
             {/* Timeline line */}
@@ -1123,7 +1128,9 @@ function ContactSection() {
           }}
         />
       </div>
-      <div className="window-frame w-[86vw] mx-auto bg-[#050505]/60 backdrop-blur-[10px] p-[6%] text-center relative overflow-hidden z-10">
+      <div
+        style={{ borderRadius: '6rem' }}
+        className="window-frame w-[86vw] mx-auto bg-[#050505]/60 backdrop-blur-[10px] p-[6%] text-center relative overflow-hidden z-10">
         {/* Ghost Text */}
         <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none opacity-[0.4]">
           <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
