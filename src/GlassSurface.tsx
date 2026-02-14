@@ -189,12 +189,11 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
         }
 
         const div = document.createElement('div');
+        div.style.display = 'none';
         div.style.backdropFilter = `url(#${filterId})`;
 
-        // We return true if the browser accepts the url() syntax or if we want to force it
-        // Chrome/Edge/Brave on Android/PC usually pass this. 
-        // iOS Safari might reject the syntax, which will trigger the standard blur fallback.
-        return div.style.backdropFilter !== '';
+        const supported = div.style.backdropFilter !== '' || (window as any).WebKitCSSMatrix !== undefined;
+        return supported;
     };
 
     const supportsBackdropFilter = () => {
@@ -217,8 +216,11 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
         if (svgSupported) {
             return {
                 ...baseStyles,
-                background: isDarkMode ? `hsl(0 0% 0% / ${backgroundOpacity})` : `hsl(0 0% 100% / ${backgroundOpacity})`,
+                background: isDarkMode
+                    ? `hsl(0 0% 0% / ${Math.max(backgroundOpacity, 0.2)})`
+                    : `hsl(0 0% 100% / ${Math.max(backgroundOpacity, 0.2)})`,
                 backdropFilter: `url(#${filterId}) saturate(${saturation})`,
+                WebkitBackdropFilter: `url(#${filterId}) saturate(${saturation})`,
                 boxShadow: isDarkMode
                     ? `0 0 55px 1px color-mix(in oklch, white, transparent 85%) inset,
              0 0 10px 4px color-mix(in oklch, black, transparent 95%) inset,
