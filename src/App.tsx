@@ -239,8 +239,8 @@ function ProgressIndicator() {
 function Header({ menuOpen, toggleMenu }: { menuOpen: boolean; toggleMenu: () => void }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-[1000] px-6 py-5 flex justify-between items-center">
-      <a href="#hero" className="font-display text-xl font-bold text-white tracking-tight">
-        SB
+      <a href="#hero" className="flex items-center">
+        <img src="/favicon.svg" alt="SB Logo" className="w-8 h-8 rounded-sm" />
       </a>
       <button
         onClick={toggleMenu}
