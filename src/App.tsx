@@ -179,7 +179,7 @@ useEffect(() => {
       <Header menuOpen={menuOpen} toggleMenu={toggleMenu} />
 
       {/* Full Screen Menu */}
-      {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} sectionRefs={sectionRefs} />}
+      {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} />}
 
       {/* Main Content */}
       <main className="relative">
@@ -222,19 +222,10 @@ function Header({ menuOpen, toggleMenu }: { menuOpen: boolean; toggleMenu: () =>
 // Full Screen Menu
 function FullScreenMenu({ 
   menuRef, 
-  closeMenu,
-  sectionRefs 
+  closeMenu
 }: { 
   menuRef: React.RefObject<HTMLDivElement | null>; 
   closeMenu: () => void;
-  sectionRefs: React.MutableRefObject<{
-    hero: HTMLElement | null;
-    about: HTMLElement | null;
-    work: HTMLElement | null;
-    capabilities: HTMLElement | null;
-    experience: HTMLElement | null;
-    contact: HTMLElement | null;
-  }>;
 }) {
   const menuItems = [
     { label: 'Home', section: 'hero' as const },
