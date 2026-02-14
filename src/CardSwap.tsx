@@ -3,9 +3,9 @@ import React, {
   cloneElement,
   forwardRef,
   isValidElement,
-  ReactElement,
-  ReactNode,
-  RefObject,
+  type ReactElement,
+  type ReactNode,
+  type RefObject,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -90,21 +90,21 @@ const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(function CardSwap(
   const config =
     easing === 'elastic'
       ? {
-          ease: 'elastic.out(0.6,0.9)' as const,
-          durDrop: 2,
-          durMove: 2,
-          durReturn: 2,
-          promoteOverlap: 0.9,
-          returnDelay: 0.05
-        }
+        ease: 'elastic.out(0.6,0.9)' as const,
+        durDrop: 2,
+        durMove: 2,
+        durReturn: 2,
+        promoteOverlap: 0.9,
+        returnDelay: 0.05
+      }
       : {
-          ease: 'power1.inOut' as const,
-          durDrop: 0.8,
-          durMove: 0.8,
-          durReturn: 0.8,
-          promoteOverlap: 0.45,
-          returnDelay: 0.2
-        };
+        ease: 'power1.inOut' as const,
+        durDrop: 0.8,
+        durMove: 0.8,
+        durReturn: 0.8,
+        promoteOverlap: 0.45,
+        returnDelay: 0.2
+      };
 
   const childArr = useMemo(() => Children.toArray(children) as ReactElement<CardProps>[], [children]);
   const refs = useMemo<CardRef[]>(
@@ -167,15 +167,15 @@ const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(function CardSwap(
   const rendered = childArr.map((child, i) =>
     isValidElement<CardProps>(child)
       ? cloneElement(child, {
-          key: i,
-          ref: refs[i],
-          style: { width, height, ...(child.props.style ?? {}) },
-          onClick: (e: React.MouseEvent<HTMLDivElement>) => {
-            e.stopPropagation();
-            child.props.onClick?.(e);
-            bringToFront(i);
-          }
-        } as CardProps & React.RefAttributes<HTMLDivElement>)
+        key: i,
+        ref: refs[i],
+        style: { width, height, ...(child.props.style ?? {}) },
+        onClick: (e: React.MouseEvent<HTMLDivElement>) => {
+          e.stopPropagation();
+          child.props.onClick?.(e);
+          bringToFront(i);
+        }
+      } as CardProps & React.RefAttributes<HTMLDivElement>)
       : child
   );
 

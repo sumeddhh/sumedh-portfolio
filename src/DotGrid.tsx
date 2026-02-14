@@ -30,7 +30,6 @@ export interface DotGridProps {
   shockRadius?: number;
   shockStrength?: number;
   maxSpeed?: number;
-  resistance?: number;
   returnDuration?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -56,7 +55,6 @@ const DotGrid: React.FC<DotGridProps> = ({
   shockRadius = 250,
   shockStrength = 5,
   maxSpeed = 5000,
-  resistance = 750,
   returnDuration = 1.5,
   className = '',
   style

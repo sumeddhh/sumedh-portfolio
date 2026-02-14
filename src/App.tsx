@@ -438,7 +438,6 @@ function HeroSection() {
             proximity={120}
             shockRadius={250}
             shockStrength={5}
-            resistance={750}
             returnDuration={1.5}
             className="!p-0 absolute inset-0"
           />
