@@ -330,9 +330,9 @@ function SelectedWorkSection() {
       id="work"
       className="section-pinned bg-[#050505] flex items-center justify-center z-20"
     >
-      <div className="window-frame relative w-[86vw] h-[82vh] bg-[#050505] flex flex-col md:flex-row p-4 md:p-0">
+      <div className="window-frame relative w-[86vw] h-[82vh] bg-[#050505] flex flex-col md:flex-row items-center justify-center p-6 md:p-12 gap-10">
         {/* Project List */}
-        <div ref={listRef} className="w-full md:w-[40%] p-[6%] pr-[10%] flex flex-col justify-center">
+        <div ref={listRef} className="w-full md:w-[30%] flex flex-col justify-center">
           <h2 className="font-display text-3xl md:text-4xl font-semibold text-[#B9FF2C] mb-8">
             Highlighted work
           </h2>
@@ -344,7 +344,7 @@ function SelectedWorkSection() {
               >
                 <a
                   href={project.href}
-                  className={`block transition-colors ${i === 0 ? 'text-white' : 'text-white/40'} hover:text-[#B9FF2C]`}
+                  className="block text-white"
                 >
                   {project.label}
                 </a>
@@ -356,25 +356,20 @@ function SelectedWorkSection() {
         {/* Project Cards */}
         <div 
           ref={cardsRef}
-          className="relative md:absolute right-auto md:right-[6%] top-auto md:top-[12%] w-full md:w-[56vw] mt-6 md:mt-0 grid gap-4 md:gap-6 md:grid-cols-3"
+          className="relative w-full md:w-[60%] mt-6 md:mt-0 grid gap-4 md:gap-6 md:grid-cols-3"
         >
           {[
             { title: 'Healthcare AI', img: '/project_healthcare_ai.jpg', tags: ['AI', 'UX Research', 'App Design'] },
             { title: 'Fertility Bot', img: '/project_fertility_bot.jpg', tags: ['Service Design', 'Concepting', 'App Design'] },
             { title: 'Team Collaboration Platform', img: '/project_team_collab.jpg', tags: ['Product Design', 'Design System', 'Branding'] },
           ].map((card) => (
-            <div key={card.title} className="relative h-[30vh] md:h-[42vh] rounded-[14px] overflow-hidden">
+            <div key={card.title} className="relative h-[36vh] md:h-[50vh] rounded-[14px] overflow-hidden">
               <img src={card.img} alt={card.title} className="w-full h-full object-cover img-mono" />
               <div className="card-gradient absolute inset-0" />
               <div className="absolute bottom-[6%] left-[6%]">
-                <h3 className="font-display text-xl md:text-2xl font-semibold text-white neon-text mb-2">
+                <h3 className="font-display text-xl md:text-2xl font-semibold text-white mb-2">
                   {card.title}
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {card.tags.map((tag) => (
-                    <span key={tag} className="tag-pill">{tag}</span>
-                  ))}
-                </div>
               </div>
             </div>
           ))}
@@ -455,7 +450,7 @@ function ProjectHealthcareAI() {
         />
         <div className="card-gradient absolute inset-0" />
         <div ref={contentRef} className="absolute bottom-[6%] left-[4%]">
-          <h3 className="font-display text-3xl md:text-5xl font-semibold text-white mb-4 neon-text">
+          <h3 className="font-display text-3xl md:text-5xl font-semibold text-white mb-4">
             Healthcare AI
           </h3>
           <div className="flex flex-wrap gap-2 mb-4">
@@ -552,7 +547,7 @@ function ProjectFertilityBot() {
         />
         <div className="card-gradient absolute inset-0" />
         <div ref={contentRef} className="absolute bottom-[6%] left-[4%]">
-          <h3 className="font-display text-3xl md:text-5xl font-semibold text-white mb-4 neon-text">
+          <h3 className="font-display text-3xl md:text-5xl font-semibold text-white mb-4">
             Fertility Bot
           </h3>
           <div className="flex flex-wrap gap-2 mb-4">
@@ -649,7 +644,7 @@ function ProjectTeamCollab() {
         />
         <div className="card-gradient absolute inset-0" />
         <div ref={contentRef} className="absolute bottom-[6%] left-[4%]">
-          <h3 className="font-display text-3xl md:text-5xl font-semibold text-white mb-4 neon-text">
+          <h3 className="font-display text-3xl md:text-5xl font-semibold text-white mb-4">
             Team Collaboration Platform
           </h3>
           <div className="flex flex-wrap gap-2 mb-4">
@@ -760,7 +755,7 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
           ref={textRef}
           className="relative md:absolute left-auto md:left-[50%] top-auto md:top-1/2 md:-translate-y-1/2 w-full md:w-[42vw] mt-6 md:mt-0"
         >
-          <h2 className="font-display text-4xl md:text-6xl font-semibold text-white mb-8 neon-text">
+          <h2 className="font-display text-4xl md:text-6xl font-semibold text-white mb-8">
             About
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-6">
@@ -772,10 +767,10 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
             With 4.5+ years of experience, I specialize in React, Next.js, and AI-powered solutions.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
-            <p className="text-white/60 text-sm"><span className="text-[#B9FF2C] font-semibold">15+</span> production deployments</p>
-            <p className="text-white/60 text-sm"><span className="text-[#B9FF2C] font-semibold">99.9%</span> uptime in healthcare systems</p>
-            <p className="text-white/60 text-sm"><span className="text-[#B9FF2C] font-semibold">40%</span> development cost reduction</p>
-            <p className="text-white/60 text-sm"><span className="text-[#B9FF2C] font-semibold">8+</span> engineers mentored</p>
+            <p className="text-white/60 text-sm">15+ production deployments</p>
+            <p className="text-white/60 text-sm">99.9% uptime in healthcare systems</p>
+            <p className="text-white/60 text-sm">40% development cost reduction</p>
+            <p className="text-white/60 text-sm">8+ engineers mentored</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <button onClick={onViewResume} className="btn-primary flex items-center gap-2">
@@ -818,7 +813,7 @@ function ResumeModal({
           <X size={18} />
         </button>
         <div className="flex flex-col h-full">
-          <h2 className="font-display text-2xl md:text-4xl font-semibold text-white mb-4 neon-text">
+          <h2 className="font-display text-2xl md:text-4xl font-semibold text-white mb-4">
             Resume
           </h2>
           <div className="rounded-[14px] overflow-hidden border border-white/10 bg-black/40 flex-1">
@@ -909,7 +904,7 @@ function CapabilitiesSection() {
     >
       <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%]">
         <div ref={contentRef}>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-4 neon-text">
+          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-4">
             Capabilities
           </h2>
           <div className="w-24 h-1 bg-[#B9FF2C] mb-12" />
@@ -917,7 +912,7 @@ function CapabilitiesSection() {
           <div className="grid md:grid-cols-2 gap-x-16 gap-y-10">
             {capabilities.map((cap) => (
               <div key={cap.category} className="capability-block">
-                  <h3 className="font-mono text-sm uppercase tracking-widest text-[#B9FF2C] mb-3 neon-text">
+                  <h3 className="font-mono text-sm uppercase tracking-widest text-[#B9FF2C] mb-3">
                     {cap.category}
                   </h3>
                 <p className="text-white/70 text-lg">
@@ -978,7 +973,7 @@ function ExperienceSection() {
     >
       <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%]">
         <div ref={contentRef}>
-          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-12 neon-text">
+          <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-12">
             Experience
           </h2>
           
@@ -1052,7 +1047,7 @@ function ContactSection() {
     >
       <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] text-center">
         <div ref={contentRef}>
-          <h2 className="font-display text-5xl md:text-7xl font-semibold text-white mb-8 neon-text">
+          <h2 className="font-display text-5xl md:text-7xl font-semibold text-white mb-8">
             Let's build something<br />
             <span className="text-[#B9FF2C]">precise.</span>
           </h2>
