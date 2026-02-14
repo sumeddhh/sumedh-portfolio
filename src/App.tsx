@@ -337,7 +337,7 @@ function SelectedWorkSection() {
             Highlighted work
           </h2>
           <ul className="space-y-4">
-            {projects.map((project, i) => (
+            {projects.map((project) => (
               <li
                 key={project.label}
                 className="font-display text-xl md:text-2xl leading-snug break-words whitespace-normal"
