@@ -192,7 +192,8 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
         div.style.display = 'none';
         div.style.backdropFilter = `url(#${filterId})`;
 
-        const supported = div.style.backdropFilter !== '' || (window as any).WebKitCSSMatrix !== undefined;
+        // Check if the browser actually accepts the url(#id) syntax in backdrop-filter
+        const supported = div.style.backdropFilter !== '';
         return supported;
     };
 
@@ -219,8 +220,9 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
                 background: isDarkMode
                     ? `hsl(0 0% 0% / ${Math.max(backgroundOpacity, 0.2)})`
                     : `hsl(0 0% 100% / ${Math.max(backgroundOpacity, 0.2)})`,
-                backdropFilter: `url(#${filterId}) saturate(${saturation})`,
-                WebkitBackdropFilter: `url(#${filterId}) saturate(${saturation})`,
+                // Adding blur(12px) as a safety baseline so it never looks fully transparent
+                backdropFilter: `blur(12px) url(#${filterId}) saturate(${saturation})`,
+                WebkitBackdropFilter: `blur(12px) url(#${filterId}) saturate(${saturation})`,
                 boxShadow: isDarkMode
                     ? `0 0 55px 1px color-mix(in oklch, white, transparent 85%) inset,
              0 0 10px 4px color-mix(in oklch, black, transparent 95%) inset,
