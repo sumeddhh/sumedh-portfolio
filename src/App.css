@@ -16,24 +16,36 @@ html.has-scroll-smooth body {
 
 /* Window frame responsive adjustments */
 @media (max-width: 768px) {
+  /* Disable all pinning and animations on mobile */
   .section-pinned {
     height: auto !important;
-    min-height: 100svh;
+    min-height: auto !important;
     overflow: visible !important;
-    padding-top: 5rem;
-    padding-bottom: 2rem;
+    padding: 0 !important;
+    position: relative !important;
   }
 
   .window-frame {
-    width: 96vw !important;
+    width: 100% !important;
     height: auto !important;
-    min-height: 72vh;
-    border-radius: 14px;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    padding: 10% 6% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
   }
   
   .hairline-v,
   .hairline-h {
     display: none;
+  }
+
+  /* Reset all transforms and opacity for mobile */
+  .section-pinned * {
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
 

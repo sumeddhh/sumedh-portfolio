@@ -1,10 +1,12 @@
-import { useEffect, useRef, useLayoutEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Menu, X, ArrowUpRight, Mail, Linkedin, Eye } from 'lucide-react';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import Lenis from 'lenis';
+import { ArrowUpRight, Eye, Linkedin, Mail, Menu, X } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
@@ -12,6 +14,146 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(false);
 
+  // Section refs for reliable navigation
+  const sectionRefs = useRef({
+    hero: null as HTMLElement | null,
+    about: null as HTMLElement | null,
+    work: null as HTMLElement | null,
+    capabilities: null as HTMLElement | null,
+    experience: null as HTMLElement | null,
+    contact: null as HTMLElement | null,
+  });
+
+// In App.tsx, replace the navigation useEffect with this:
+
+useEffect(() => {
+  // Global navigation handler attached to window
+  (window as any).navigateToSection = (sectionId: string) => {
+    // Wait for next frame to ensure all ScrollTriggers are initialized
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+      
+      const element = document.querySelector(`#${sectionId}`);
+      if (!element) return;
+
+      let targetScroll = 0;
+      let foundPinnedTrigger = false;
+
+      // Get all triggers and find by element ID
+      const allTriggers = ScrollTrigger.getAll();
+      
+      for (const st of allTriggers) {
+        // Check if this trigger is pinned and matches our element
+        if (st.vars.pin && st.trigger && (st.trigger as Element).id === sectionId) {
+          // For pinned sections, we need the scroll position where pinning starts
+          // st.start gives us the trigger position, but we need to account for 
+          // any scrub/pin spacing. Use the actual pinned position.
+          targetScroll = st.start;
+          foundPinnedTrigger = true;
+          
+          console.log(`Found pinned section ${sectionId}:`, {
+            start: st.start,
+            end: st.end,
+            pin: st.vars.pin
+          });
+          break;
+        }
+      }
+
+      // If not a pinned section, calculate based on element position
+      if (!foundPinnedTrigger) {
+        // For non-pinned sections, we need to account for the space taken by pinned sections
+        // Calculate cumulative height of all pinned sections that come before this one
+        let pinnedOffset = 0;
+        
+        allTriggers.forEach(st => {
+          if (st.vars.pin && st.trigger) {
+            const triggerId = (st.trigger as Element).id;
+            const triggerElement = document.querySelector(`#${triggerId}`);
+            const currentElement = document.querySelector(`#${sectionId}`);
+            
+            if (triggerElement && currentElement) {
+              const triggerRect = triggerElement.getBoundingClientRect();
+              const currentRect = currentElement.getBoundingClientRect();
+              
+              // If this pinned section comes before our target
+              if (triggerRect.top < currentRect.top) {
+                // Add the pin duration (end - start) to the offset
+                pinnedOffset += (st.end - st.start);
+              }
+            }
+          }
+        });
+        
+        targetScroll = (element as HTMLElement).offsetTop - pinnedOffset;
+      }
+
+      console.log(`Navigating to ${sectionId} at scroll position:`, targetScroll);
+
+      const lenisInstance = (window as any).lenis;
+      if (lenisInstance?.scrollTo) {
+        lenisInstance.scrollTo(targetScroll, { 
+          duration: 1.2,
+          immediate: false
+        });
+      } else {
+        window.scrollTo({ 
+          top: targetScroll, 
+          behavior: 'smooth' 
+        });
+      }
+    });
+  };
+
+  return () => {
+    delete (window as any).navigateToSection;
+  };
+}, []);
+
+ // Initialize Lenis smooth scroll
+useEffect(() => {
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    touchMultiplier: 2,
+  });
+
+  // Store on window for navigation access
+  (window as any).lenis = lenis;
+
+  function raf(time: number) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+
+  requestAnimationFrame(raf);
+
+  // Connect Lenis with GSAP ScrollTrigger
+  lenis.on('scroll', ScrollTrigger.update);
+
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+
+  gsap.ticker.lagSmoothing(0);
+
+  // Store section refs
+  sectionRefs.current.hero = document.querySelector('#hero');
+  sectionRefs.current.about = document.querySelector('#about');
+  sectionRefs.current.work = document.querySelector('#work');
+  sectionRefs.current.capabilities = document.querySelector('#capabilities');
+  sectionRefs.current.experience = document.querySelector('#experience');
+  sectionRefs.current.contact = document.querySelector('#contact');
+
+  return () => {
+    lenis.destroy();
+    delete (window as any).lenis;
+    gsap.ticker.remove(() => {});
+  };
+}, []);
   // Menu toggle
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -37,16 +179,16 @@ function App() {
       <Header menuOpen={menuOpen} toggleMenu={toggleMenu} />
 
       {/* Full Screen Menu */}
-      {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} />}
+      {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} sectionRefs={sectionRefs} />}
 
       {/* Main Content */}
       <main className="relative">
         <HeroSection />
+        <AboutSection onViewResume={handleViewResume} />
         <SelectedWorkSection />
         <ProjectHealthcareAI />
         <ProjectFertilityBot />
         <ProjectTeamCollab />
-        <AboutSection onViewResume={handleViewResume} />
         <ResumeModal open={showResume} onOpenChange={setShowResume} />
         <CapabilitiesSection />
         <ExperienceSection />
@@ -78,18 +220,46 @@ function Header({ menuOpen, toggleMenu }: { menuOpen: boolean; toggleMenu: () =>
 }
 
 // Full Screen Menu
-function FullScreenMenu({ menuRef, closeMenu }: { menuRef: React.RefObject<HTMLDivElement | null>; closeMenu: () => void }) {
+function FullScreenMenu({ 
+  menuRef, 
+  closeMenu,
+  sectionRefs 
+}: { 
+  menuRef: React.RefObject<HTMLDivElement | null>; 
+  closeMenu: () => void;
+  sectionRefs: React.MutableRefObject<{
+    hero: HTMLElement | null;
+    about: HTMLElement | null;
+    work: HTMLElement | null;
+    capabilities: HTMLElement | null;
+    experience: HTMLElement | null;
+    contact: HTMLElement | null;
+  }>;
+}) {
   const menuItems = [
-    { label: 'Home', href: '#hero' },
-    { label: 'Work', href: '#work' },
-    { label: 'About', href: '#about' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Home', section: 'hero' as const },
+    { label: 'Capabilities', section: 'capabilities' as const },
+    { label: 'Experience', section: 'experience' as const },
+    { label: 'Contact', section: 'contact' as const },
   ];
 
   const socialLinks = [
     { label: 'LinkedIn', href: 'https://np.linkedin.com/in/sumedh-bajracharya' },
     { label: 'Email', href: 'mailto:sumedhbajracharya07@gmail.com' },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, section: string) => {
+    closeMenu();
+    
+    // Special case for home - scroll to top
+    if (section === 'hero') {
+      e.preventDefault();
+      setTimeout(() => {
+        window.scrollTo({ top: 500, behavior: 'smooth' });
+      }, 300);
+    }
+    // For other sections, let the browser handle anchor navigation naturally
+  };
 
   return (
     <div
@@ -102,8 +272,8 @@ function FullScreenMenu({ menuRef, closeMenu }: { menuRef: React.RefObject<HTMLD
             {menuItems.map((item) => (
               <li key={item.label}>
                 <a
-                  href={item.href}
-                  onClick={closeMenu}
+                  href={`#${item.section}`}
+                  onClick={(e) => handleNavClick(e, item.section)}
                   className="font-display text-5xl md:text-7xl font-semibold text-white hover:text-[#B9FF2C] transition-colors"
                 >
                   {item.label}
@@ -129,6 +299,19 @@ function FullScreenMenu({ menuRef, closeMenu }: { menuRef: React.RefObject<HTMLD
     </div>
   );
 }
+// Subtle Ghost Text Component
+function GhostText() {
+  return (
+    <div className="absolute right-[8%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
+      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-white/[0.02] whitespace-nowrap">
+        FULLSTACK
+      </div>
+      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-white/[0.02] whitespace-nowrap -mt-4">
+        ENGINEER
+      </div>
+    </div>
+  );
+}
 
 // Hero Section
 function HeroSection() {
@@ -144,6 +327,10 @@ function HeroSection() {
     const cta = ctaRef.current;
 
     if (!section || !windowEl || !headline || !cta) return;
+
+    // Skip animations on mobile
+    // Mobile check removed
+    
 
     const ctx = gsap.context(() => {
       // Initial load animation
@@ -171,9 +358,9 @@ function HeroSection() {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.6,
+          end: '+=80%',
+          pin: window.innerWidth > 768,
+          scrub: 1.2,
           onLeaveBack: () => {
             gsap.set([windowEl, headline.children, cta.children], { clearProps: 'all' });
             loadTl.progress(1);
@@ -225,34 +412,34 @@ function HeroSection() {
           <span className="font-mono text-xs uppercase tracking-widest text-white/80">Available for projects</span>
         </div>
 
+        {/* Ghost Text */}
+        <GhostText />
+
         {/* Headline */}
         <div ref={headlineRef} className="mt-auto">
-          <p className="font-display text-2xl md:text-4xl text-white/60 mb-2">Sup, I'm</p>
-          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9]">
+          <p className="font-display text-xl md:text-4xl text-white/60 mb-2">Sup, I'm</p>
+          <h1 className="font-display text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9]">
             Sumedh
           </h1>
-          <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9]">
+          <h1 className="font-display text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9]">
             Bajracharya.
           </h1>
         </div>
 
         {/* Subheadline & CTA */}
-        <div className="mt-8">
-          <p className="text-white/60 text-lg md:text-xl mb-6">
-            Senior Software Engineer II · Frontend · UX
+        <div className="mt-6 md:mt-8">
+          <p className="text-white/60 text-base md:text-xl mb-4 md:mb-6">
+            Senior Software Engineer II · Web Development · UX
           </p>
-          <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4">
-            <a href="#work" className="btn-primary flex items-center gap-2">
+          <div ref={ctaRef} className="flex flex-col sm:flex-row gap-3 md:gap-4 py-2 md:py-4">
+            <a href="#work" className="btn-primary flex items-center justify-center gap-2 text-base md:text-base">
               View work
               <ArrowUpRight size={18} />
             </a>
-            <a href="#contact" className="btn-secondary">
+            <a href="#contact" className="btn-secondary text-base md:text-base text-center">
               Contact
             </a>
           </div>
-          <p className="mt-4 text-white/40 text-sm">
-            Based in Nepal · Working worldwide
-          </p>
         </div>
       </div>
     </section>
@@ -269,16 +456,23 @@ function SelectedWorkSection() {
     const section = sectionRef.current;
     const list = listRef.current;
     const cards = cardsRef.current;
+    // Mobile check removed
+    
+
     if (!section || !list || !cards) return;
+
+    // Skip animations on mobile
+    
 
     const ctx = gsap.context(() => {
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.6,
+          end: '+=80%',
+          pin: window.innerWidth > 768,
+          
+          scrub: 1.2,
         }
       });
 
@@ -340,14 +534,9 @@ function SelectedWorkSection() {
             {projects.map((project) => (
               <li
                 key={project.label}
-                className="font-display text-xl md:text-2xl leading-snug break-words whitespace-normal"
+                className="font-display text-xl md:text-2xl leading-snug break-words whitespace-normal text-white"
               >
-                <a
-                  href={project.href}
-                  className="block text-white"
-                >
-                  {project.label}
-                </a>
+                {project.label}
               </li>
             ))}
           </ul>
@@ -389,6 +578,9 @@ function ProjectHealthcareAI() {
     const section = sectionRef.current;
     const card = cardRef.current;
     const content = contentRef.current;
+    // Mobile check removed
+    
+
     if (!section || !card || !content) return;
 
     const ctx = gsap.context(() => {
@@ -396,9 +588,10 @@ function ProjectHealthcareAI() {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.6,
+          end: '+=80%',
+          pin: window.innerWidth > 768,
+          
+          scrub: 1.2,
         }
       });
 
@@ -479,6 +672,9 @@ function ProjectFertilityBot() {
     const card = cardRef.current;
     const content = contentRef.current;
     const img = imgRef.current;
+    // Mobile check removed
+    
+
     if (!section || !card || !content || !img) return;
 
     const ctx = gsap.context(() => {
@@ -486,9 +682,10 @@ function ProjectFertilityBot() {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.6,
+          end: '+=80%',
+          pin: window.innerWidth > 768,
+          
+          scrub: 1.2,
         }
       });
 
@@ -576,6 +773,9 @@ function ProjectTeamCollab() {
     const card = cardRef.current;
     const content = contentRef.current;
     const img = imgRef.current;
+    // Mobile check removed
+    
+
     if (!section || !card || !content || !img) return;
 
     const ctx = gsap.context(() => {
@@ -583,9 +783,10 @@ function ProjectTeamCollab() {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.6,
+          end: '+=80%',
+          pin: window.innerWidth > 768,
+          
+          scrub: 1.2,
         }
       });
 
@@ -673,6 +874,9 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
     const windowEl = windowRef.current;
     const portrait = portraitRef.current;
     const text = textRef.current;
+    // Mobile check removed
+    
+
     if (!section || !windowEl || !portrait || !text) return;
 
     const ctx = gsap.context(() => {
@@ -680,9 +884,10 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.6,
+          end: '+=80%',
+          pin: window.innerWidth > 768,
+          
+          scrub: 1.2,
         }
       });
 
@@ -837,6 +1042,9 @@ function CapabilitiesSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
+    // Mobile check removed
+    
+
     if (!section || !content) return;
 
     const ctx = gsap.context(() => {
@@ -900,6 +1108,7 @@ function CapabilitiesSection() {
   return (
     <section
       ref={sectionRef}
+      id="capabilities"
       className="relative bg-[#050505] py-24 z-[70]"
     >
       <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%]">
@@ -935,6 +1144,9 @@ function ExperienceSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
+    // Mobile check removed
+    
+
     if (!section || !content) return;
 
     const ctx = gsap.context(() => {
@@ -969,6 +1181,7 @@ function ExperienceSection() {
   return (
     <section
       ref={sectionRef}
+      id="experience"
       className="relative bg-[#050505] py-24 z-[80]"
     >
       <div className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%]">
@@ -1017,6 +1230,9 @@ function ContactSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
+    // Mobile check removed
+    
+
     if (!section || !content) return;
 
     const ctx = gsap.context(() => {
