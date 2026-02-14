@@ -158,14 +158,6 @@
 }
 
 /* Hairline decorations */
-.hairline-v {
-  @apply absolute w-px bg-white/[0.08];
-}
-
-.hairline-h {
-  @apply absolute h-px bg-white/[0.08];
-}
-
 /* Link underline animation */
 .link-underline {
   position: relative;

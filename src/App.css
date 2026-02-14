@@ -37,11 +37,6 @@ html.has-scroll-smooth body {
     justify-content: center !important;
   }
   
-  .hairline-v,
-  .hairline-h {
-    display: none;
-  }
-
   /* Reset all transforms and opacity for mobile */
   .section-pinned * {
     transform: none !important;
