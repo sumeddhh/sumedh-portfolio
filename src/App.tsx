@@ -17,8 +17,8 @@ function App() {
 
   useEffect(() => {
     if (menuOpen) {
-      gsap.fromTo(menuRef.current, 
-        { opacity: 0 }, 
+      gsap.fromTo(menuRef.current,
+        { opacity: 0 },
         { opacity: 1, duration: 0.3 }
       );
     }
@@ -32,13 +32,13 @@ function App() {
     <div ref={mainRef} className="relative bg-[#050505] min-h-screen">
       {/* Grain Overlay */}
       <div className="grain-overlay" />
-      
+
       {/* Persistent Header */}
       <Header menuOpen={menuOpen} toggleMenu={toggleMenu} />
-      
+
       {/* Full Screen Menu */}
       {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} />}
-      
+
       {/* Main Content */}
       <main className="relative">
         <HeroSection />
@@ -52,7 +52,7 @@ function App() {
         <ExperienceSection />
         <ContactSection />
       </main>
-      
+
       {/* Progress Indicator */}
       <ProgressIndicator />
     </div>
@@ -66,7 +66,7 @@ function Header({ menuOpen, toggleMenu }: { menuOpen: boolean; toggleMenu: () =>
       <a href="#hero" className="font-display text-xl font-bold text-white tracking-tight">
         SB
       </a>
-      <button 
+      <button
         onClick={toggleMenu}
         className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
       >
@@ -92,7 +92,7 @@ function FullScreenMenu({ menuRef, closeMenu }: { menuRef: React.RefObject<HTMLD
   ];
 
   return (
-    <div 
+    <div
       ref={menuRef}
       className="fixed inset-0 z-[999] bg-[#050505]/98 backdrop-blur-md flex items-center justify-center"
     >
@@ -101,7 +101,7 @@ function FullScreenMenu({ menuRef, closeMenu }: { menuRef: React.RefObject<HTMLD
           <ul className="space-y-6">
             {menuItems.map((item) => (
               <li key={item.label}>
-                <a 
+                <a
                   href={item.href}
                   onClick={closeMenu}
                   className="font-display text-5xl md:text-7xl font-semibold text-white hover:text-[#B9FF2C] transition-colors"
@@ -114,7 +114,7 @@ function FullScreenMenu({ menuRef, closeMenu }: { menuRef: React.RefObject<HTMLD
         </nav>
         <div className="flex justify-center gap-8">
           {socialLinks.map((link) => (
-            <a 
+            <a
               key={link.label}
               href={link.href}
               target="_blank"
@@ -148,18 +148,18 @@ function HeroSection() {
     const ctx = gsap.context(() => {
       // Initial load animation
       const loadTl = gsap.timeline();
-      
-      loadTl.fromTo(windowEl, 
+
+      loadTl.fromTo(windowEl,
         { scale: 0.92, opacity: 0 },
         { scale: 1, opacity: 1, duration: 0.9, ease: 'power3.out' }
       );
-      
+
       loadTl.fromTo(headline.children,
         { y: 40, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
         '-=0.5'
       );
-      
+
       loadTl.fromTo(cta.children,
         { y: 18, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 },
@@ -187,13 +187,13 @@ function HeroSection() {
         { x: '-18vw', opacity: 0, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(windowEl,
         { scale: 1, opacity: 1 },
         { scale: 1.06, opacity: 0.35, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(cta,
         { y: 0, opacity: 1 },
         { y: '10vh', opacity: 0, ease: 'power2.in' },
@@ -205,26 +205,26 @@ function HeroSection() {
   }, []);
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       id="hero"
       className="section-pinned bg-[#050505] flex items-center justify-center z-10"
     >
       {/* Window Frame */}
-      <div 
+      <div
         ref={windowRef}
         className="window-frame relative w-[86vw] h-[82vh] bg-[#050505] flex flex-col justify-between p-[6%]"
       >
         {/* Decorative hairlines */}
         <div className="hairline-v left-[28%] top-0 h-full" />
         <div className="hairline-h left-0 top-[34%] w-full" />
-        
+
         {/* Available Badge */}
         <div className="absolute right-[6%] top-[8%] flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
           <span className="w-2 h-2 rounded-full bg-[#B9FF2C] pulse-dot" />
           <span className="font-mono text-xs uppercase tracking-widest text-white/80">Available for projects</span>
         </div>
-        
+
         {/* Headline */}
         <div ref={headlineRef} className="mt-auto">
           <p className="font-display text-2xl md:text-4xl text-white/60 mb-2">Sup, I'm</p>
@@ -235,7 +235,7 @@ function HeroSection() {
             Bajracharya.
           </h1>
         </div>
-        
+
         {/* Subheadline & CTA */}
         <div className="mt-8">
           <p className="text-white/60 text-lg md:text-xl mb-6">
@@ -284,19 +284,19 @@ function SelectedWorkSection() {
 
       // Entrance (0%-30%)
       scrollTl.fromTo(list,
-        { x: '-18vw', opacity: 0 },
+        { x: '-10vw', opacity: 0 },
         { x: 0, opacity: 1, ease: 'none' },
         0
       );
-      
+
       scrollTl.fromTo(list.querySelectorAll('li'),
         { y: 24, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
         0.06
       );
-      
+
       scrollTl.fromTo(cards,
-        { x: '60vw', opacity: 0 },
+        { x: '20vw', opacity: 0 },
         { x: 0, opacity: 1, ease: 'power2.out' },
         0.08
       );
@@ -304,13 +304,13 @@ function SelectedWorkSection() {
       // Exit (70%-100%)
       scrollTl.fromTo(list,
         { x: 0, opacity: 1 },
-        { x: '-10vw', opacity: 0, ease: 'power2.in' },
+        { x: '-5vw', opacity: 0, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(cards,
         { x: 0, opacity: 1 },
-        { x: '-18vw', opacity: 0.45, ease: 'power2.in' },
+        { x: '-10vw', opacity: 0.45, ease: 'power2.in' },
         0.7
       );
     }, section);
@@ -325,7 +325,7 @@ function SelectedWorkSection() {
   ];
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="work"
       className="section-pinned bg-[#050505] flex items-center justify-center z-20"
@@ -338,7 +338,7 @@ function SelectedWorkSection() {
           </h2>
           <ul className="space-y-4">
             {projects.map((project, i) => (
-              <li 
+              <li
                 key={project.label}
                 className="font-display text-xl md:text-2xl leading-snug break-words whitespace-normal"
               >
@@ -352,9 +352,9 @@ function SelectedWorkSection() {
             ))}
           </ul>
         </div>
-        
+
         {/* Project Cards */}
-        <div 
+        <div
           ref={cardsRef}
           className="relative w-full md:w-[60%] mt-6 md:mt-0 grid gap-4 md:gap-6 md:grid-cols-3"
         >
@@ -408,7 +408,7 @@ function ProjectHealthcareAI() {
         { x: 0, rotateY: 0, opacity: 1, ease: 'power2.out' },
         0
       );
-      
+
       scrollTl.fromTo(content.querySelectorAll('*'),
         { y: 40, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
@@ -421,7 +421,7 @@ function ProjectHealthcareAI() {
         { x: '-40vw', rotateY: -10, opacity: 0.4, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(content,
         { y: 0, opacity: 1 },
         { y: '-6vh', opacity: 0, ease: 'power2.in' },
@@ -433,18 +433,18 @@ function ProjectHealthcareAI() {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="project-healthcare-ai"
       className="section-pinned bg-[#0B0B0C] flex items-center justify-center z-30"
     >
-      <div 
+      <div
         ref={cardRef}
         className="relative w-[92vw] h-[78vh] rounded-[14px] overflow-hidden"
         style={{ perspective: '1000px' }}
       >
-        <img 
-          src="/project_healthcare_ai.jpg" 
+        <img
+          src="/project_healthcare_ai.jpg"
           alt="Healthcare AI"
           className="w-full h-full object-cover img-mono"
         />
@@ -498,13 +498,13 @@ function ProjectFertilityBot() {
         { x: 0, rotateY: 0, opacity: 1, ease: 'power2.out' },
         0
       );
-      
+
       scrollTl.fromTo(img,
         { scale: 1.14, x: '6vw' },
         { scale: 1, x: 0, ease: 'none' },
         0.08
       );
-      
+
       scrollTl.fromTo(content.querySelectorAll('*'),
         { y: 40, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
@@ -517,7 +517,7 @@ function ProjectFertilityBot() {
         { x: '-40vw', rotateY: -10, opacity: 0.4, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(content,
         { y: 0, opacity: 1 },
         { y: '-6vh', opacity: 0, ease: 'power2.in' },
@@ -529,19 +529,19 @@ function ProjectFertilityBot() {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="project-fertility-bot"
       className="section-pinned bg-[#0B0B0C] flex items-center justify-center z-40"
     >
-      <div 
+      <div
         ref={cardRef}
         className="relative w-[92vw] h-[78vh] rounded-[14px] overflow-hidden"
         style={{ perspective: '1000px' }}
       >
-        <img 
+        <img
           ref={imgRef}
-          src="/project_fertility_bot.jpg" 
+          src="/project_fertility_bot.jpg"
           alt="Fertility Bot"
           className="w-full h-full object-cover img-mono"
         />
@@ -595,13 +595,13 @@ function ProjectTeamCollab() {
         { x: 0, rotateY: 0, opacity: 1, ease: 'power2.out' },
         0
       );
-      
+
       scrollTl.fromTo(img,
         { scale: 1.12, x: '-4vw' },
         { scale: 1, x: 0, ease: 'none' },
         0.08
       );
-      
+
       scrollTl.fromTo(content.querySelectorAll('*'),
         { y: 40, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
@@ -614,7 +614,7 @@ function ProjectTeamCollab() {
         { scale: 1.18, opacity: 0.35, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(content,
         { y: 0, opacity: 1 },
         { y: '8vh', opacity: 0, ease: 'power2.in' },
@@ -626,19 +626,19 @@ function ProjectTeamCollab() {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="project-team-collab"
       className="section-pinned bg-[#0B0B0C] flex items-center justify-center z-50"
     >
-      <div 
+      <div
         ref={cardRef}
         className="relative w-[92vw] h-[78vh] rounded-[14px] overflow-hidden"
         style={{ perspective: '1000px' }}
       >
-        <img 
+        <img
           ref={imgRef}
-          src="/project_team_collab.jpg" 
+          src="/project_team_collab.jpg"
           alt="Team Collaboration Platform"
           className="w-full h-full object-cover img-mono"
         />
@@ -692,13 +692,13 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
         { x: 0, opacity: 1, ease: 'power2.out' },
         0
       );
-      
+
       scrollTl.fromTo(text.querySelector('h2'),
         { y: '-10vh', opacity: 0 },
         { y: 0, opacity: 1, ease: 'none' },
         0.06
       );
-      
+
       scrollTl.fromTo(text.querySelectorAll('p, a, button'),
         { y: 24, opacity: 0 },
         { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
@@ -711,13 +711,13 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
         { x: '-18vw', opacity: 0.35, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(text,
         { x: 0, opacity: 1 },
         { x: '10vw', opacity: 0, ease: 'power2.in' },
         0.7
       );
-      
+
       scrollTl.fromTo(windowEl,
         { opacity: 1 },
         { opacity: 0.25, ease: 'power2.in' },
@@ -729,29 +729,29 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="about"
       className="section-pinned bg-[#050505] flex items-center justify-center z-[60]"
     >
-      <div 
+      <div
         ref={windowRef}
         className="window-frame relative w-[86vw] h-[82vh] bg-[#050505] flex flex-col md:flex-row items-start md:items-center p-[6%] md:p-0"
       >
         {/* Portrait */}
-        <div 
+        <div
           ref={portraitRef}
           className="relative md:absolute left-auto md:left-[6%] top-auto md:top-1/2 md:-translate-y-1/2 w-full md:w-[34vw] h-[38vh] md:h-[62vh] rounded-[14px] overflow-hidden"
         >
-          <img 
-            src="/about_portrait.jpg" 
+          <img
+            src="/about_portrait.jpg"
             alt="Sumedh Bajracharya"
             className="w-full h-full object-cover img-mono"
           />
         </div>
-        
+
         {/* Text Content */}
-        <div 
+        <div
           ref={textRef}
           className="relative md:absolute left-auto md:left-[50%] top-auto md:top-1/2 md:-translate-y-1/2 w-full md:w-[42vw] mt-6 md:mt-0"
         >
@@ -759,11 +759,11 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
             About
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-6">
-            I'm a senior frontend engineer who cares about the space between design and code—performance, 
+            I'm a senior frontend engineer who cares about the space between design and code—performance,
             accessibility, and interaction quality.
           </p>
           <p className="text-white/70 text-lg leading-relaxed mb-8">
-            I've led UI for healthcare platforms, built design systems, and shipped products used by thousands. 
+            I've led UI for healthcare platforms, built design systems, and shipped products used by thousands.
             With 4.5+ years of experience, I specialize in React, Next.js, and AI-powered solutions.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
@@ -777,8 +777,8 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
               <Eye size={18} />
               View Resume
             </button>
-            <a 
-              href="https://np.linkedin.com/in/sumedh-bajracharya" 
+            <a
+              href="https://np.linkedin.com/in/sumedh-bajracharya"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-secondary flex items-center gap-2"
@@ -898,7 +898,7 @@ function CapabilitiesSection() {
   ];
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative bg-[#050505] py-24 z-[70]"
     >
@@ -908,13 +908,13 @@ function CapabilitiesSection() {
             Capabilities
           </h2>
           <div className="w-24 h-1 bg-[#B9FF2C] mb-12" />
-          
+
           <div className="grid md:grid-cols-2 gap-x-16 gap-y-10">
             {capabilities.map((cap) => (
               <div key={cap.category} className="capability-block">
-                  <h3 className="font-mono text-sm uppercase tracking-widest text-[#B9FF2C] mb-3">
-                    {cap.category}
-                  </h3>
+                <h3 className="font-mono text-sm uppercase tracking-widest text-[#B9FF2C] mb-3">
+                  {cap.category}
+                </h3>
                 <p className="text-white/70 text-lg">
                   {cap.skills}
                 </p>
@@ -967,7 +967,7 @@ function ExperienceSection() {
   ];
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       className="relative bg-[#050505] py-24 z-[80]"
     >
@@ -976,17 +976,17 @@ function ExperienceSection() {
           <h2 className="font-display text-4xl md:text-5xl font-semibold text-white mb-12">
             Experience
           </h2>
-          
+
           <div className="relative">
             {/* Timeline line */}
             <div className="absolute left-0 top-0 w-px h-full bg-white/10" />
-            
+
             <div className="space-y-8">
               {experiences.map((exp, i) => (
                 <div key={i} className="experience-item relative pl-8">
                   {/* Timeline dot */}
                   <div className="absolute left-0 top-2 w-2 h-2 -translate-x-1/2 rounded-full bg-[#B9FF2C]" />
-                  
+
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <div>
                       <h3 className="font-display text-xl md:text-2xl font-semibold text-white">
@@ -1040,7 +1040,7 @@ function ContactSection() {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="contact"
       className="relative bg-[#050505] py-24 z-[90]"
@@ -1051,16 +1051,16 @@ function ContactSection() {
             Let's build something<br />
             <span className="text-[#B9FF2C]">precise.</span>
           </h2>
-          
+
           <div className="flex flex-col md:flex-row justify-center items-center gap-6 mt-12">
-            <a 
+            <a
               href="mailto:sumedhbajracharya07@gmail.com"
               className="flex items-center gap-3 text-white/80 hover:text-[#B9FF2C] transition-colors"
             >
               <Mail size={20} />
               <span className="font-mono text-sm">sumedhbajracharya07@gmail.com</span>
             </a>
-            <a 
+            <a
               href="https://np.linkedin.com/in/sumedh-bajracharya"
               target="_blank"
               rel="noopener noreferrer"
@@ -1070,7 +1070,7 @@ function ContactSection() {
               <span className="font-mono text-sm">LinkedIn</span>
             </a>
           </div>
-          
+
           <div className="mt-24 pt-8 border-t border-white/10">
             <p className="font-mono text-xs uppercase tracking-widest text-white/40">
               © Sumedh Bajracharya — {new Date().getFullYear()}
