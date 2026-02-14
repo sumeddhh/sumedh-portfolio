@@ -1,6 +1,7 @@
 import TiltedCard from './TiltedCard';
 import LogoLoop from './LogoLoop';
 import Hyperspeed from './Hyperspeed';
+import GlassSurface from './GlassSurface';
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs,
   SiPostgresql, SiMongodb, SiDocker, SiAmazonwebservices, SiFigma,
@@ -212,6 +213,15 @@ function ProgressIndicator() {
   const [progress, setProgress] = useState(1);
   const totalSections = 6;
 
+  const sectionDescriptions: Record<number, string> = {
+    1: "Introductory section for my landing page",
+    2: "About my background & journey",
+    3: "Showcase of selected projects",
+    4: "Technical skills & expertise",
+    5: "Professional experience & milestones",
+    6: "Contact & collaboration"
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -225,12 +235,27 @@ function ProgressIndicator() {
   }, []);
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000]">
-      <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-        <span className="font-mono text-xs text-white/60">
-          {progress} / {totalSections}
-        </span>
-      </div>
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-[min(90vw,480px)]">
+      <GlassSurface
+        width="100%"
+        height={60}
+        borderRadius={50}
+        backgroundOpacity={0.5}
+        blur={24}
+        displace={4}
+        distortionScale={-120}
+        mixBlendMode="multiply"
+      >
+        <div className="px-6 w-full flex items-center justify-between gap-4">
+          <span className="font-mono text-[10px] md:text-xs text-white whitespace-nowrap">
+            <span className="text-white">{progress}</span> / {totalSections}
+          </span>
+          <div className="h-4 w-[1px] bg-white/10" />
+          <span className="font-mono text-[10px] md:text-xs text-white truncate text-right">
+            {sectionDescriptions[progress]}
+          </span>
+        </div>
+      </GlassSurface>
     </div>
   );
 }
@@ -1057,7 +1082,7 @@ function ContactSection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative bg-[#050505] py-24 z-[90]"
+      className="relative bg-[#050505] h-screen z-[90] overflow-hidden flex items-center justify-center"
     >
       <div className="absolute inset-0 z-0 opacity-[0.7]">
         <Hyperspeed
