@@ -536,14 +536,14 @@ function SelectedWorkSection() {
         {/* Project Cards */}
         <div
           ref={cardsRef}
-          className="relative w-full md:w-[60%] mt-6 md:mt-0 grid gap-4 md:gap-6 md:grid-cols-3"
+          className="relative w-full md:w-[60%] mt-6 md:mt-0 grid gap-8 lg:gap-6 lg:grid-cols-3"
         >
           {[
             { title: 'Healthcare AI', img: '/project_healthcare_ai.jpg', tags: ['AI', 'UX Research', 'App Design'] },
             { title: 'Fertility Bot', img: '/project_fertility_bot.jpg', tags: ['Service Design', 'Concepting', 'App Design'] },
             { title: 'Team Collaboration Platform', img: '/project_team_collab.jpg', tags: ['Product Design', 'Design System', 'Branding'] },
           ].map((card) => (
-            <div key={card.title} className="relative h-[36vh] md:h-[50vh] rounded-[14px] overflow-hidden">
+            <div key={card.title} className="relative h-[14vh] lg:h-[50vh] rounded-[14px] overflow-hidden">
               <img src={card.img} alt={card.title} className="w-full h-full object-cover img-mono" />
               <div className="card-gradient absolute inset-0" />
               <div className="absolute bottom-[6%] left-[6%]">
@@ -1310,7 +1310,7 @@ function ProgressIndicator() {
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000]">
       <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
         <span className="font-mono text-xs text-white/60">
-          {String(progress).padStart(2, '0')} / {totalSections}
+          {progress} / {totalSections}
         </span>
       </div>
     </div>
