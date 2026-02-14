@@ -903,11 +903,11 @@ function CapabilitiesSection() {
           </div>
         </div>
         <div ref={contentRef}>
-          <div className="font-display text-4xl md:text-[5rem] font-semibold text-white mb-4 text-center mb-20">
+          <div className="font-display text-4xl md:text-[5rem] font-semibold text-white text-center mb-24">
             Stacks & <span className="text-[#B9FF2C]">Capabilities</span>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-x-16 gap-y-10">
+          <div className="grid md:grid-cols-2 gap-x-16 gap-y-10 mt-10">
             {capabilities.map((cap) => (
               <div key={cap.category} className="capability-block">
                 <h3 className="font-mono text-sm uppercase tracking-widest text-[#B9FF2C] mb-3">
