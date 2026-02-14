@@ -1,0 +1,142 @@
+/* App-specific styles */
+
+/* Ensure smooth scrolling behavior for GSAP */
+html.has-scroll-smooth {
+  overflow: hidden;
+}
+
+html.has-scroll-smooth body {
+  overflow: hidden;
+}
+
+/* Section stacking for z-index */
+.section-pinned {
+  position: relative;
+}
+
+/* Window frame responsive adjustments */
+@media (max-width: 768px) {
+  .section-pinned {
+    height: auto !important;
+    min-height: 100svh;
+    overflow: visible !important;
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+  }
+
+  .window-frame {
+    width: 96vw !important;
+    height: auto !important;
+    min-height: 72vh;
+    border-radius: 14px;
+  }
+  
+  .hairline-v,
+  .hairline-h {
+    display: none;
+  }
+}
+
+/* Project card responsive */
+@media (max-width: 768px) {
+  .section-pinned > div[class*="rounded"] {
+    width: 96vw !important;
+    height: 64vh !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.05;
+  }
+
+  .tag-pill {
+    font-size: 10px;
+    padding: 0.25rem 0.55rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* About section responsive */
+@media (max-width: 1024px) {
+  #about .window-frame {
+    flex-direction: column !important;
+    padding: 8% !important;
+  }
+}
+
+/* Menu animation */
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Card hover effects */
+.project-card {
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: scale(1.02);
+}
+
+/* Tag hover */
+.tag-pill {
+  transition: all 0.2s ease;
+}
+
+.tag-pill:hover {
+  background: rgba(185, 255, 44, 0.15);
+  color: #B9FF2C;
+}
+
+/* Experience timeline */
+.experience-item {
+  transition: opacity 0.3s ease;
+}
+
+.experience-item:hover {
+  opacity: 1;
+}
+
+.experience-item:hover h3 {
+  color: #B9FF2C;
+}
+
+/* Capability block hover */
+.capability-block {
+  transition: transform 0.2s ease;
+}
+
+.capability-block:hover {
+  transform: translateX(4px);
+}
+
+/* Focus states for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #B9FF2C;
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
