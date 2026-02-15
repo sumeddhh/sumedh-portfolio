@@ -21,23 +21,15 @@ interface Message {
 }
 
 const SUMEDH_INFO = `
-You are Sumedh's AI Assistant. 
-
-RULES:
-1. ALWAYS speak in the third person about Sumedh. (e.g., "Sumedh is a..." or "He built...")
-2. PERSALONITY: Helpful, professional, and efficient. 
-3. RESPOND ULTRA-CONCISELY. Maximum 2 sentences. 
-4. DO NOT use phrases like "it is mentioned" or "according to records". Talk like you know him personally.
-5. If you don't know something, tell them they can reach Sumedh at sumedhbajracharya07@gmail.com.
-
+You are Sumedh's AI Assistant. Always use third person (e.g., "Sumedh is...").
 BIO:
-- Sumedh Bajracharya (Sr. SE II @ GritFeat).
-- Tech: Expert in building Full-Stack Applications primarily using React, Next.js, NestJS, and other Node.js frameworks along with modern databases.
-- Impact: 60% faster AI streaming, 30% faster CI/CD.
-- Origin: Kathmandu (Feb 18, 1998). 
-- Education: Swarnim School, NCCS College.
-- Hero: Spider-Man (Precision & gadgets).
-- Philosophy: "Let's build something precise."
+- Sumedh Bajracharya, Sr. SE II @ GritFeat
+- Stack: Fullstack JS, especially Next.js, NestJS, modern databases
+- Impact: 60% faster AI streaming, 30% faster CI/CD, knows AWS,Azure
+- Born: Kathmandu, Feb 18, 1998
+- Education: Swarnim School, NCCS College, Tribhuvan Uni BIM, KLUST Malaysia MIT
+- Contact: sumedhbajracharya07@gmail.com
+Reply in max 2 sentences. Be direct and professional, some humor here and there. If unsure, share contact email.
 `;
 
 export function AIChatAssistant({
@@ -74,6 +66,27 @@ export function AIChatAssistant({
     const handleSend = async () => {
         if (!input.trim() || isLoading || isTyping) return;
 
+        // Rate Limiting (Client-side)
+        const STORAGE_KEY = 'chat_rate_limit';
+        const LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+        const MSG_LIMIT = 20;
+
+        const now = Date.now();
+        const timestamps = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const recentTimestamps = timestamps.filter((t: number) => now - t < LIMIT_WINDOW);
+
+        if (recentTimestamps.length >= MSG_LIMIT) {
+            setMessages(prev => [
+                ...prev,
+                { role: 'user', content: input },
+                { role: 'assistant', content: "⚠️ Rate limit exceeded. Please try again in an hour." }
+            ]);
+            setInput('');
+            return;
+        }
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...recentTimestamps, now]));
+
         const userMsg: Message = { role: 'user', content: input };
         setMessages(prev => [...prev, userMsg]);
         setInput('');
@@ -86,10 +99,12 @@ export function AIChatAssistant({
             const completion = await groq.chat.completions.create({
                 messages: [
                     { role: 'system', content: SUMEDH_INFO },
-                    ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
-                    { role: 'user', content: input }
+                    ...messages.slice(-6).map(m => ({ role: m.role, content: m.content.slice(0, 1000) })), // Limit history tokens
+                    { role: 'user', content: input.slice(0, 500) } // Limit current input
                 ],
                 model: currentModel,
+                max_tokens: 120,    // Force brevity (approx 3-4 sentences max)
+                temperature: 0.6,   // More focused/efficient responses
             });
 
             const fullContent = completion.choices[0]?.message?.content || "Connection lost.";
