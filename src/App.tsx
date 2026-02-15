@@ -596,7 +596,7 @@ function SelectedWorkSection() {
 
         <div
           ref={cardsRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-[90rem] mx-auto items-center justify-items-center"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 w-full max-w-[92rem] mx-auto items-center justify-items-center px-4"
         >
           {projects.map((project) => (
             <TiltedCard
@@ -607,7 +607,7 @@ function SelectedWorkSection() {
               containerHeight="400px"
               containerWidth="100%"
               imageHeight="300px"
-              imageWidth="300px"
+              imageWidth="100%"
               rotateAmplitude={12}
               scaleOnHover={1.05}
               showMobileWarning={false}
