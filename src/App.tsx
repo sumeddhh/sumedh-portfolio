@@ -62,12 +62,6 @@ function App() {
             // any scrub/pin spacing. Use the actual pinned position.
             targetScroll = st.start;
             foundPinnedTrigger = true;
-
-            console.log(`Found pinned section ${sectionId}:`, {
-              start: st.start,
-              end: st.end,
-              pin: st.vars.pin
-            });
             break;
           }
         }
@@ -99,8 +93,6 @@ function App() {
 
           targetScroll = (element as HTMLElement).offsetTop - pinnedOffset;
         }
-
-        console.log(`Navigating to ${sectionId} at scroll position:`, targetScroll);
 
         const lenisInstance = (window as any).lenis;
         if (lenisInstance?.scrollTo) {

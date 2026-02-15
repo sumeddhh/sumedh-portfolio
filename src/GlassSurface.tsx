@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useId } from 'react';
+import React, { useEffect, useRef, useState, useId, useCallback } from 'react';
 
 export interface GlassSurfaceProps {
     children?: React.ReactNode;
@@ -49,7 +49,9 @@ const useDarkMode = () => {
         if (typeof window === 'undefined') return;
 
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        setIsDark(mediaQuery.matches);
+        requestAnimationFrame(() => {
+            setIsDark(mediaQuery.matches);
+        });
 
         const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
         mediaQuery.addEventListener('change', handler);
@@ -57,6 +59,24 @@ const useDarkMode = () => {
     }, []);
 
     return isDark;
+};
+
+const useMobile = () => {
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        requestAnimationFrame(checkMobile);
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    return isMobile;
 };
 
 const GlassSurface: React.FC<GlassSurfaceProps> = ({
@@ -97,8 +117,9 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     const gaussianBlurRef = useRef<SVGFEGaussianBlurElement>(null);
 
     const isDarkMode = useDarkMode();
+    const isMobile = useMobile();
 
-    const generateDisplacementMap = () => {
+    const generateDisplacementMap = useCallback(() => {
         const rect = containerRef.current?.getBoundingClientRect();
         const actualWidth = rect?.width || 400;
         const actualHeight = rect?.height || 200;
@@ -124,11 +145,11 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     `;
 
         return `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-    };
+    }, [borderRadius, borderWidth, brightness, opacity, blur, mixBlendMode, redGradId, blueGradId]);
 
-    const updateDisplacementMap = () => {
+    const updateDisplacementMap = useCallback(() => {
         feImageRef.current?.setAttribute('href', generateDisplacementMap());
-    };
+    }, [generateDisplacementMap]);
 
     useEffect(() => {
         updateDisplacementMap();
@@ -146,46 +167,17 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
 
         gaussianBlurRef.current?.setAttribute('stdDeviation', displace.toString());
     }, [
-        width,
-        height,
-        borderRadius,
-        borderWidth,
-        brightness,
-        opacity,
-        blur,
-        displace,
+        updateDisplacementMap,
         distortionScale,
         redOffset,
         greenOffset,
         blueOffset,
         xChannel,
         yChannel,
-        mixBlendMode
+        displace
     ]);
 
-    useEffect(() => {
-        setSvgSupported(supportsSVGFilters());
-    }, []);
-
-    useEffect(() => {
-        if (!containerRef.current) return;
-
-        const resizeObserver = new ResizeObserver(() => {
-            setTimeout(updateDisplacementMap, 0);
-        });
-
-        resizeObserver.observe(containerRef.current);
-
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, []);
-
-    useEffect(() => {
-        setTimeout(updateDisplacementMap, 0);
-    }, [width, height]);
-
-    const supportsSVGFilters = () => {
+    const supportsSVGFilters = useCallback(() => {
         if (typeof window === 'undefined' || typeof document === 'undefined') {
             return false;
         }
@@ -201,7 +193,29 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
         div.style.backdropFilter = `url(#${filterId})`;
 
         return div.style.backdropFilter !== '';
-    };
+    }, [filterId]);
+
+    useEffect(() => {
+        setSvgSupported(supportsSVGFilters());
+    }, [supportsSVGFilters]);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateDisplacementMap();
+        });
+
+        resizeObserver.observe(containerRef.current);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [updateDisplacementMap]);
+
+    useEffect(() => {
+        updateDisplacementMap();
+    }, [updateDisplacementMap, width, height]);
 
     const supportsBackdropFilter = () => {
         if (typeof window === 'undefined') return false;
@@ -219,8 +233,9 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
         } as React.CSSProperties;
 
         const backdropFilterSupported = supportsBackdropFilter();
+        const shouldShowFallback = isMobile || !svgSupported;
 
-        if (svgSupported) {
+        if (!shouldShowFallback) {
             return {
                 ...baseStyles,
                 background: isDarkMode ? `hsl(0 0% 0% / ${backgroundOpacity})` : `hsl(0 0% 100% / ${backgroundOpacity})`,
@@ -248,27 +263,27 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
                 if (!backdropFilterSupported) {
                     return {
                         ...baseStyles,
-                        background: 'rgba(0, 0, 0, 0.4)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.1)`
+                        background: 'rgba(0, 0, 0, 0.75)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.05)`
                     };
                 } else {
                     return {
                         ...baseStyles,
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        backdropFilter: 'blur(12px) saturate(1.8) brightness(1.2)',
-                        WebkitBackdropFilter: 'blur(12px) saturate(1.8) brightness(1.2)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.1)`
+                        background: 'rgba(0, 0, 0, 0.65)',
+                        backdropFilter: 'blur(16px) saturate(1.2) brightness(0.8)',
+                        WebkitBackdropFilter: 'blur(16px) saturate(1.2) brightness(0.8)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.05)`
                     };
                 }
             } else {
                 if (!backdropFilterSupported) {
                     return {
                         ...baseStyles,
-                        background: 'rgba(255, 255, 255, 0.4)',
+                        background: 'rgba(255, 255, 255, 0.8)',
                         border: '1px solid rgba(255, 255, 255, 0.3)',
                         boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
                         inset 0 -1px 0 0 rgba(255, 255, 255, 0.3)`
@@ -276,12 +291,12 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
                 } else {
                     return {
                         ...baseStyles,
-                        background: 'rgba(255, 255, 255, 0.25)',
-                        backdropFilter: 'blur(12px) saturate(1.8) brightness(1.1)',
-                        WebkitBackdropFilter: 'blur(12px) saturate(1.8) brightness(1.1)',
+                        background: 'rgba(255, 255, 255, 0.6)',
+                        backdropFilter: 'blur(16px) saturate(1.6) brightness(1.05)',
+                        WebkitBackdropFilter: 'blur(16px) saturate(1.6) brightness(1.05)',
                         border: '1px solid rgba(255, 255, 255, 0.3)',
-                        boxShadow: `0 8px 32px 0 rgba(31, 38, 135, 0.2),
-                        0 2px 16px 0 rgba(31, 38, 135, 0.1),
+                        boxShadow: `0 8px 32px 0 rgba(0, 0, 0, 0.15),
+                        0 2px 16px 0 rgba(0, 0, 0, 0.1),
                         inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
                         inset 0 -1px 0 0 rgba(255, 255, 255, 0.2)`
                     };

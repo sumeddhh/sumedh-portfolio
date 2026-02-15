@@ -4,12 +4,51 @@ import { Bot, Send, X, User, Minimize2, Maximize2 } from 'lucide-react';
 import Groq from 'groq-sdk';
 import GlassSurface from './GlassSurface';
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
+
+const decodeSecret = (s: string) => {
+    try {
+        return atob(s).split('').reverse().join('');
+    } catch {
+        return '';
+    }
+};
+
+const encodeSecret = (s: string) => {
+    try {
+        return btoa(s.split('').reverse().join(''));
+    } catch {
+        return '';
+    }
+};
+
+const _G = import.meta.env.VITE_APP_TOKEN_G || '';
+const _T = import.meta.env.VITE_APP_TOKEN_T || '';
 
 const groq = new Groq({
-    apiKey: GROQ_API_KEY || '',
+    apiKey: decodeSecret(_G),
     dangerouslyAllowBrowser: true
 });
+
+async function performWebSearch(query: string) {
+    try {
+        const response = await fetch('https://api.tavily.com/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                api_key: decodeSecret(_T),
+                query,
+                search_depth: "basic",
+                include_answer: true,
+                max_results: 3
+            })
+        });
+        const data = await response.json();
+        return data.answer || data.results?.map((r: { content: string }) => r.content).join('\n\n') || "No results found.";
+    } catch {
+        return "Error performing search.";
+    }
+}
 
 const MODELS = [
     'llama-3.3-70b-versatile',
@@ -22,15 +61,20 @@ interface Message {
 }
 
 const SUMEDH_INFO = `
-You are Sumedh's AI Assistant. Always use third person (e.g., "Sumedh is...").
-BIO:
-- Sumedh Bajracharya, Sr. SE II @ GritFeat
-- Stack: Fullstack JS, especially Next.js, NestJS, modern databases
-- Impact: 60% faster AI streaming, 30% faster CI/CD, knows AWS,Azure
-- Born: Kathmandu, Feb 18, 1998
-- Education: Swarnim School, NCCS College, Tribhuvan Uni BIM, KLUST Malaysia MIT
-- Contact: sumedhbajracharya07@gmail.com
-Reply in max 2 sentences. Be direct and professional, some humor here and there. If unsure, share contact email.
+Today's Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', timeZone: 'Asia/Kathmandu' })}
+Sumedh's Local Time (NPT): ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kathmandu' })}
+
+You are Sumedh's Assistant. Speak in the third person about Sumedh (e.g., "Sumedh is...", "He specializes...").
+
+IDENTITY:
+- Sumedh Bajracharya, Senior SE II at GritFeat Solutions. 
+- Expert in AI, Healthcare SaaS, and Fullstack Engineering.
+
+BEHAVIOR:
+- Be witty, conversational, and direct. Skip the resume dump unless explicitly asked.
+- REAL-TIME FACTS: If asked about things you don't know (news, sports, specific real-time data), use the \`web_search\` tool.
+- TOOL USAGE: Never type out tool formatting like <function> or tags. Use the native tool feature.
+- PERSONALITY: Respond naturally to small talk. Max 2-3 sentences.
 `;
 
 export function AIChatAssistant({
@@ -49,7 +93,21 @@ export function AIChatAssistant({
     const [isLoading, setIsLoading] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const typingTimeoutRef = useRef<any>(null);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Personality Loading State
+    const [loadingText, setLoadingText] = useState("Thinking...");
+
+    useEffect(() => {
+        if (!isLoading) return;
+        const texts = ["Thinking...", "Checking my local nodes...", "Accessing memory banks...", "Connecting to Sumedh's brain...", "Drafting witty reply..."];
+        let i = 0;
+        const interval = setInterval(() => {
+            i = (i + 1) % texts.length;
+            setLoadingText(texts[i]);
+        }, 1500);
+        return () => clearInterval(interval);
+    }, [isLoading]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -60,90 +118,209 @@ export function AIChatAssistant({
     useEffect(() => {
         // Cleanup typing on unmount
         return () => {
-            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
         };
     }, []);
 
     const handleSend = async () => {
         if (!input.trim() || isLoading || isTyping) return;
 
-        // Rate Limiting (Client-side)
-        const STORAGE_KEY = 'chat_rate_limit';
-        const LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+        // Obfuscated Rate Limiting
+        const STORAGE_KEY = '_sys_tokens_ref';
+        const LIMIT_WINDOW = 60 * 60 * 1000;
         const MSG_LIMIT = 20;
 
         const now = Date.now();
-        const timestamps = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const rawData = localStorage.getItem(STORAGE_KEY);
+        let timestamps: number[] = [];
+
+        if (rawData) {
+            try {
+                const decoded = decodeSecret(rawData);
+                timestamps = JSON.parse(decoded);
+            } catch {
+                timestamps = [];
+            }
+        }
+
         const recentTimestamps = timestamps.filter((t: number) => now - t < LIMIT_WINDOW);
 
         if (recentTimestamps.length >= MSG_LIMIT) {
             setMessages(prev => [
                 ...prev,
                 { role: 'user', content: input },
-                { role: 'assistant', content: "⚠️ Rate limit exceeded. Please try again in an hour." }
+                { role: 'assistant', content: "My cognitive processors are at capacity for this hour. Please visit again shortly, or reach out to Sumedh via email for urgent matters." }
             ]);
             setInput('');
             return;
         }
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([...recentTimestamps, now]));
+        const nextTimestamps = [...recentTimestamps, now];
+        localStorage.setItem(STORAGE_KEY, encodeSecret(JSON.stringify(nextTimestamps)));
 
         const userMsg: Message = { role: 'user', content: input };
         setMessages(prev => [...prev, userMsg]);
         setInput('');
         setIsLoading(true);
 
-        try {
-            const currentModel = MODELS[modelIndex];
-            setModelIndex((prev) => (prev + 1) % MODELS.length);
+        const currentModel = MODELS[modelIndex];
+        setModelIndex((prev) => (prev + 1) % MODELS.length);
 
-            const completion = await groq.chat.completions.create({
-                messages: [
-                    { role: 'system', content: SUMEDH_INFO },
-                    ...messages.slice(-6).map(m => ({ role: m.role, content: m.content.slice(0, 1000) })), // Limit history tokens
-                    { role: 'user', content: input.slice(0, 500) } // Limit current input
-                ],
+        const apiMessages: ChatCompletionMessageParam[] = [
+            { role: 'system', content: SUMEDH_INFO },
+            ...messages.slice(-6).map(m => ({ role: m.role, content: m.content.slice(0, 1000) })) as ChatCompletionMessageParam[],
+            { role: 'user', content: input }
+        ];
+
+        const tools = [
+            {
+                type: "function" as const,
+                function: {
+                    name: "web_search",
+                    description: "Search the web for real-time information, facts, news, or sports scores.",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            query: { type: "string", description: "The search query" }
+                        },
+                        required: ["query"]
+                    }
+                }
+            }
+        ];
+
+        const typeDelay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+        try {
+            const stream = await groq.chat.completions.create({
+                messages: apiMessages,
                 model: currentModel,
-                max_tokens: 120,    // Force brevity (approx 3-4 sentences max)
-                temperature: 0.6,   // More focused/efficient responses
+                tools: tools,
+                tool_choice: "auto",
+                stream: true,
+                temperature: 0.6,
+                max_tokens: 400
             });
 
-            const fullContent = completion.choices[0]?.message?.content || "Connection lost.";
+            let fullContent = '';
+            let toolCallAccumulator: { id: string; function: { name: string; arguments: string } } | null = null;
+            let hasStartedResponse = false;
 
-            setIsLoading(false);
-            setIsTyping(true);
+            for await (const chunk of stream) {
+                const delta = chunk.choices[0]?.delta;
 
-            // Add empty assistant message first
-            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-
-            let charIndex = 0;
-
-            const typeNextChar = () => {
-                if (charIndex < fullContent.length) {
-                    setMessages(prev => {
-                        const newMessages = [...prev];
-                        const lastMsg = newMessages[newMessages.length - 1];
-                        // Ensure we are updating the last assistant message
-                        if (lastMsg && lastMsg.role === 'assistant') {
-                            lastMsg.content = fullContent.slice(0, charIndex + 1);
-                        }
-                        return newMessages;
-                    });
-                    charIndex++;
-                    // Random delay between 10ms and 30ms for natural feel
-                    typingTimeoutRef.current = setTimeout(typeNextChar, 10 + Math.random() * 20);
-                } else {
-                    setIsTyping(false);
-                    typingTimeoutRef.current = null;
+                if (delta?.tool_calls) {
+                    const tc = delta.tool_calls[0];
+                    if (!toolCallAccumulator && tc.id) {
+                        toolCallAccumulator = { id: tc.id, function: { name: tc.function?.name || '', arguments: '' } };
+                    }
+                    if (tc.function?.arguments && toolCallAccumulator) {
+                        toolCallAccumulator.function.arguments += tc.function.arguments;
+                    }
                 }
-            };
 
-            typeNextChar();
+                if (delta?.content) {
+                    if (!hasStartedResponse) {
+                        hasStartedResponse = true;
+                        setIsLoading(false);
+                        setIsTyping(true);
+                        setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+                    }
+
+                    const chunkContent = delta.content;
+                    // Filter out any raw function tags leaked into content
+                    if (!chunkContent.includes('<function')) {
+                        for (const char of chunkContent) {
+                            fullContent += char;
+                            setMessages(prev => {
+                                const newMsgs = [...prev];
+                                if (newMsgs[newMsgs.length - 1]) {
+                                    newMsgs[newMsgs.length - 1].content = fullContent;
+                                }
+                                return newMsgs;
+                            });
+                            await typeDelay(10 + Math.random() * 10);
+                        }
+                    }
+                }
+            }
+
+            if (toolCallAccumulator && toolCallAccumulator.id) {
+                if (hasStartedResponse && !fullContent.trim()) {
+                    setMessages(prev => prev.slice(0, -1));
+                }
+
+                const functionName = toolCallAccumulator.function.name;
+                let functionArgs: Record<string, string> = {};
+                try {
+                    functionArgs = JSON.parse(toolCallAccumulator.function.arguments || '{}');
+                } catch {
+                    functionArgs = { query: input };
+                }
+
+                let toolResult = "";
+                if (functionName === "web_search") {
+                    setMessages(prev => [...prev, { role: 'assistant', content: "🔍 Searching for the latest facts..." }]);
+                    toolResult = await performWebSearch(functionArgs.query || input);
+                    setMessages(prev => prev.slice(0, -1));
+                }
+
+                const secondStream = await groq.chat.completions.create({
+                    messages: [
+                        ...apiMessages,
+                        {
+                            role: "assistant",
+                            content: fullContent || null,
+                            tool_calls: [{
+                                id: toolCallAccumulator.id,
+                                type: "function",
+                                function: toolCallAccumulator.function
+                            }]
+                        } as ChatCompletionMessageParam,
+                        {
+                            role: "tool",
+                            tool_call_id: toolCallAccumulator.id,
+                            content: toolResult
+                        }
+                    ],
+                    model: currentModel,
+                    stream: true
+                });
+
+                if (!hasStartedResponse || !fullContent.trim()) {
+                    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+                    setIsLoading(false);
+                    setIsTyping(true);
+                }
+
+                for await (const chunk of secondStream) {
+                    const content = chunk.choices[0]?.delta?.content || '';
+                    if (content) {
+                        for (const char of content) {
+                            fullContent += char;
+                            setMessages(prev => {
+                                const newMsgs = [...prev];
+                                newMsgs[newMsgs.length - 1].content = fullContent;
+                                return newMsgs;
+                            });
+                            await typeDelay(8 + Math.random() * 10);
+                        }
+                    }
+                }
+            }
 
         } catch (error) {
             console.error("Groq Error:", error);
-            setIsLoading(false);
+            setMessages(prev => {
+                if (prev.length > 0 && prev[prev.length - 1].content === '') return prev.slice(0, -1);
+                return prev;
+            });
             setMessages(prev => [...prev, { role: 'assistant', content: "Brain fried. Try later or email Sumedh." }]);
+        } finally {
+            setIsLoading(false);
+            setIsTyping(false);
         }
     };
 
@@ -229,8 +406,9 @@ export function AIChatAssistant({
                                         >
                                             {messages.map((msg, i) => (
                                                 <motion.div
-                                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                    initial={{ opacity: 0, y: 15, scale: 0.9 }}
                                                     animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
                                                     key={i}
                                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                                 >
@@ -250,12 +428,13 @@ export function AIChatAssistant({
                                                         <div className="w-7 h-7 rounded-full bg-[#B9FF2C] text-black flex items-center justify-center shrink-0">
                                                             <Bot size={14} />
                                                         </div>
-                                                        <div className="bg-white/5 text-white/90 p-3.5 rounded-2xl rounded-tl-none border border-white/10">
+                                                        <div className="bg-white/5 text-white/90 p-3.5 rounded-2xl rounded-tl-none border border-white/10 flex items-center gap-3">
                                                             <div className="flex gap-1">
-                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce" />
+                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C] rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C] rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C] rounded-full animate-bounce" />
                                                             </div>
+                                                            <span className="text-[11px] font-mono text-[#B9FF2C]/70 animate-pulse">{loadingText}</span>
                                                         </div>
                                                     </div>
                                                 </div>
