@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, X, User, Minimize2, Maximize2 } from 'lucide-react';
 import Groq from 'groq-sdk';
+import GlassSurface from './GlassSurface';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
@@ -174,115 +175,124 @@ export function AIChatAssistant({
                         exit={{ opacity: 0, scale: 0.8, y: 50 }}
                         className="fixed bottom-6 right-6 z-[2000] overflow-hidden"
                     >
-                        <div className="w-full h-full flex flex-col bg-black/60 backdrop-blur-2xl border border-white/10 rounded-[24px] shadow-2xl relative">
-                            {/* Animated Background Subtle Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#B9FF2C]/5 to-transparent pointer-events-none" />
+                        <GlassSurface
+                            width="100%"
+                            height="100%"
+                            borderRadius={24}
+                            backgroundOpacity={0.6}
+                            innerClassName="p-0"
+                            className="shadow-2xl"
+                        >
+                            <div className="w-full h-full flex flex-col relative">
+                                {/* Animated Background Subtle Gradient */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#B9FF2C]/5 to-transparent pointer-events-none" />
 
-                            {/* Header */}
-                            <div className="flex items-center justify-between p-4 border-b border-white/10 w-full relative z-10">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-[#B9FF2C] flex items-center justify-center text-black shadow-[0_0_15px_rgba(185,255,44,0.3)]">
-                                        <Bot size={20} />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-display font-bold text-white leading-none">Sumedh's Assistant</h3>
-                                        <div className="flex items-center gap-1.5 mt-1.5">
-                                            <span className="w-1.5 h-1.5 bg-[#B9FF2C] rounded-full animate-pulse shadow-[0_0_5px_#B9FF2C]" />
-                                            <span className="text-[10px] uppercase tracking-widest text-white/40 font-mono">Online</span>
+                                {/* Header */}
+                                <div className="flex items-center justify-between p-4 border-b border-white/10 w-full relative z-10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-[#B9FF2C] flex items-center justify-center text-black shadow-[0_0_15px_rgba(185,255,44,0.3)]">
+                                            <Bot size={20} />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-display font-bold text-white leading-none">Sumedh's Assistant</h3>
+                                            <div className="flex items-center gap-1.5 mt-1.5">
+                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C] rounded-full animate-pulse shadow-[0_0_5px_#B9FF2C]" />
+                                                <span className="text-[10px] uppercase tracking-widest text-white/40 font-mono">Online</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => setIsMinimized(!isMinimized)}
+                                            className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"
+                                            title={isMinimized ? "Maximize" : "Minimize"}
+                                        >
+                                            {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+                                        </button>
+                                        <button
+                                            onClick={() => setIsOpen(false)}
+                                            className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"
+                                            title="Close"
+                                        >
+                                            <X size={16} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <button
-                                        onClick={() => setIsMinimized(!isMinimized)}
-                                        className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"
-                                        title={isMinimized ? "Maximize" : "Minimize"}
-                                    >
-                                        {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
-                                    </button>
-                                    <button
-                                        onClick={() => setIsOpen(false)}
-                                        className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"
-                                        title="Close"
-                                    >
-                                        <X size={16} />
-                                    </button>
-                                </div>
-                            </div>
 
-                            {/* Messages */}
-                            {!isMinimized && (
-                                <>
-                                    <div
-                                        ref={scrollRef}
-                                        data-lenis-prevent
-                                        className="flex-1 overflow-y-auto p-4 space-y-5 font-sans relative z-10 scrollbar-thin scrollbar-thumb-white/10"
-                                    >
-                                        {messages.map((msg, i) => (
-                                            <motion.div
-                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                key={i}
-                                                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                                            >
-                                                <div className={`max-w-[85%] flex items-start gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-white/10 text-white' : 'bg-[#B9FF2C] text-black'}`}>
-                                                        {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                                {/* Messages */}
+                                {!isMinimized && (
+                                    <>
+                                        <div
+                                            ref={scrollRef}
+                                            data-lenis-prevent
+                                            className="flex-1 overflow-y-auto p-4 space-y-5 font-sans relative z-10 scrollbar-thin scrollbar-thumb-white/10"
+                                        >
+                                            {messages.map((msg, i) => (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                    key={i}
+                                                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                                                >
+                                                    <div className={`max-w-[85%] flex items-start gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-white/10 text-white' : 'bg-[#B9FF2C] text-black'}`}>
+                                                            {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                                                        </div>
+                                                        <div className={`p-3.5 rounded-2xl text-[13.5px] leading-[1.6] shadow-sm ${msg.role === 'user' ? 'bg-[#B9FF2C]/10 text-white border border-[#B9FF2C]/20 rounded-tr-none' : 'bg-white/5 text-white/90 rounded-tl-none border border-white/10'}`}>
+                                                            {msg.content}
+                                                        </div>
                                                     </div>
-                                                    <div className={`p-3.5 rounded-2xl text-[13.5px] leading-[1.6] shadow-sm ${msg.role === 'user' ? 'bg-[#B9FF2C]/10 text-white border border-[#B9FF2C]/20 rounded-tr-none' : 'bg-white/5 text-white/90 rounded-tl-none border border-white/10'}`}>
-                                                        {msg.content}
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                        {isLoading && (
-                                            <div className="flex justify-start">
-                                                <div className="flex items-start gap-2.5">
-                                                    <div className="w-7 h-7 rounded-full bg-[#B9FF2C] text-black flex items-center justify-center shrink-0">
-                                                        <Bot size={14} />
-                                                    </div>
-                                                    <div className="bg-white/5 text-white/90 p-3.5 rounded-2xl rounded-tl-none border border-white/10">
-                                                        <div className="flex gap-1">
-                                                            <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                                            <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                                            <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce" />
+                                                </motion.div>
+                                            ))}
+                                            {isLoading && (
+                                                <div className="flex justify-start">
+                                                    <div className="flex items-start gap-2.5">
+                                                        <div className="w-7 h-7 rounded-full bg-[#B9FF2C] text-black flex items-center justify-center shrink-0">
+                                                            <Bot size={14} />
+                                                        </div>
+                                                        <div className="bg-white/5 text-white/90 p-3.5 rounded-2xl rounded-tl-none border border-white/10">
+                                                            <div className="flex gap-1">
+                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                                                <span className="w-1.5 h-1.5 bg-[#B9FF2C]/50 rounded-full animate-bounce" />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
+                                            )}
+                                        </div>
 
-                                    {/* Input */}
-                                    <div className="p-4 bg-black/40 border-t border-white/10 w-full relative z-10">
-                                        <div className="relative flex items-center">
-                                            <input
-                                                type="text"
-                                                value={input}
-                                                onChange={(e) => setInput(e.target.value)}
-                                                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                                                placeholder="Ask a question..."
-                                                className="w-full bg-white/5 border border-white/10 rounded-full py-3.5 px-6 pr-14 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#B9FF2C]/50 focus:bg-white/[0.08] transition-all"
-                                            />
-                                            <button
-                                                onClick={handleSend}
-                                                disabled={isLoading || !input.trim()}
-                                                className="absolute right-2 p-2.5 bg-[#B9FF2C] text-black rounded-full disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(185,255,44,0.4)]"
-                                            >
-                                                <Send size={16} />
-                                            </button>
+                                        {/* Input */}
+                                        <div className="p-4 bg-black/40 border-t border-white/10 w-full relative z-10">
+                                            <div className="relative flex items-center">
+                                                <input
+                                                    type="text"
+                                                    value={input}
+                                                    onChange={(e) => setInput(e.target.value)}
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                                                    placeholder="Ask a question..."
+                                                    className="w-full bg-white/5 border border-white/10 rounded-full py-3.5 px-6 pr-14 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#B9FF2C]/50 focus:bg-white/[0.08] transition-all"
+                                                />
+                                                <button
+                                                    onClick={handleSend}
+                                                    disabled={isLoading || !input.trim()}
+                                                    className="absolute right-2 p-2.5 bg-[#B9FF2C] text-black rounded-full disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all shadow-[0_0_10px_rgba(185,255,44,0.4)]"
+                                                >
+                                                    <Send size={16} />
+                                                </button>
+                                            </div>
+                                            <div className="flex items-center justify-center gap-2 mt-4">
+                                                <span className="w-8 h-px bg-white/10" />
+                                                <p className="text-[9px] text-white/20 font-mono uppercase tracking-[0.25em]">
+                                                    Groq AI Engine
+                                                </p>
+                                                <span className="w-8 h-px bg-white/10" />
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-center gap-2 mt-4">
-                                            <span className="w-8 h-px bg-white/10" />
-                                            <p className="text-[9px] text-white/20 font-mono uppercase tracking-[0.25em]">
-                                                Groq AI Engine
-                                            </p>
-                                            <span className="w-8 h-px bg-white/10" />
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                                    </>
+                                )}
+                            </div>
+                        </GlassSurface>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -39,6 +39,7 @@ export interface GlassSurfaceProps {
     | 'plus-lighter';
     className?: string;
     style?: React.CSSProperties;
+    innerClassName?: string;
 }
 
 const useDarkMode = () => {
@@ -78,7 +79,8 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     yChannel = 'G',
     mixBlendMode = 'difference',
     className = '',
-    style = {}
+    style = {},
+    innerClassName = 'p-2'
 }) => {
     const uniqueId = useId().replace(/:/g, '-');
     const filterId = `glass-filter-${uniqueId}`;
@@ -355,7 +357,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
                 </defs>
             </svg>
 
-            <div className="w-full h-full flex items-center justify-center p-2 rounded-[inherit] relative z-10">
+            <div className={`w-full h-full flex items-center justify-center rounded-[inherit] relative z-10 ${innerClassName}`}>
                 {children}
             </div>
         </div>
