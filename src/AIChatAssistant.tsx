@@ -3,30 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, X, User, Minimize2, Maximize2, Volume2, VolumeX } from 'lucide-react';
 import Groq from 'groq-sdk';
 import GlassSurface from './GlassSurface';
-
 import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
 
-const decodeSecret = (s: string) => {
-    try {
-        return atob(s).split('').reverse().join('');
-    } catch {
-        return '';
-    }
-};
-
-const encodeSecret = (s: string) => {
-    try {
-        return btoa(s.split('').reverse().join(''));
-    } catch {
-        return '';
-    }
-};
-
-const _G = import.meta.env.VITE_APP_TOKEN_G || '';
-const _T = import.meta.env.VITE_APP_TOKEN_T || '';
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+const TAVILY_API_KEY = import.meta.env.VITE_TAVILY_KEY;
 
 const groq = new Groq({
-    apiKey: decodeSecret(_G),
+    apiKey: GROQ_API_KEY || '',
     dangerouslyAllowBrowser: true
 });
 
@@ -36,7 +19,7 @@ async function performWebSearch(query: string) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                api_key: decodeSecret(_T),
+                api_key: TAVILY_API_KEY,
                 query,
                 search_depth: "basic",
                 include_answer: true,
@@ -157,8 +140,7 @@ export function AIChatAssistant({
 
         if (rawData) {
             try {
-                const decoded = decodeSecret(rawData);
-                timestamps = JSON.parse(decoded);
+                timestamps = JSON.parse(rawData);
             } catch {
                 timestamps = [];
             }
@@ -184,7 +166,7 @@ export function AIChatAssistant({
         }
 
         const nextTimestamps = [...dailyMsgs, now];
-        localStorage.setItem(STORAGE_KEY, encodeSecret(JSON.stringify(nextTimestamps)));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextTimestamps));
 
         const userMsg: Message = { role: 'user', content: input };
         setMessages(prev => [...prev, userMsg]);
