@@ -12,8 +12,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import Lenis from 'lenis';
-import { ArrowUpRight, Eye, Linkedin, Mail, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Eye, Linkedin, Mail, Menu, X, Bot } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { AIChatAssistant } from './AIChatAssistant';
 import './App.css';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -23,6 +24,7 @@ function App() {
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Section refs for reliable navigation
   const sectionRefs = useRef({
@@ -186,7 +188,10 @@ function App() {
       <div className="grain-overlay" />
 
       {/* Persistent Header */}
-      <Header menuOpen={menuOpen} toggleMenu={toggleMenu} />
+      <Header menuOpen={menuOpen} toggleMenu={toggleMenu} onOpenChat={() => setIsChatOpen(true)} />
+
+      {/* AI Chat Assistant */}
+      <AIChatAssistant isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
 
       {/* Full Screen Menu */}
       {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} />}
@@ -261,19 +266,28 @@ function ProgressIndicator() {
 }
 
 // Header Component
-function Header({ menuOpen, toggleMenu }: { menuOpen: boolean; toggleMenu: () => void }) {
+function Header({ menuOpen, toggleMenu, onOpenChat }: { menuOpen: boolean; toggleMenu: () => void; onOpenChat: () => void }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-[1000] px-6 py-5 flex justify-between items-center">
       <a href="#hero" className="flex items-center">
         <img src="/favicon.svg" alt="SB Logo" className="w-8 h-8 rounded-sm" />
       </a>
-      <button
-        onClick={toggleMenu}
-        className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
-      >
-        {menuOpen ? <X size={16} /> : <Menu size={16} />}
-        <span className="font-mono text-xs uppercase tracking-widest">Menu</span>
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onOpenChat}
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors group"
+        >
+          <Bot size={16} className="text-[#B9FF2C] group-hover:scale-110 transition-transform" />
+          <span className="hidden md:inline font-mono text-[10px] uppercase tracking-widest">Talk to AI</span>
+        </button>
+        <button
+          onClick={toggleMenu}
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
+        >
+          {menuOpen ? <X size={16} /> : <Menu size={16} />}
+          <span className="font-mono text-xs uppercase tracking-widest">Menu</span>
+        </button>
+      </div>
     </header>
   );
 }
