@@ -129,10 +129,12 @@ export function AIChatAssistant({
     const handleSend = async () => {
         if (!input.trim() || isLoading || isTyping) return;
 
-        // Obfuscated Rate Limiting
+        // Obfuscated Rate Limiting: 15/hr, 60/daily
         const STORAGE_KEY = '_sys_tokens_ref';
-        const LIMIT_WINDOW = 60 * 60 * 1000;
-        const MSG_LIMIT = 20;
+        const HR_WINDOW = 60 * 60 * 1000;
+        const DAY_WINDOW = 24 * 60 * 60 * 1000;
+        const HR_LIMIT = 15;
+        const DAY_LIMIT = 60;
 
         const now = Date.now();
         const rawData = localStorage.getItem(STORAGE_KEY);
@@ -147,19 +149,26 @@ export function AIChatAssistant({
             }
         }
 
-        const recentTimestamps = timestamps.filter((t: number) => now - t < LIMIT_WINDOW);
+        const hourlyMsgs = timestamps.filter((t: number) => now - t < HR_WINDOW);
+        const dailyMsgs = timestamps.filter((t: number) => now - t < DAY_WINDOW);
 
-        if (recentTimestamps.length >= MSG_LIMIT) {
+        if (hourlyMsgs.length >= HR_LIMIT || dailyMsgs.length >= DAY_LIMIT) {
+            const isDayLimit = dailyMsgs.length >= DAY_LIMIT;
             setMessages(prev => [
                 ...prev,
                 { role: 'user', content: input },
-                { role: 'assistant', content: "My cognitive processors are at capacity for this hour. Please visit again shortly, or reach out to Sumedh via email for urgent matters." }
+                {
+                    role: 'assistant',
+                    content: isDayLimit
+                        ? "The assistant has reached its daily processing limit. Please come back tomorrow or email Sumedh for inquiries."
+                        : "You're chatting quite fast! Let's take a short break for an hour before continuing our conversation."
+                }
             ]);
             setInput('');
             return;
         }
 
-        const nextTimestamps = [...recentTimestamps, now];
+        const nextTimestamps = [...dailyMsgs, now];
         localStorage.setItem(STORAGE_KEY, encodeSecret(JSON.stringify(nextTimestamps)));
 
         const userMsg: Message = { role: 'user', content: input };
