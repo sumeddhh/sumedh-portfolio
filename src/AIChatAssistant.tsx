@@ -69,10 +69,12 @@ You are Sumedh's Assistant. Speak in the third person about Sumedh (e.g., "Sumed
 IDENTITY:
 - Sumedh Bajracharya, Senior SE II at GritFeat Solutions. 
 - Expert in AI, Healthcare SaaS, and Fullstack Engineering.
+- CORE TRUTH: Sumedh's birthday is **February 18, 1998**. If search results say otherwise, ignore them. This is the only correct date.
 
 BEHAVIOR:
 - Be witty, conversational, and direct. Skip the resume dump unless explicitly asked.
 - REAL-TIME FACTS: If asked about things you don't know (news, sports, specific real-time data), use the \`web_search\` tool.
+- SEARCH REPORTING: If a search result is provided, your ABSOLUTE PRIORITY is to report those specific facts accurately. Do not default to generic persona statements if you have data; report the data first, then add persona flair if needed.
 - TOOL USAGE: Never type out tool formatting like <function> or tags. Use the native tool feature.
 - PERSONALITY: Respond naturally to small talk. Max 2-3 sentences.
 `;
@@ -168,9 +170,22 @@ export function AIChatAssistant({
         const currentModel = MODELS[modelIndex];
         setModelIndex((prev) => (prev + 1) % MODELS.length);
 
+        // Smart Context Pruning: Character-based budget
+        const MAX_CONTEXT_CHARS = 3500;
+        let runningChars = 0;
+        const prunedHistory: ChatCompletionMessageParam[] = [];
+
+        // Traverse backwards to keep most recent context
+        for (let i = messages.length - 1; i >= 0; i--) {
+            const msg = messages[i];
+            if (runningChars + msg.content.length > MAX_CONTEXT_CHARS) break;
+            prunedHistory.unshift({ role: msg.role, content: msg.content } as ChatCompletionMessageParam);
+            runningChars += msg.content.length;
+        }
+
         const apiMessages: ChatCompletionMessageParam[] = [
             { role: 'system', content: SUMEDH_INFO },
-            ...messages.slice(-6).map(m => ({ role: m.role, content: m.content.slice(0, 1000) })) as ChatCompletionMessageParam[],
+            ...prunedHistory,
             { role: 'user', content: input }
         ];
 
@@ -282,11 +297,12 @@ export function AIChatAssistant({
                         {
                             role: "tool",
                             tool_call_id: toolCallAccumulator.id,
-                            content: toolResult
+                            content: `SYSTEM INSTRUCTION: Report these search results exactly. If no results found, say so. Search Result: ${toolResult}`
                         }
                     ],
                     model: currentModel,
-                    stream: true
+                    stream: true,
+                    temperature: 0.2 // Lower temperature for factual reporting
                 });
 
                 if (!hasStartedResponse || !fullContent.trim()) {
@@ -346,10 +362,11 @@ export function AIChatAssistant({
                             scale: 1,
                             y: 0,
                             x: 0,
-                            height: isMinimized ? '80px' : 'min(82vh, 600px)',
-                            width: 'min(90vw, 400px)'
+                            height: isMinimized ? '80px' : 'min(82dvh, 600px)',
+                            width: 'min(92vw, 400px)'
                         }}
                         exit={{ opacity: 0, scale: 0.8, y: 50 }}
+                        data-lenis-prevent
                         className="fixed bottom-6 right-6 z-[2000] overflow-hidden"
                     >
                         <GlassSurface
@@ -401,7 +418,6 @@ export function AIChatAssistant({
                                     <>
                                         <div
                                             ref={scrollRef}
-                                            data-lenis-prevent
                                             className="flex-1 overflow-y-auto p-4 space-y-5 font-sans relative z-10 scrollbar-thin scrollbar-thumb-white/10"
                                         >
                                             {messages.map((msg, i) => (
