@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X, User, Minimize2, Maximize2 } from 'lucide-react';
+import { Bot, Send, X, User, Minimize2, Maximize2, Volume2, VolumeX } from 'lucide-react';
 import Groq from 'groq-sdk';
 import GlassSurface from './GlassSurface';
 
@@ -97,7 +97,22 @@ export function AIChatAssistant({
     const scrollRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Personality Loading State
+    const [isAutoPlay, setIsAutoPlay] = useState(false);
+
+    const speak = (text: string) => {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        };
+    }, []);
     const [loadingText, setLoadingText] = useState("Thinking...");
 
     useEffect(() => {
@@ -334,6 +349,9 @@ export function AIChatAssistant({
                         }
                     }
                 }
+                if (isAutoPlay && fullContent) {
+                    speak(fullContent);
+                }
             }
 
         } catch (error) {
@@ -405,6 +423,16 @@ export function AIChatAssistant({
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={() => {
+                                                if (isAutoPlay) window.speechSynthesis.cancel();
+                                                setIsAutoPlay(!isAutoPlay);
+                                            }}
+                                            className={`p-2 rounded-full transition-all duration-300 ${isAutoPlay ? 'bg-[#B9FF2C] text-black shadow-[0_0_10px_#B9FF2C]' : 'hover:bg-white/10 text-white/40'}`}
+                                            title={isAutoPlay ? "Voice: ON" : "Voice: OFF"}
+                                        >
+                                            {isAutoPlay ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                                        </button>
                                         <button
                                             onClick={() => setIsMinimized(!isMinimized)}
                                             className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"
