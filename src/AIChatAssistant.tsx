@@ -12,9 +12,7 @@ const groq = new Groq({
 
 const MODELS = [
     'llama-3.3-70b-versatile',
-    'llama-3.1-8b-instant',
-    'qwen-qwq-32b',
-    'llama-3.1-70b-versatile'
+    'llama-3.1-8b-instant'
 ];
 
 interface Message {
@@ -56,7 +54,9 @@ export function AIChatAssistant({
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const typingTimeoutRef = useRef<any>(null);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -64,8 +64,15 @@ export function AIChatAssistant({
         }
     }, [messages]);
 
+    useEffect(() => {
+        // Cleanup typing on unmount
+        return () => {
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        };
+    }, []);
+
     const handleSend = async () => {
-        if (!input.trim() || isLoading) return;
+        if (!input.trim() || isLoading || isTyping) return;
 
         const userMsg: Message = { role: 'user', content: input };
         setMessages(prev => [...prev, userMsg]);
@@ -85,16 +92,42 @@ export function AIChatAssistant({
                 model: currentModel,
             });
 
-            const assistantMsg: Message = {
-                role: 'assistant',
-                content: completion.choices[0]?.message?.content || "Connection lost."
+            const fullContent = completion.choices[0]?.message?.content || "Connection lost.";
+
+            setIsLoading(false);
+            setIsTyping(true);
+
+            // Add empty assistant message first
+            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+            let charIndex = 0;
+
+            const typeNextChar = () => {
+                if (charIndex < fullContent.length) {
+                    setMessages(prev => {
+                        const newMessages = [...prev];
+                        const lastMsg = newMessages[newMessages.length - 1];
+                        // Ensure we are updating the last assistant message
+                        if (lastMsg && lastMsg.role === 'assistant') {
+                            lastMsg.content = fullContent.slice(0, charIndex + 1);
+                        }
+                        return newMessages;
+                    });
+                    charIndex++;
+                    // Random delay between 10ms and 30ms for natural feel
+                    typingTimeoutRef.current = setTimeout(typeNextChar, 10 + Math.random() * 20);
+                } else {
+                    setIsTyping(false);
+                    typingTimeoutRef.current = null;
+                }
             };
-            setMessages(prev => [...prev, assistantMsg]);
+
+            typeNextChar();
+
         } catch (error) {
             console.error("Groq Error:", error);
-            setMessages(prev => [...prev, { role: 'assistant', content: "Brain fried. Try later or email Sumedh." }]);
-        } finally {
             setIsLoading(false);
+            setMessages(prev => [...prev, { role: 'assistant', content: "Brain fried. Try later or email Sumedh." }]);
         }
     };
 
