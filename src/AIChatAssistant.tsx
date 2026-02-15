@@ -5,9 +5,16 @@ import Groq from 'groq-sdk';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
+if (!GROQ_API_KEY) {
+    console.warn("DEBUG: VITE_GROQ_API_KEY is UNDEFINED");
+} else {
+    console.log("DEBUG: VITE_GROQ_API_KEY length:", GROQ_API_KEY.length);
+    console.log("DEBUG: VITE_GROQ_API_KEY ends with:", GROQ_API_KEY.slice(-4));
+}
+
 const groq = new Groq({
-    apiKey: GROQ_API_KEY,
-    dangerouslyAllowBrowser: true // For personal portfolio it is acceptable
+    apiKey: GROQ_API_KEY || '',
+    dangerouslyAllowBrowser: true
 });
 
 const MODELS = [
