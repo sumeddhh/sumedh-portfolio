@@ -5,13 +5,6 @@ import Groq from 'groq-sdk';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
-if (!GROQ_API_KEY) {
-    console.warn("DEBUG: VITE_GROQ_API_KEY is UNDEFINED");
-} else {
-    console.log("DEBUG: VITE_GROQ_API_KEY length:", GROQ_API_KEY.length);
-    console.log("DEBUG: VITE_GROQ_API_KEY ends with:", GROQ_API_KEY.slice(-4));
-}
-
 const groq = new Groq({
     apiKey: GROQ_API_KEY || '',
     dangerouslyAllowBrowser: true
@@ -20,8 +13,8 @@ const groq = new Groq({
 const MODELS = [
     'llama-3.3-70b-versatile',
     'llama-3.1-8b-instant',
-    'mixtral-8x7b-32768',
-    'gemma2-9b-it'
+    'qwen-qwq-32b',
+    'llama-3.1-70b-versatile'
 ];
 
 interface Message {
@@ -41,7 +34,7 @@ RULES:
 
 BIO:
 - Sumedh Bajracharya (Sr. SE II @ GritFeat).
-- Tech: Expert in building Full-Stack Applications using React, Next.js, Node.js, and modern databases.
+- Tech: Expert in building Full-Stack Applications primarily using React, Next.js, NestJS, and other Node.js frameworks along with modern databases.
 - Impact: 60% faster AI streaming, 30% faster CI/CD.
 - Origin: Kathmandu (Feb 18, 1998). 
 - Education: Swarnim School, NCCS College.
@@ -86,7 +79,7 @@ export function AIChatAssistant({
             const completion = await groq.chat.completions.create({
                 messages: [
                     { role: 'system', content: SUMEDH_INFO },
-                    ...messages.map(m => ({ role: m.role, content: m.content })),
+                    ...messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
                     { role: 'user', content: input }
                 ],
                 model: currentModel,
