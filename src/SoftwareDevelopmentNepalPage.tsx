@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  ArrowRight,
-  Bookmark,
   CalendarDays,
   Clock3,
-  Menu,
+  Linkedin,
+  Mail,
   PersonStanding,
   Share2,
   ThumbsUp,
@@ -51,22 +50,11 @@ const hiringPoints = [
   },
 ];
 
-const relatedArticles = [
-  {
-    title: 'The Future of Digital Payments in Southeast Asia',
-    image: '/project_healthcare_ai.jpg',
-  },
-  {
-    title: 'Mastering Cloud-Native Architectures',
-    image: '/project_team_collab.jpg',
-  },
-  {
-    title: 'Clean Code: Engineering Beyond the Syntax',
-    image: '/project_marketing_engine.png',
-  },
-];
-
 export default function SoftwareDevelopmentNepalPage() {
+  const [liked, setLiked] = useState(false);
+  const [likePop, setLikePop] = useState(false);
+  const [toast, setToast] = useState('');
+
   useEffect(() => {
     const previousTitle = document.title;
     document.title = 'Software Development in Nepal: Trends, Skills, and What Businesses Should Look For';
@@ -74,6 +62,27 @@ export default function SoftwareDevelopmentNepalPage() {
       document.title = previousTitle;
     };
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const handle = window.setTimeout(() => setToast(''), 1800);
+    return () => window.clearTimeout(handle);
+  }, [toast]);
+
+  const handleLike = () => {
+    setLiked((prev) => !prev);
+    setLikePop(true);
+    window.setTimeout(() => setLikePop(false), 180);
+  };
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setToast('Link copied');
+    } catch {
+      setToast('Could not copy link');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0c0c0c] text-white">
@@ -88,21 +97,26 @@ export default function SoftwareDevelopmentNepalPage() {
 
       <nav className="sticky top-0 z-40 border-b border-white/10 bg-[#0c0c0c]/85 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-[1500px] items-center justify-between px-6 py-5 md:px-8">
-          <a href="/" className="font-display text-base font-bold uppercase tracking-wider">
-            The Neon Monolith
+          <a href="/" className="flex items-center gap-2">
+            <img src="/favicon.svg" alt="SB Logo" className="h-8 w-8 rounded-sm" />
           </a>
-          <div className="hidden items-center gap-8 text-[11px] font-mono uppercase tracking-[0.2em] md:flex">
-            <a className="text-white/55 transition-colors hover:text-white" href="/#work">
-              Portfolio
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              className="hidden md:flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-widest">Portfolio</span>
             </a>
-            <span className="border-b border-[#b2f722] pb-1 text-[#b2f722]">Articles</span>
-            <a className="text-white/55 transition-colors hover:text-white" href="/#contact">
-              Contact
+            <span className="flex items-center gap-2 rounded-full border border-[#b2f722]/60 bg-[#b2f722]/10 px-4 py-2 text-sm font-medium text-[#b2f722]">
+              <span className="font-mono text-[10px] uppercase tracking-widest">Articles</span>
+            </span>
+            <a
+              href="/#contact"
+              className="flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-widest">Contact</span>
             </a>
           </div>
-          <button aria-label="Open menu" className="rounded-md border border-white/20 p-2 text-white/75">
-            <Menu size={16} />
-          </button>
         </div>
       </nav>
 
@@ -239,60 +253,92 @@ export default function SoftwareDevelopmentNepalPage() {
 
           <aside className="col-span-12 hidden lg:col-span-2 lg:block">
             <div className="sticky top-28 flex flex-col gap-4">
-              <button aria-label="Like article" className="w-fit rounded-full border border-white/20 p-3 text-white/70 hover:bg-white/10">
+              <button
+                aria-label="Like article"
+                onClick={handleLike}
+                className={`w-fit rounded-full border border-white/20 p-3 transition-all duration-150 hover:bg-white/10 ${
+                  liked ? 'text-[#b2f722]' : 'text-white/70'
+                } ${likePop ? 'scale-125' : 'scale-100'}`}
+              >
                 <ThumbsUp size={16} />
               </button>
-              <button aria-label="Share article" className="w-fit rounded-full border border-white/20 p-3 text-white/70 hover:bg-white/10">
+              <button
+                aria-label="Share article"
+                onClick={handleShare}
+                className="w-fit rounded-full border border-white/20 p-3 text-white/70 transition hover:bg-white/10"
+              >
                 <Share2 size={16} />
-              </button>
-              <button aria-label="Save article" className="w-fit rounded-full border border-white/20 p-3 text-white/70 hover:bg-white/10">
-                <Bookmark size={16} />
               </button>
             </div>
           </aside>
         </div>
 
-        <section className="mx-auto mt-24 w-full max-w-[1500px] px-6 md:px-8">
-          <p className="mb-8 font-mono text-[10px] uppercase tracking-[0.22em] text-white/65">More from the Monolith</p>
-          <div className="grid gap-6 md:grid-cols-3">
-            {relatedArticles.map((post) => (
-              <article key={post.title} className="group cursor-pointer">
-                <div className="aspect-[16/10] overflow-hidden rounded-md border border-white/10 bg-white/[0.02]">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
-                  />
-                </div>
-                <h3 className="mt-4 font-display text-xl font-bold transition-colors group-hover:text-[#b2f722]">
-                  {post.title}
-                </h3>
-              </article>
-            ))}
+        <section className="mx-auto mt-20 flex w-full max-w-[1500px] px-6 md:px-8 lg:hidden">
+          <div className="flex gap-3">
+            <button
+              aria-label="Like article"
+              onClick={handleLike}
+              className={`rounded-full border border-white/20 p-3 transition-all duration-150 ${
+                liked ? 'text-[#b2f722]' : 'text-white/70'
+              } ${likePop ? 'scale-125' : 'scale-100'}`}
+            >
+              <ThumbsUp size={16} />
+            </button>
+            <button
+              aria-label="Share article"
+              onClick={handleShare}
+              className="rounded-full border border-white/20 p-3 text-white/70 transition hover:bg-white/10"
+            >
+              <Share2 size={16} />
+            </button>
           </div>
         </section>
 
-        <section className="mx-auto mt-28 w-full max-w-[900px] px-6 text-center md:px-8">
-          <h2 className="font-display text-5xl font-black leading-[0.95] tracking-tight md:text-8xl">
-            LET&apos;S BUILD <span className="text-[#b2f722]">SOMETHING PRECISE.</span>
+        <section className="mx-auto mt-28 w-full max-w-[1200px] px-6 text-center md:px-8">
+          <h2 className="font-display text-5xl font-semibold leading-tight text-white md:text-7xl">
+            Let&apos;s build something
+            <br />
+            <span className="text-[#b2f722]">precise.</span>
           </h2>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 md:flex-row">
             <a
               href="/#contact"
-              className="inline-flex items-center gap-2 rounded-sm bg-[#b2f722] px-8 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-black transition hover:brightness-95"
+              className="btn-primary inline-flex items-center justify-center gap-2 rounded-full"
             >
               Contact Me
-              <ArrowRight size={14} />
             </a>
             <a
               href="/#work"
-              className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-8 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-white/5"
+              className="btn-secondary inline-flex items-center justify-center gap-2 rounded-full"
             >
               View Portfolio
             </a>
           </div>
+          <div className="mt-16 flex flex-col items-center justify-center gap-4 border-t border-white/10 pt-8 text-white/75 md:flex-row md:gap-8">
+            <a href="mailto:sumedhbajracharya07@gmail.com" className="inline-flex items-center gap-2 hover:text-[#b2f722]">
+              <Mail size={16} />
+              <span className="font-mono text-xs">sumedhbajracharya07@gmail.com</span>
+            </a>
+            <a
+              href="https://np.linkedin.com/in/sumedh-bajracharya"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 hover:text-[#b2f722]"
+            >
+              <Linkedin size={16} />
+              <span className="font-mono text-xs">LinkedIn</span>
+            </a>
+          </div>
+          <p className="mt-8 font-mono text-[11px] uppercase tracking-widest text-white/40">
+            © Sumedh Bajracharya — {new Date().getFullYear()}
+          </p>
         </section>
       </main>
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-md border border-white/20 bg-black/85 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-[#b2f722] shadow-lg">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
