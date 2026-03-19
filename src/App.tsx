@@ -17,6 +17,9 @@ const AIChatAssistant = lazy(() =>
   import('./AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
 );
 
+const shouldSkipHeavyAnimations = () =>
+  window.innerWidth <= 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 declare global {
   interface Window {
     navigateToSection?: (sectionId: string) => void;
@@ -278,6 +281,7 @@ function Header({ menuOpen, toggleMenu, onOpenChat }: { menuOpen: boolean; toggl
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenChat}
+          aria-label="Open AI chat assistant"
           className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors group"
         >
           <Bot size={16} className="text-[#B9FF2C] group-hover:scale-110 transition-transform" />
@@ -285,6 +289,7 @@ function Header({ menuOpen, toggleMenu, onOpenChat }: { menuOpen: boolean; toggl
         </button>
         <button
           onClick={toggleMenu}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
         >
           {menuOpen ? <X size={16} /> : <Menu size={16} />}
@@ -371,10 +376,10 @@ function FullScreenMenu({
 function GhostText() {
   return (
     <div aria-hidden="true" className="absolute right-[8%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
-      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap">
+      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-300/[0.05] whitespace-nowrap">
         FULLSTACK
       </div>
-      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap -mt-4">
+      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-300/[0.05] whitespace-nowrap -mt-4">
         ENGINEER
       </div>
     </div>
@@ -420,10 +425,7 @@ function HeroSection() {
     const cta = ctaRef.current;
 
     if (!section || !windowEl || !headline || !cta) return;
-
-    // Skip animations on mobile
-    // Mobile check removed
-
+    if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
       // Initial load animation
@@ -560,13 +562,8 @@ function SelectedWorkSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const cards = cardsRef.current;
-    // Mobile check removed
-
-
     if (!section || !cards) return;
-
-    // Skip animations on mobile
-
+    if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
       const scrollTl = gsap.timeline({
@@ -705,10 +702,8 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
     const windowEl = windowRef.current;
     const portrait = portraitRef.current;
     const text = textRef.current;
-    // Mobile check removed
-
-
     if (!section || !windowEl || !portrait || !text) return;
+    if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
       const scrollTl = gsap.timeline({
@@ -873,10 +868,8 @@ function CapabilitiesSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
-    // Mobile check removed
-
-
     if (!section || !content) return;
+    if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(content.querySelector('h2'),
@@ -974,7 +967,7 @@ function CapabilitiesSection() {
         className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
         {/* Ghost Text */}
         <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
-          <div className="font-display text-[5rem] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap uppercase">
+          <div className="font-display text-[5rem] font-bold leading-none tracking-tighter text-lime-300/[0.05] whitespace-nowrap uppercase">
             Capabilities
           </div>
         </div>
@@ -1020,10 +1013,8 @@ function ExperienceSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
-    // Mobile check removed
-
-
     if (!section || !content) return;
+    if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(content.querySelectorAll('.experience-item'),
@@ -1063,7 +1054,7 @@ function ExperienceSection() {
         className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
         {/* Ghost Text */}
         <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
-          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap uppercase">
+          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.05] whitespace-nowrap uppercase">
             Experience
           </div>
         </div>
@@ -1088,9 +1079,9 @@ function ExperienceSection() {
                         {exp.role}
                       </h3>
                       <p className="text-white/60 mt-1">{exp.company}</p>
-                      <p className="text-white/45 mt-2 text-sm md:text-base">{exp.highlight}</p>
+                      <p className="text-white/50 mt-2 text-sm md:text-base">{exp.highlight}</p>
                     </div>
-                    <span className="font-mono text-sm text-white/40 mt-2 md:mt-0">
+                    <span className="font-mono text-sm text-white/50 mt-2 md:mt-0">
                       {exp.period}
                     </span>
                   </div>
@@ -1113,10 +1104,8 @@ function ContactSection() {
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const content = contentRef.current;
-    // Mobile check removed
-
-
     if (!section || !content) return;
+    if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(content.querySelectorAll('*'),
@@ -1213,7 +1202,7 @@ function ContactSection() {
         className="window-frame w-[86vw] mx-auto bg-[#050505]/60 backdrop-blur-[10px] p-[6%] text-center relative overflow-hidden z-10">
         {/* Ghost Text */}
         <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
-          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap uppercase">
+          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.05] whitespace-nowrap uppercase">
             Contact
           </div>
         </div>
