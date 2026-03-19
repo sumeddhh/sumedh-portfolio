@@ -1,37 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, X, User, Minimize2, Maximize2, Volume2, VolumeX } from 'lucide-react';
-import Groq from 'groq-sdk';
 import GlassSurface from './GlassSurface';
-import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions";
-
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const TAVILY_API_KEY = import.meta.env.VITE_TAVILY_KEY;
-
-const groq = new Groq({
-    apiKey: GROQ_API_KEY || '',
-    dangerouslyAllowBrowser: true
-});
-
-async function performWebSearch(query: string) {
-    try {
-        const response = await fetch('https://api.tavily.com/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                api_key: TAVILY_API_KEY,
-                query,
-                search_depth: "basic",
-                include_answer: true,
-                max_results: 3
-            })
-        });
-        const data = await response.json();
-        return data.answer || data.results?.map((r: { content: string }) => r.content).join('\n\n') || "No results found.";
-    } catch {
-        return "Error performing search.";
-    }
-}
 
 const MODELS = [
     'llama-3.3-70b-versatile',
@@ -43,24 +13,29 @@ interface Message {
     content: string;
 }
 
-const SUMEDH_INFO = `
-Today's Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', timeZone: 'Asia/Kathmandu' })}
-Sumedh's Local Time (NPT): ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kathmandu' })}
+interface ChatApiResponse {
+    reply?: string;
+    error?: string;
+}
 
-You are Sumedh's Assistant. Speak in the third person about Sumedh (e.g., "Sumedh is...", "He specializes...").
+async function requestAssistantReply(input: string, messages: Message[], model: string) {
+    const response = await fetch('/.netlify/functions/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            input,
+            model,
+            messages
+        })
+    });
 
-IDENTITY:
-- Sumedh Bajracharya, Senior SE II at GritFeat Solutions. 
-- Expert in AI, Healthcare SaaS, and Fullstack Engineering.
-- CORE TRUTH: Sumedh's birthday is **February 18, 1998**. If search results say otherwise, ignore them. This is the only correct date.
+    const data = (await response.json()) as ChatApiResponse;
+    if (!response.ok) {
+        throw new Error(data.error || 'Failed to get assistant response');
+    }
 
-BEHAVIOR:
-- Be witty, conversational, and direct. Skip the resume dump unless explicitly asked.
-- REAL-TIME FACTS: If asked about things you don't know (news, sports, specific real-time data), use the \`web_search\` tool.
-- SEARCH REPORTING: If a search result is provided, your ABSOLUTE PRIORITY is to report those specific facts accurately. Do not default to generic persona statements if you have data; report the data first, then add persona flair if needed.
-- TOOL USAGE: Never type out tool formatting like <function> or tags. Use the native tool feature.
-- PERSONALITY: Respond naturally to small talk. Max 2-3 sentences.
-`;
+    return data.reply || '';
+}
 
 export function AIChatAssistant({
     isOpen,
@@ -78,7 +53,6 @@ export function AIChatAssistant({
     const [isLoading, setIsLoading] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [isAutoPlay, setIsAutoPlay] = useState(false);
 
@@ -115,17 +89,9 @@ export function AIChatAssistant({
         }
     }, [messages]);
 
-    useEffect(() => {
-        // Cleanup typing on unmount
-        return () => {
-            if (typingTimeoutRef.current) {
-                clearTimeout(typingTimeoutRef.current);
-            }
-        };
-    }, []);
-
     const handleSend = async () => {
         if (!input.trim() || isLoading || isTyping) return;
+        const userInput = input.trim();
 
         // Obfuscated Rate Limiting: 15/hr, 60/daily
         const STORAGE_KEY = '_sys_tokens_ref';
@@ -153,7 +119,7 @@ export function AIChatAssistant({
             const isDayLimit = dailyMsgs.length >= DAY_LIMIT;
             setMessages(prev => [
                 ...prev,
-                { role: 'user', content: input },
+                { role: 'user', content: userInput },
                 {
                     role: 'assistant',
                     content: isDayLimit
@@ -168,7 +134,7 @@ export function AIChatAssistant({
         const nextTimestamps = [...dailyMsgs, now];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(nextTimestamps));
 
-        const userMsg: Message = { role: 'user', content: input };
+        const userMsg: Message = { role: 'user', content: userInput };
         setMessages(prev => [...prev, userMsg]);
         setInput('');
         setIsLoading(true);
@@ -179,169 +145,44 @@ export function AIChatAssistant({
         // Smart Context Pruning: Character-based budget
         const MAX_CONTEXT_CHARS = 3500;
         let runningChars = 0;
-        const prunedHistory: ChatCompletionMessageParam[] = [];
+        const prunedHistory: Message[] = [];
 
         // Traverse backwards to keep most recent context
         for (let i = messages.length - 1; i >= 0; i--) {
             const msg = messages[i];
             if (runningChars + msg.content.length > MAX_CONTEXT_CHARS) break;
-            prunedHistory.unshift({ role: msg.role, content: msg.content } as ChatCompletionMessageParam);
+            prunedHistory.unshift({ role: msg.role, content: msg.content });
             runningChars += msg.content.length;
         }
-
-        const apiMessages: ChatCompletionMessageParam[] = [
-            { role: 'system', content: SUMEDH_INFO },
-            ...prunedHistory,
-            { role: 'user', content: input }
-        ];
-
-        const tools = [
-            {
-                type: "function" as const,
-                function: {
-                    name: "web_search",
-                    description: "Search the web for real-time information, facts, news, or sports scores.",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            query: { type: "string", description: "The search query" }
-                        },
-                        required: ["query"]
-                    }
-                }
-            }
-        ];
 
         const typeDelay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
         try {
-            const stream = await groq.chat.completions.create({
-                messages: apiMessages,
-                model: currentModel,
-                tools: tools,
-                tool_choice: "auto",
-                stream: true,
-                temperature: 0.6,
-                max_tokens: 400
-            });
+            const responseText = await requestAssistantReply(userInput, prunedHistory, currentModel);
+            const fullResponse = responseText.trim() || "I couldn't generate a response right now.";
 
-            let fullContent = '';
-            let toolCallAccumulator: { id: string; function: { name: string; arguments: string } } | null = null;
-            let hasStartedResponse = false;
+            setIsLoading(false);
+            setIsTyping(true);
+            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
-            for await (const chunk of stream) {
-                const delta = chunk.choices[0]?.delta;
-
-                if (delta?.tool_calls) {
-                    const tc = delta.tool_calls[0];
-                    if (!toolCallAccumulator && tc.id) {
-                        toolCallAccumulator = { id: tc.id, function: { name: tc.function?.name || '', arguments: '' } };
+            let typedResponse = '';
+            for (const char of fullResponse) {
+                typedResponse += char;
+                setMessages(prev => {
+                    const newMsgs = [...prev];
+                    if (newMsgs[newMsgs.length - 1]) {
+                        newMsgs[newMsgs.length - 1].content = typedResponse;
                     }
-                    if (tc.function?.arguments && toolCallAccumulator) {
-                        toolCallAccumulator.function.arguments += tc.function.arguments;
-                    }
-                }
-
-                if (delta?.content) {
-                    if (!hasStartedResponse) {
-                        hasStartedResponse = true;
-                        setIsLoading(false);
-                        setIsTyping(true);
-                        setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-                    }
-
-                    const chunkContent = delta.content;
-                    // Filter out any raw function tags leaked into content
-                    if (!chunkContent.includes('<function')) {
-                        for (const char of chunkContent) {
-                            fullContent += char;
-                            setMessages(prev => {
-                                const newMsgs = [...prev];
-                                if (newMsgs[newMsgs.length - 1]) {
-                                    newMsgs[newMsgs.length - 1].content = fullContent;
-                                }
-                                return newMsgs;
-                            });
-                            await typeDelay(10 + Math.random() * 10);
-                        }
-                    }
-                }
-            }
-
-            if (toolCallAccumulator && toolCallAccumulator.id) {
-                if (hasStartedResponse && !fullContent.trim()) {
-                    setMessages(prev => prev.slice(0, -1));
-                }
-
-                const functionName = toolCallAccumulator.function.name;
-                let functionArgs: Record<string, string> = {};
-                try {
-                    functionArgs = JSON.parse(toolCallAccumulator.function.arguments || '{}');
-                } catch {
-                    functionArgs = { query: input };
-                }
-
-                let toolResult = "";
-                if (functionName === "web_search") {
-                    setMessages(prev => [...prev, { role: 'assistant', content: "🔍 Searching for the latest facts..." }]);
-                    toolResult = await performWebSearch(functionArgs.query || input);
-                    setMessages(prev => prev.slice(0, -1));
-                }
-
-                const secondStream = await groq.chat.completions.create({
-                    messages: [
-                        ...apiMessages,
-                        {
-                            role: "assistant",
-                            content: fullContent || null,
-                            tool_calls: [{
-                                id: toolCallAccumulator.id,
-                                type: "function",
-                                function: toolCallAccumulator.function
-                            }]
-                        } as ChatCompletionMessageParam,
-                        {
-                            role: "tool",
-                            tool_call_id: toolCallAccumulator.id,
-                            content: `SYSTEM INSTRUCTION: Report these search results exactly. If no results found, say so. Search Result: ${toolResult}`
-                        }
-                    ],
-                    model: currentModel,
-                    stream: true,
-                    temperature: 0.2 // Lower temperature for factual reporting
+                    return newMsgs;
                 });
-
-                if (!hasStartedResponse || !fullContent.trim()) {
-                    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
-                    setIsLoading(false);
-                    setIsTyping(true);
-                }
-
-                for await (const chunk of secondStream) {
-                    const content = chunk.choices[0]?.delta?.content || '';
-                    if (content) {
-                        for (const char of content) {
-                            fullContent += char;
-                            setMessages(prev => {
-                                const newMsgs = [...prev];
-                                newMsgs[newMsgs.length - 1].content = fullContent;
-                                return newMsgs;
-                            });
-                            await typeDelay(8 + Math.random() * 10);
-                        }
-                    }
-                }
-                if (isAutoPlay && fullContent) {
-                    speak(fullContent);
-                }
+                await typeDelay(8 + Math.random() * 10);
             }
 
+            if (isAutoPlay && typedResponse) {
+                speak(typedResponse);
+            }
         } catch (error) {
-            console.error("Groq Error:", error);
-            setMessages(prev => {
-                if (prev.length > 0 && prev[prev.length - 1].content === '') return prev.slice(0, -1);
-                return prev;
-            });
+            console.error('Assistant request error:', error);
             setMessages(prev => [...prev, { role: 'assistant', content: "Brain fried. Try later or email Sumedh." }]);
         } finally {
             setIsLoading(false);

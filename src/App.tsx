@@ -1,6 +1,5 @@
 import TiltedCard from './TiltedCard';
 import LogoLoop from './LogoLoop';
-import Hyperspeed from './Hyperspeed';
 import GlassSurface from './GlassSurface';
 import {
   SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs,
@@ -13,11 +12,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import Lenis from 'lenis';
 import { ArrowUpRight, Eye, Linkedin, Mail, Menu, X, Bot } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { AIChatAssistant } from './AIChatAssistant';
+import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+const Hyperspeed = lazy(() => import('./Hyperspeed'));
+const AIChatAssistant = lazy(() =>
+  import('./AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
+);
+
+declare global {
+  interface Window {
+    navigateToSection?: (sectionId: string) => void;
+    lenis?: Lenis;
+  }
+}
 
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
@@ -25,6 +35,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [shouldLoadChat, setShouldLoadChat] = useState(false);
 
   // Section refs for reliable navigation
   const sectionRefs = useRef({
@@ -40,7 +51,7 @@ function App() {
 
   useEffect(() => {
     // Global navigation handler attached to window
-    (window as any).navigateToSection = (sectionId: string) => {
+    window.navigateToSection = (sectionId: string) => {
       // Wait for next frame to ensure all ScrollTriggers are initialized
       requestAnimationFrame(() => {
         ScrollTrigger.refresh();
@@ -94,7 +105,7 @@ function App() {
           targetScroll = (element as HTMLElement).offsetTop - pinnedOffset;
         }
 
-        const lenisInstance = (window as any).lenis;
+        const lenisInstance = window.lenis;
         if (lenisInstance?.scrollTo) {
           lenisInstance.scrollTo(targetScroll, {
             duration: 1.2,
@@ -110,7 +121,7 @@ function App() {
     };
 
     return () => {
-      delete (window as any).navigateToSection;
+      delete window.navigateToSection;
     };
   }, []);
 
@@ -125,24 +136,18 @@ function App() {
       touchMultiplier: 2,
     });
 
-    // Store on window for navigation access
-    (window as any).lenis = lenis;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
     // Connect Lenis with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const tickerCallback = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(tickerCallback);
 
     gsap.ticker.lagSmoothing(0);
+
+    // Store on window for navigation access
+    window.lenis = lenis;
 
     // Store section refs
     sectionRefs.current.hero = document.querySelector('#hero');
@@ -153,9 +158,9 @@ function App() {
     sectionRefs.current.contact = document.querySelector('#contact');
 
     return () => {
+      gsap.ticker.remove(tickerCallback);
       lenis.destroy();
-      delete (window as any).lenis;
-      gsap.ticker.remove(() => { });
+      delete window.lenis;
     };
   }, []);
   // Menu toggle
@@ -180,10 +185,21 @@ function App() {
       <div className="grain-overlay" />
 
       {/* Persistent Header */}
-      <Header menuOpen={menuOpen} toggleMenu={toggleMenu} onOpenChat={() => setIsChatOpen(true)} />
+      <Header
+        menuOpen={menuOpen}
+        toggleMenu={toggleMenu}
+        onOpenChat={() => {
+          setShouldLoadChat(true);
+          setIsChatOpen(true);
+        }}
+      />
 
       {/* AI Chat Assistant */}
-      <AIChatAssistant isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+      {shouldLoadChat && (
+        <Suspense fallback={null}>
+          <AIChatAssistant isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
+        </Suspense>
+      )}
 
       {/* Full Screen Menu */}
       {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} />}
@@ -754,16 +770,16 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
             About
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-6">
-            I'm a Senior Frontend Engineer focused on the intersection of design and code, with strong attention to performance, accessibility, and interaction quality.
+            I'm a Senior Software Engineer focused on frontend architecture, full-stack product delivery, and design-to-code execution, with strong attention to performance, accessibility, and interaction quality.
           </p>
           <p className="text-white/70 text-lg leading-relaxed mb-8">
-            I've led UI development for healthcare platforms, built scalable design systems, and shipped products used by thousands. With over 4.5 years of experience, I specialize in React, Next.js, and AI-powered solutions.
+            I've led enterprise healthcare platforms, delivered 15+ production deployments, and built HIPAA-compliant systems with 99.9% uptime. With 4.5+ years of experience, I specialize in React, Next.js, TypeScript, and AI-powered product workflows.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
             <p className="text-white/60 text-sm">15+ production deployments</p>
             <p className="text-white/60 text-sm">99.9% uptime in healthcare systems</p>
-            <p className="text-white/60 text-sm">40% development cost reduction</p>
-            <p className="text-white/60 text-sm">8+ engineers mentored</p>
+            <p className="text-white/60 text-sm">10,000+ monthly active healthcare users served</p>
+            <p className="text-white/60 text-sm">40% LLM operational cost reduction</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <button onClick={onViewResume} className="btn-primary flex items-center gap-2">
@@ -873,23 +889,31 @@ function CapabilitiesSection() {
   const capabilities = [
     {
       category: 'Frontend',
-      skills: 'React, Next.js, TypeScript, Vue, TailwindCSS, React Query, ReactFlow, Redux'
+      skills: 'React, Next.js, TypeScript, Vue.js, TailwindCSS, React Query, ReactFlow, Redux, Vite, Webpack'
     },
     {
       category: 'Backend',
-      skills: 'Node.js, Nest.js, PostgreSQL, MongoDB, Redis, GraphQL, Microservices'
+      skills: 'Node.js, Nest.js, PostgreSQL, MongoDB, Redis, GraphQL, REST APIs, Microservices'
+    },
+    {
+      category: 'Testing',
+      skills: 'Jest, Cypress, Vitest, React Testing Library'
     },
     {
       category: 'Cloud / DevOps',
-      skills: 'AWS (S3, Lambda, Cognito), Azure, Docker, Harness, CI/CD'
+      skills: 'AWS (S3, EC2, Lambda, Cognito, CloudFront), Azure (ACR, Container Apps, DevOps), Docker, Kubernetes, GitHub Actions, Harness'
+    },
+    {
+      category: 'Security / Auth',
+      skills: 'OAuth, JWT, HIPAA-compliant architecture, AWS Cognito'
     },
     {
       category: 'AI & Automation',
-      skills: 'Cursor, Claude Code, LLM APIs, Token Optimization, Intent Recognition'
+      skills: 'Cursor, Claude Code, LLM API Integration, Token Optimization, Intent Recognition'
     },
     {
       category: 'Design',
-      skills: 'Figma, Adobe XD, Design Systems, Prototyping, Usability Testing'
+      skills: 'Figma, Adobe XD, Storybook, Design Systems, Usability Testing'
     }
   ];
 
@@ -996,12 +1020,10 @@ function ExperienceSection() {
   }, []);
 
   const experiences = [
-    { role: 'Sr. Software Engineer II', company: 'GritFeat Solutions', period: '2024–Present', highlight: 'Led AI chat streaming rollout with 60% faster responses and lower token costs.' },
-    { role: 'Sr. Software Engineer I', company: 'GritFeat Solutions', period: '2023–2024', highlight: 'Managed AWS + Azure infrastructure and reduced deployment time by 30% with CI/CD.' },
-    { role: 'Software Engineer III', company: 'GritFeat Solutions', period: '2023', highlight: 'Built design systems that cut feature delivery time by 25%.' },
-    { role: 'Software Engineer I & II', company: 'GritFeat Solutions', period: '2021–2022', highlight: 'Improved initial load times by 50% through refactoring and bundle optimization.' },
-    { role: 'Associate UI/UX Engineer', company: 'GritFeat Solutions', period: '2020–2021', highlight: 'Converted business requirements into high-fidelity product prototypes.' },
-    { role: 'UX & Full-Stack Intern', company: 'ITGlance', period: '2020', highlight: 'Supported full-stack workflows for manual record digitization systems.' },
+    { role: 'Sr. Software Engineer II', company: 'GritFeat Solutions', period: '2024–Present', highlight: 'Led frontend architecture and chunk-based AI chat streaming; improved response times by 60% and reduced token costs by 40%.' },
+    { role: 'Sr. Software Engineer I', company: 'GritFeat Solutions', period: '2023', highlight: 'Managed AWS/Azure infrastructure and automated CI/CD with GitHub Actions + Harness, reducing deployment time by 30%.' },
+    { role: 'Software Engineer (Associate through III)', company: 'GritFeat Solutions', period: '2020–2022', highlight: 'Delivered design systems, cut initial load times by 50%, reduced API calls by 70%, and improved feature delivery by 25%.' },
+    { role: 'UX & Full-Stack Intern', company: 'ITGlance', period: '2020', highlight: 'Contributed to JavaScript/Java full-stack workflows for manual record digitization systems.' },
   ];
 
   return (
@@ -1060,6 +1082,7 @@ function ExperienceSection() {
 function ContactSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [shouldLoadHyperspeed, setShouldLoadHyperspeed] = useState(false);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -1089,6 +1112,25 @@ function ContactSection() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || shouldLoadHyperspeed) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry?.isIntersecting) {
+          setShouldLoadHyperspeed(true);
+          observer.disconnect();
+        }
+      },
+      { root: null, rootMargin: '350px 0px', threshold: 0.01 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [shouldLoadHyperspeed]);
+
   return (
     <section
       ref={sectionRef}
@@ -1096,43 +1138,49 @@ function ContactSection() {
       className="relative bg-[#050505] h-screen z-[90] overflow-hidden flex items-center justify-center"
     >
       <div className="absolute inset-0 z-0 opacity-[0.7]">
-        <Hyperspeed
-          effectOptions={{
-            distortion: 'turbulentDistortion',
-            length: 400,
-            roadWidth: 10,
-            islandWidth: 2,
-            lanesPerRoad: 3,
-            fov: 100,
-            fovSpeedUp: 150,
-            speedUp: 2,
-            carLightsFade: 0.4,
-            totalSideLightSticks: 20,
-            lightPairsPerRoadWay: 40,
-            shoulderLinesWidthPercentage: 0.05,
-            brokenLinesWidthPercentage: 0.1,
-            brokenLinesLengthPercentage: 0.5,
-            lightStickWidth: [0.12, 0.5],
-            lightStickHeight: [1.3, 1.7],
-            movingAwaySpeed: [60, 80],
-            movingCloserSpeed: [-120, -160],
-            carLightsLength: [12, 80],
-            carLightsRadius: [0.05, 0.14],
-            carWidthPercentage: [0.3, 0.5],
-            carShiftX: [-0.8, 0.8],
-            carFloorSeparation: [0, 5],
-            colors: {
-              roadColor: 0x080808,
-              islandColor: 0xffffff,
-              background: 0x000000,
-              shoulderLines: 0x131318,
-              brokenLines: 0x131318,
-              leftCars: [0xB9FF2C, 0xffffff, 0xddff88],
-              rightCars: [0xB9FF2C, 0x88cc00, 0xddff88],
-              sticks: 0xFFFFFF
-            }
-          }}
-        />
+        {shouldLoadHyperspeed ? (
+          <Suspense fallback={<div className="h-full w-full bg-[#050505]" />}>
+            <Hyperspeed
+              effectOptions={{
+                distortion: 'turbulentDistortion',
+                length: 400,
+                roadWidth: 10,
+                islandWidth: 2,
+                lanesPerRoad: 3,
+                fov: 100,
+                fovSpeedUp: 150,
+                speedUp: 2,
+                carLightsFade: 0.4,
+                totalSideLightSticks: 20,
+                lightPairsPerRoadWay: 40,
+                shoulderLinesWidthPercentage: 0.05,
+                brokenLinesWidthPercentage: 0.1,
+                brokenLinesLengthPercentage: 0.5,
+                lightStickWidth: [0.12, 0.5],
+                lightStickHeight: [1.3, 1.7],
+                movingAwaySpeed: [60, 80],
+                movingCloserSpeed: [-120, -160],
+                carLightsLength: [12, 80],
+                carLightsRadius: [0.05, 0.14],
+                carWidthPercentage: [0.3, 0.5],
+                carShiftX: [-0.8, 0.8],
+                carFloorSeparation: [0, 5],
+                colors: {
+                  roadColor: 0x080808,
+                  islandColor: 0xffffff,
+                  background: 0x000000,
+                  shoulderLines: 0x131318,
+                  brokenLines: 0x131318,
+                  leftCars: [0xB9FF2C, 0xffffff, 0xddff88],
+                  rightCars: [0xB9FF2C, 0x88cc00, 0xddff88],
+                  sticks: 0xFFFFFF
+                }
+              }}
+            />
+          </Suspense>
+        ) : (
+          <div className="h-full w-full bg-[radial-gradient(circle_at_center,#101010,#050505_60%)]" />
+        )}
       </div>
       <div
         style={{ borderRadius: '6rem' }}

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import React, {
   Children,
   cloneElement,
@@ -5,7 +6,6 @@ import React, {
   isValidElement,
   type ReactElement,
   type ReactNode,
-  type RefObject,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -44,7 +44,6 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({ customClass, ...res
 ));
 Card.displayName = 'Card';
 
-type CardRef = RefObject<HTMLDivElement | null>;
 interface Slot {
   x: number;
   y: number;
@@ -99,18 +98,11 @@ const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(function CardSwap(
       }
       : {
         ease: 'power1.inOut' as const,
-        durDrop: 0.8,
         durMove: 0.8,
-        durReturn: 0.8,
-        promoteOverlap: 0.45,
-        returnDelay: 0.2
       };
 
   const childArr = useMemo(() => Children.toArray(children) as ReactElement<CardProps>[], [children]);
-  const refs = useMemo<CardRef[]>(
-    () => childArr.map(() => React.createRef<HTMLDivElement>()),
-    [childArr.length]
-  );
+  const cardElementsRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const order = useRef<number[]>(Array.from({ length: childArr.length }, (_, i) => i));
 
@@ -119,7 +111,7 @@ const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(function CardSwap(
 
   const bringToFront = useCallback(
     (clickedIdx: number) => {
-      const total = refs.length;
+      const total = childArr.length;
       const currentOrder = order.current;
       if (currentOrder[0] === clickedIdx) {
         onCardClick?.(clickedIdx);
@@ -132,7 +124,7 @@ const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(function CardSwap(
       tlRef.current = tl;
       for (let i = 0; i < total; i++) {
         const cardIdx = newOrder[i];
-        const el = refs[cardIdx].current;
+        const el = cardElementsRef.current[cardIdx];
         if (!el) continue;
         const slot = makeSlot(i, cardDistance, verticalDistance, total);
         tl.to(
@@ -153,29 +145,41 @@ const CardSwap = forwardRef<CardSwapRef, CardSwapProps>(function CardSwap(
       });
       onCardClick?.(clickedIdx);
     },
-    [cardDistance, verticalDistance, refs, config.durMove, config.ease, onCardClick, onFrontChange]
+    [childArr.length, cardDistance, verticalDistance, config.durMove, config.ease, onCardClick, onFrontChange]
   );
 
   useImperativeHandle(ref, () => ({ bringToFront }), [bringToFront]);
 
   useEffect(() => {
-    const total = refs.length;
-    refs.forEach((r, i) => placeNow(r.current!, makeSlot(i, cardDistance, verticalDistance, total), skewAmount));
+    order.current = Array.from({ length: childArr.length }, (_, i) => i);
+  }, [childArr.length]);
+
+  useEffect(() => {
+    const total = childArr.length;
+    const nextElements = Array.from({ length: childArr.length }, (_, i) =>
+      container.current?.querySelector(`[data-card-swap-index="${i}"]`) as HTMLDivElement | null
+    );
+    cardElementsRef.current = nextElements;
+
+    nextElements.forEach((cardElement, i) => {
+      if (!cardElement) return;
+      placeNow(cardElement, makeSlot(i, cardDistance, verticalDistance, total), skewAmount);
+    });
     onFrontChange?.(order.current[0]);
-  }, [cardDistance, verticalDistance, skewAmount, onFrontChange]);
+  }, [childArr.length, cardDistance, verticalDistance, skewAmount, onFrontChange]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement<CardProps>(child)
       ? cloneElement(child, {
         key: i,
-        ref: refs[i],
+        'data-card-swap-index': i,
         style: { width, height, ...(child.props.style ?? {}) },
         onClick: (e: React.MouseEvent<HTMLDivElement>) => {
           e.stopPropagation();
           child.props.onClick?.(e);
           bringToFront(i);
         }
-      } as CardProps & React.RefAttributes<HTMLDivElement>)
+      } as CardProps)
       : child
   );
 
