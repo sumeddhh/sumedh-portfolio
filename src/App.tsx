@@ -1,12 +1,5 @@
 import TiltedCard from './TiltedCard';
-import LogoLoop from './LogoLoop';
 import GlassSurface from './GlassSurface';
-import {
-  SiReact, SiNextdotjs, SiTypescript, SiTailwindcss, SiNodedotjs,
-  SiPostgresql, SiMongodb, SiDocker, SiAmazonwebservices, SiFigma,
-  SiRedux, SiVuedotjs, SiGraphql, SiNestjs, SiRedis, SiPostman
-} from 'react-icons/si';
-import DotGrid from './DotGrid';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
@@ -18,6 +11,8 @@ import './App.css';
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const Hyperspeed = lazy(() => import('./Hyperspeed'));
+const DotGrid = lazy(() => import('./DotGrid'));
+const CapabilitiesLogoLoop = lazy(() => import('./CapabilitiesLogoLoop'));
 const AIChatAssistant = lazy(() =>
   import('./AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
 );
@@ -375,11 +370,11 @@ function FullScreenMenu({
 // Subtle Ghost Text Component
 function GhostText() {
   return (
-    <div className="absolute right-[8%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
-      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-500/[0.04] whitespace-nowrap">
+    <div aria-hidden="true" className="absolute right-[8%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
+      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap">
         FULLSTACK
       </div>
-      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-500/[0.04] whitespace-nowrap -mt-4">
+      <div className="font-display text-[120px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap -mt-4">
         ENGINEER
       </div>
     </div>
@@ -392,6 +387,31 @@ function HeroSection() {
   const windowRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const [shouldLoadDotGrid, setShouldLoadDotGrid] = useState(false);
+
+  useEffect(() => {
+    const win = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    let idleHandle: number | null = null;
+    let timeoutHandle: number | null = null;
+
+    if (win.requestIdleCallback) {
+      idleHandle = win.requestIdleCallback(() => setShouldLoadDotGrid(true), { timeout: 1200 });
+    } else {
+      timeoutHandle = window.setTimeout(() => setShouldLoadDotGrid(true), 450);
+    }
+
+    return () => {
+      if (idleHandle !== null && win.cancelIdleCallback) {
+        win.cancelIdleCallback(idleHandle);
+      }
+      if (timeoutHandle !== null) {
+        window.clearTimeout(timeoutHandle);
+      }
+    };
+  }, []);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -478,17 +498,23 @@ function HeroSection() {
       >
         {/* DotGrid background */}
         <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, overflow: 'hidden' }} className="rounded-[inherit]">
-          <DotGrid
-            dotSize={5}
-            gap={15}
-            baseColor="#B9FF2C10"
-            activeColor="#B9FF2C"
-            proximity={120}
-            shockRadius={250}
-            shockStrength={5}
-            returnDuration={1.5}
-            className="!p-0 absolute inset-0"
-          />
+          {shouldLoadDotGrid ? (
+            <Suspense fallback={<div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,#20330c_0%,#050505_55%)]" />}>
+              <DotGrid
+                dotSize={5}
+                gap={15}
+                baseColor="#B9FF2C10"
+                activeColor="#B9FF2C"
+                proximity={120}
+                shockRadius={250}
+                shockStrength={5}
+                returnDuration={1.5}
+                className="!p-0 absolute inset-0"
+              />
+            </Suspense>
+          ) : (
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,#20330c_0%,#050505_55%)]" />
+          )}
         </div>
 
 
@@ -842,6 +868,7 @@ function ResumeModal({
 function CapabilitiesSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [shouldLoadLogoLoop, setShouldLoadLogoLoop] = useState(false);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -886,6 +913,25 @@ function CapabilitiesSection() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || shouldLoadLogoLoop) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry?.isIntersecting) {
+          setShouldLoadLogoLoop(true);
+          observer.disconnect();
+        }
+      },
+      { root: null, rootMargin: '300px 0px', threshold: 0.01 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [shouldLoadLogoLoop]);
+
   const capabilities = [
     {
       category: 'Frontend',
@@ -927,8 +973,8 @@ function CapabilitiesSection() {
         style={{ borderRadius: '6rem' }}
         className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
         {/* Ghost Text */}
-        <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none opacity-[0.4]">
-          <div className="font-display text-[5rem] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
+        <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
+          <div className="font-display text-[5rem] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap uppercase">
             Capabilities
           </div>
         </div>
@@ -952,33 +998,13 @@ function CapabilitiesSection() {
 
           {/* Logo Loop Carousel */}
           <div className="mt-20 pt-10 border-t border-white/5">
-            <LogoLoop
-              logos={[
-                { node: <SiReact />, title: "React" },
-                { node: <SiNextdotjs />, title: "Next.js" },
-                { node: <SiTypescript />, title: "TypeScript" },
-                { node: <SiTailwindcss />, title: "Tailwind CSS" },
-                { node: <SiVuedotjs />, title: "Vue.js" },
-                { node: <SiRedux />, title: "Redux" },
-                { node: <SiNodedotjs />, title: "Node.js" },
-                { node: <SiNestjs />, title: "Nest.js" },
-                { node: <SiPostgresql />, title: "PostgreSQL" },
-                { node: <SiMongodb />, title: "MongoDB" },
-                { node: <SiRedis />, title: "Redis" },
-                { node: <SiGraphql />, title: "GraphQL" },
-                { node: <SiDocker />, title: "Docker" },
-                { node: <SiAmazonwebservices />, title: "AWS" },
-                { node: <SiFigma />, title: "Figma" },
-                { node: <SiPostman />, title: "Postman" },
-              ]}
-              speed={60}
-              gap={80}
-              logoHeight={42}
-              direction="left"
-              fadeOut
-              fadeOutColor="#050505"
-              className="text-white/20 hover:text-[#B9FF2C] transition-colors duration-500"
-            />
+            {shouldLoadLogoLoop ? (
+              <Suspense fallback={<div className="h-[84px] w-full" />}>
+                <CapabilitiesLogoLoop />
+              </Suspense>
+            ) : (
+              <div className="h-[84px] w-full" />
+            )}
           </div>
         </div>
       </div>
@@ -1036,8 +1062,8 @@ function ExperienceSection() {
         style={{ borderRadius: '6rem' }}
         className="window-frame w-[86vw] mx-auto bg-[#050505] p-[6%] relative overflow-hidden">
         {/* Ghost Text */}
-        <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none opacity-[0.4]">
-          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
+        <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
+          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap uppercase">
             Experience
           </div>
         </div>
@@ -1186,8 +1212,8 @@ function ContactSection() {
         style={{ borderRadius: '6rem' }}
         className="window-frame w-[86vw] mx-auto bg-[#050505]/60 backdrop-blur-[10px] p-[6%] text-center relative overflow-hidden z-10">
         {/* Ghost Text */}
-        <div className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none opacity-[0.4]">
-          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-500/[0.03] whitespace-nowrap uppercase">
+        <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
+          <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.4] whitespace-nowrap uppercase">
             Contact
           </div>
         </div>
