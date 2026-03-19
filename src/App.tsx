@@ -279,6 +279,12 @@ function Header({ menuOpen, toggleMenu, onOpenChat }: { menuOpen: boolean; toggl
         <img src="/favicon.svg" alt="SB Logo" className="w-8 h-8 rounded-sm" />
       </a>
       <div className="flex items-center gap-3">
+        <a
+          href="/software-development-nepal"
+          className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-widest">Articles</span>
+        </a>
         <button
           onClick={onOpenChat}
           aria-label="Open AI chat assistant"
@@ -311,6 +317,7 @@ function FullScreenMenu({
   const menuItems = [
     { label: 'Home', section: 'hero' as const },
     { label: 'Work', section: 'work' as const },
+    { label: 'Articles', section: 'articles' as const },
     { label: 'Capabilities', section: 'capabilities' as const },
     { label: 'Experience', section: 'experience' as const },
     { label: 'Contact', section: 'contact' as const },
@@ -322,6 +329,10 @@ function FullScreenMenu({
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, section: string) => {
+    if (section === 'articles') {
+      return;
+    }
+
     closeMenu();
 
     // Special case for home - scroll to top
@@ -345,7 +356,7 @@ function FullScreenMenu({
             {menuItems.map((item) => (
               <li key={item.label}>
                 <a
-                  href={`#${item.section}`}
+                  href={item.section === 'articles' ? '/software-development-nepal' : `#${item.section}`}
                   onClick={(e) => handleNavClick(e, item.section)}
                   className="font-display text-5xl md:text-7xl font-semibold text-white hover:text-[#B9FF2C] transition-colors"
                 >
