@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { CalendarDays, Clock3, ArrowRight, Plus, Terminal, X, Lock, Trash2, Edit3 } from 'lucide-react';
 import { BLOG_POSTS, type BlogPost as BlogPostStatic } from './lib/blog-data';
 import { supabase } from './lib/supabase';
@@ -11,6 +11,27 @@ export default function BlogListPage() {
   const [showCompose, setShowCompose] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  // Mobile Dev Mode Trigger String
+  const [clickCount, setClickCount] = useState(0);
+  const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const handleMobileDevTrigger = () => {
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+
+    if (newCount >= 3) {
+      setDevMode(d => !d);
+      setClickCount(0);
+    }
+
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+    clickTimeoutRef.current = setTimeout(() => {
+      setClickCount(0);
+    }, 1000);
+  };
 
   // Blog Form State
   const [editingPostId, setEditingPostId] = useState<number | null>(null);
@@ -247,7 +268,7 @@ export default function BlogListPage() {
           {/* Header */}
           <div className="mb-20">
             <h1 className="font-display text-5xl md:text-8xl font-bold tracking-tight mb-8">
-              Letters on <span className="text-[#B9FF2C]">Code</span>
+              Letters on <span onClick={handleMobileDevTrigger} className="text-[#B9FF2C] cursor-pointer selection:bg-transparent">Code</span>
             </h1>
             <p className="text-white/60 text-lg md:text-xl max-w-2xl leading-relaxed">
               Synthesized thoughts on software engineering, product architecture, and the intersection of human and machine intelligence.
