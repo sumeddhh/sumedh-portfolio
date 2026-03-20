@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Software Development in Nepal | THE NEON MONOLITH</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-low": "#1c1b1b",
+                        "surface-dim": "#131313",
+                        "on-tertiary": "#273500",
+                        "on-error": "#690005",
+                        "tertiary-container": "#bdf500",
+                        "tertiary-fixed-dim": "#a6d700",
+                        "on-surface-variant": "#c2caae",
+                        "surface": "#131313",
+                        "primary-fixed": "#b2f722",
+                        "primary-container": "#b2f722",
+                        "primary-fixed-dim": "#9ad900",
+                        "on-primary-fixed": "#131f00",
+                        "tertiary-fixed": "#bdf500",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "secondary": "#c6c6c7",
+                        "inverse-primary": "#486800",
+                        "tertiary": "#ffffff",
+                        "inverse-on-surface": "#313030",
+                        "outline-variant": "#424934",
+                        "surface-bright": "#3a3939",
+                        "on-secondary": "#2f3131",
+                        "on-background": "#e5e2e1",
+                        "on-secondary-container": "#b4b5b5",
+                        "on-primary": "#233600",
+                        "background": "#131313",
+                        "surface-variant": "#353534",
+                        "outline": "#8c947a",
+                        "surface-container-highest": "#353534",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#9ad900",
+                        "on-tertiary-fixed-variant": "#3a4d00",
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed": "#151f00",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-container": "#536d00",
+                        "on-primary-fixed-variant": "#354e00",
+                        "secondary-container": "#454747",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-surface": "#e5e2e1",
+                        "primary": "#ffffff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#4c6e00",
+                        "on-secondary-fixed-variant": "#454747"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "mono": ["IBM Plex Mono"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            background-image: radial-gradient(circle at 50% 50%, rgba(178, 247, 34, 0.03) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-background antialiased overflow-x-hidden">
+<div class="noise-overlay"></div>
+<!-- TopNavBar -->
+<nav class="bg-[#131313]/80 backdrop-blur-xl fixed top-0 w-full z-50">
+<div class="flex justify-between items-center px-6 py-5">
+<span class="text-2xl font-bold tracking-tighter text-white font-headline">THE NEON MONOLITH</span>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white" data-icon="menu">menu</span>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<header class="px-6 pt-12 pb-16 flex flex-col items-start">
+<div class="w-full h-[353px] mb-12 bg-surface-container-lowest rounded-lg overflow-hidden relative">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface opacity-60"></div>
+<img alt="Abstract technological circuit patterns" class="w-full h-full object-cover" data-alt="Abstract glowing circuit board lines on dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCygJTs0jG6XR2cUgjXymJWJFdGrvFsfTTPvpeoxVDZQmeqjfNMPMa1XXVH3BOAZO3hAp82WDQkct88nBqITVI7tqC3PxLiQskP610suh8N4rC_IPtXOBMqz2l6R6eQGLVzcZRVWoFxaVvLubQChU_67_ML_RIL2xJaMw0XrsV-EfFWJLVb5vroFf6-57Fbemn0y9Ypn-3xUO9xYnrEaUMdBJkxfeN78wZcKOl9Ddatf1qd8YGBElli9zPFXajF3kGWiHmLlkdbth4"/>
+</div>
+<div class="font-mono text-primary-container text-[10px] uppercase tracking-[0.2em] mb-4">Editorial / Tech Landscape</div>
+<h1 class="font-headline text-5xl font-bold text-white leading-tight mb-6 uppercase tracking-tighter">
+                Software Development <br/> in Nepal
+            </h1>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-sm">
+                Exploring the rapid evolution of the Himalayan tech hub and the architects building its future.
+            </p>
+</header>
+<!-- Article Body -->
+<article class="px-6 space-y-12">
+<section class="space-y-6">
+<p class="text-on-surface text-lg leading-relaxed font-light">
+                    Nepal's digital landscape is undergoing a silent revolution. From the narrow alleys of Kathmandu to the growing outsourcing hubs, the nation is carving out a niche as a high-value software engineering destination.
+                </p>
+<p class="text-on-surface text-lg leading-relaxed font-light">
+                    What was once a landscape dominated by basic web development has matured into a sophisticated ecosystem of AI startups, fintech giants, and global remote-first engineering teams.
+                </p>
+</section>
+<!-- Pull Quote -->
+<blockquote class="relative py-8 pl-8 my-16">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary-container"></div>
+<p class="font-headline text-2xl font-medium text-white italic leading-snug">
+                    "The geographic barrier is dissolving. Nepali developers are no longer just competitors on cost; they are competing on pure architectural excellence."
+                </p>
+</blockquote>
+<!-- Highlights Card -->
+<section class="bg-surface-container-lowest border-l-4 border-primary-container p-8 space-y-6 shadow-2xl">
+<h3 class="font-headline text-xl font-bold text-white uppercase tracking-wider">Common Technology Stacks</h3>
+<ul class="space-y-4 font-mono text-xs">
+<li class="flex items-start gap-3">
+<span class="text-primary-container">01</span>
+<div class="space-y-1">
+<span class="text-white block font-bold">MERN / T3 STACK</span>
+<span class="text-on-surface-variant">The gold standard for modern SaaS built in the region.</span>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="text-primary-container">02</span>
+<div class="space-y-1">
+<span class="text-white block font-bold">FLUTTER &amp; NATIVE MOBILE</span>
+<span class="text-on-surface-variant">Powering the local ride-sharing and payment revolution.</span>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="text-primary-container">03</span>
+<div class="space-y-1">
+<span class="text-white block font-bold">PYTHON &amp; DATA SCIENCE</span>
+<span class="text-on-surface-variant">Growing focus on high-level machine learning outsourcing.</span>
+</div>
+</li>
+</ul>
+</section>
+<!-- Trends Section -->
+<section class="space-y-8">
+<h2 class="font-headline text-3xl font-bold text-white uppercase tracking-tighter">Current Trends</h2>
+<div class="space-y-6">
+<!-- Trend Card 1 -->
+<div class="bg-surface-container-low p-6 transition-all active:scale-95">
+<span class="material-symbols-outlined text-primary-container mb-4" data-icon="language">language</span>
+<h4 class="font-headline text-lg font-bold text-white mb-2">Remote-First Culture</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                            A shift from office-bound agencies to independent consultants working for global tech giants directly.
+                        </p>
+</div>
+<!-- Trend Card 2 -->
+<div class="bg-surface-container-low p-6 transition-all active:scale-95">
+<span class="material-symbols-outlined text-primary-container mb-4" data-icon="account_balance">account_balance</span>
+<h4 class="font-headline text-lg font-bold text-white mb-2">Fintech Maturity</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                            Infrastructure for digital payments has hit critical mass, enabling a new wave of localized micro-services.
+                        </p>
+</div>
+<!-- Trend Card 3 -->
+<div class="bg-surface-container-low p-6 transition-all active:scale-95">
+<span class="material-symbols-outlined text-primary-container mb-4" data-icon="school">school</span>
+<h4 class="font-headline text-lg font-bold text-white mb-2">Bootcamp Evolution</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                            Specialized, project-based learning centers are replacing traditional academic delays.
+                        </p>
+</div>
+</div>
+</section>
+<section class="pb-12 border-b border-white/5">
+<p class="text-on-surface text-lg leading-relaxed font-light">
+                    As connectivity reaches every corner of the country, the next decade of software development in Nepal promises to be its most transformative yet. The monolith is rising.
+                </p>
+</section>
+</article>
+<!-- Footer / CTA -->
+<footer class="bg-surface-container-lowest py-20 px-6 mt-20">
+<div class="max-w-screen-2xl mx-auto space-y-12">
+<div class="space-y-4">
+<span class="font-headline text-lg font-bold text-white">THE NEON MONOLITH</span>
+<p class="text-on-surface-variant text-sm max-w-[250px]">
+                        Curating the future of digital craftsmanship and engineering.
+                    </p>
+</div>
+<div class="flex flex-col gap-4">
+<button class="w-full py-5 bg-primary-container text-on-primary font-headline font-bold uppercase tracking-widest text-sm flex justify-between px-6 items-center group">
+                        Contact Me
+                        <span class="material-symbols-outlined text-xl group-active:translate-x-2 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="w-full py-5 border border-white/10 text-white font-headline font-bold uppercase tracking-widest text-sm flex justify-between px-6 items-center">
+                        Articles
+                        <span class="material-symbols-outlined text-xl" data-icon="article">article</span>
+</button>
+<button class="w-full py-5 border border-white/10 text-white font-headline font-bold uppercase tracking-widest text-sm flex justify-between px-6 items-center">
+                        Portfolio
+                        <span class="material-symbols-outlined text-xl" data-icon="work">work</span>
+</button>
+</div>
+<div class="pt-12 flex flex-col gap-8">
+<div class="flex flex-wrap gap-x-8 gap-y-4 text-[10px] font-mono uppercase text-white/30">
+<a class="hover:text-primary-container transition-colors" href="#">Newsletter</a>
+<a class="hover:text-primary-container transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary-container transition-colors" href="#">Terms</a>
+</div>
+<p class="font-mono text-[10px] uppercase tracking-tighter text-white/30">
+                        © 2024 NEON MONOLITH. ALL RIGHTS RESERVED.
+                    </p>
+</div>
+</div>
+</footer>
+</main>
+<!-- SideNavBar (Mobile Drawer Placeholder) -->
+<div class="h-full w-80 fixed right-0 top-0 z-[60] bg-[#0E0E0E] shadow-2xl shadow-black/50 transform translate-x-full hidden transition-transform duration-300" id="mobile-drawer">
+<div class="flex flex-col p-12 space-y-8">
+<div class="flex flex-col space-y-2 mb-8">
+<span class="text-white font-black text-2xl font-headline">Navigation</span>
+<span class="text-white/40 text-xs font-mono uppercase tracking-widest">The Neon Monolith Editorial</span>
+</div>
+<nav class="flex flex-col">
+<a class="text-[#B2F722] flex items-center gap-4 py-4 font-headline uppercase text-xl" href="#">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+                    Portfolio
+                </a>
+<a class="text-white/40 flex items-center gap-4 py-4 font-headline uppercase text-xl" href="#">
+<span class="material-symbols-outlined" data-icon="article">article</span>
+                    Articles
+                </a>
+<a class="text-white/40 flex items-center gap-4 py-4 font-headline uppercase text-xl" href="#">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+                    Contact
+                </a>
+</nav>
+<button class="mt-auto py-4 bg-primary-container text-on-primary font-headline font-bold uppercase text-xs tracking-widest">
+                Subscribe to Newsletter
+            </button>
+</div>
+</div>
+</body></html>

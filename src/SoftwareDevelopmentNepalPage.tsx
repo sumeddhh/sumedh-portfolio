@@ -7,7 +7,6 @@ import {
   PersonStanding,
   Share2,
   ThumbsUp,
-  ArrowLeft,
 } from 'lucide-react';
 
 const stackCards = [

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Software Development in Nepal: Trends, Skills, and What Businesses Should Look For</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-low": "#1c1b1b",
+              "surface-dim": "#131313",
+              "on-tertiary": "#273500",
+              "on-error": "#690005",
+              "tertiary-container": "#bdf500",
+              "tertiary-fixed-dim": "#a6d700",
+              "on-surface-variant": "#c2caae",
+              "surface": "#131313",
+              "primary-fixed": "#b2f722",
+              "primary-container": "#b2f722",
+              "primary-fixed-dim": "#9ad900",
+              "on-primary-fixed": "#131f00",
+              "tertiary-fixed": "#bdf500",
+              "secondary-fixed-dim": "#c6c6c7",
+              "secondary": "#c6c6c7",
+              "inverse-primary": "#486800",
+              "tertiary": "#ffffff",
+              "inverse-on-surface": "#313030",
+              "outline-variant": "#424934",
+              "surface-bright": "#3a3939",
+              "on-secondary": "#2f3131",
+              "on-background": "#e5e2e1",
+              "on-secondary-container": "#b4b5b5",
+              "on-primary": "#233600",
+              "background": "#131313",
+              "surface-variant": "#353534",
+              "outline": "#8c947a",
+              "surface-container-highest": "#353534",
+              "surface-container-high": "#2a2a2a",
+              "on-secondary-fixed": "#1a1c1c",
+              "error": "#ffb4ab",
+              "on-error-container": "#ffdad6",
+              "surface-tint": "#9ad900",
+              "on-tertiary-fixed-variant": "#3a4d00",
+              "inverse-surface": "#e5e2e1",
+              "on-tertiary-fixed": "#151f00",
+              "surface-container": "#201f1f",
+              "on-tertiary-container": "#536d00",
+              "on-primary-fixed-variant": "#354e00",
+              "secondary-container": "#454747",
+              "secondary-fixed": "#e2e2e2",
+              "on-surface": "#e5e2e1",
+              "primary": "#ffffff",
+              "surface-container-lowest": "#0e0e0e",
+              "error-container": "#93000a",
+              "on-primary-container": "#4c6e00",
+              "on-secondary-fixed-variant": "#454747"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["IBM Plex Mono"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .noise-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+        }
+        .neon-glow {
+            box-shadow: 0 0 40px rgba(178, 247, 34, 0.15);
+        }
+        .text-neon { color: #b2f722; }
+        .bg-neon { background-color: #b2f722; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
+<!-- Global Noise Overlay -->
+<div class="fixed inset-0 noise-overlay z-[100]"></div>
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-8 py-6 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-bold tracking-tighter text-white font-headline">THE NEON MONOLITH</div>
+<div class="hidden md:flex items-center gap-10 font-headline uppercase tracking-widest text-sm">
+<a class="text-white/60 hover:text-white transition-colors" href="#">Portfolio</a>
+<a class="text-[#B2F722] font-bold border-b-2 border-[#B2F722] pb-1" href="#">Articles</a>
+<a class="text-white/60 hover:text-white transition-colors" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white cursor-pointer" data-icon="menu">menu</span>
+</div>
+</div>
+</nav>
+<main class="relative pt-32 pb-20">
+<!-- Hero Section -->
+<header class="max-w-screen-2xl mx-auto px-8 mb-32">
+<div class="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-16 bg-surface-container-lowest flex items-center justify-center">
+<div class="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_50%_50%,_#b2f722_0%,_transparent_60%)]"></div>
+<img alt="Abstract futuristic tech visualization with neon accents" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-30" data-alt="Abstract futuristic tech visualization with neon accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC9PXm68lr88ZTYn2iRNukhhWEcgHD8jZ5-R-itPkWk3-JEPD0Ww9KF4KqleKpd_hUw4hcs407YSQtuHV-Z0LtTATJJ11FVcDF91nn2Fcubkmt8yCrwVFJkV87DnaEEH6kilZYC1IrUK_6KnP7BvW95YSAURqPHIPtRUUCUGtCZ8z1mPhniY3bwGk3ctFGmUSwYglvTX5c5Ox72gsyOt610ZEso7OXP5Q7hUYBFgw7pqfxCQEVYTUJVUe0nLjVC1BlGXIp9EHOgCM"/>
+<div class="relative z-10 text-center px-4 max-w-4xl">
+<span class="font-label text-primary-container uppercase tracking-widest mb-6 block">Editorial Insight</span>
+<h1 class="text-5xl md:text-7xl font-headline font-bold text-white leading-none tracking-tighter mb-8">
+                        Software Development in Nepal: Trends, Skills, and What Businesses Should Look For
+                    </h1>
+<p class="text-xl md:text-2xl text-on-surface-variant font-light mb-10 max-w-2xl mx-auto">
+                        The evolving landscape of the tech ecosystem in Nepal
+                    </p>
+<div class="flex items-center justify-center gap-8 font-label text-xs uppercase tracking-tighter text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="person">person</span>
+<span>Sumedh Bajracharya</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>12 Min Read</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
+<span>October 24, 2024</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Article Content Shell -->
+<div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-12 gap-12 relative">
+<!-- Sidebar Table of Contents -->
+<aside class="col-span-3 hidden lg:block sticky top-40 h-fit">
+<div class="space-y-6">
+<div class="text-white font-headline font-bold uppercase tracking-widest text-xs mb-8">Contents</div>
+<nav class="flex flex-col space-y-4 font-label text-xs uppercase">
+<a class="text-primary-container flex items-center gap-3 group transition-all duration-300" href="#overview">
+<span class="w-8 h-[1px] bg-primary-container"></span>
+<span>I. Overview of Ecosystem</span>
+</a>
+<a class="text-on-surface-variant hover:text-white flex items-center gap-3 group transition-all duration-300" href="#stacks">
+<span class="w-4 h-[1px] bg-outline-variant group-hover:w-8 group-hover:bg-white transition-all"></span>
+<span>II. Technology Stacks</span>
+</a>
+<a class="text-on-surface-variant hover:text-white flex items-center gap-3 group transition-all duration-300" href="#hiring">
+<span class="w-4 h-[1px] bg-outline-variant group-hover:w-8 group-hover:bg-white transition-all"></span>
+<span>III. The Hiring Blueprint</span>
+</a>
+<a class="text-on-surface-variant hover:text-white flex items-center gap-3 group transition-all duration-300" href="#trends">
+<span class="w-4 h-[1px] bg-outline-variant group-hover:w-8 group-hover:bg-white transition-all"></span>
+<span>IV. SaaS &amp; AI Trends</span>
+</a>
+</nav>
+<div class="mt-20 pt-10 border-t border-outline-variant/20">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest leading-relaxed">
+                            A deep-dive analysis into the burgeoning engineering culture of Kathmandu and beyond.
+                        </p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<article class="col-span-12 lg:col-span-7 space-y-16">
+<section class="space-y-8" id="overview">
+<h2 class="text-4xl font-headline font-bold text-white tracking-tight">I. Overview of Development in Nepal</h2>
+<div class="space-y-6 text-on-surface-variant text-lg leading-[1.8] font-body">
+<p>
+                            Nepal's software development sector has moved far beyond simple outsourcing. It is maturing into a specialized hub of creative engineering. Over the last decade, the landscape has shifted from basic web maintenance to high-scale cloud architecture and complex fintech solutions. 
+                        </p>
+<p>
+                            The ecosystem is fueled by a young, tech-savvy demographic that is increasingly looking toward global standards. With the rise of domestic tech giants and a thriving freelance community, Kathmandu has become the "Silicon Valley of the Himalayas," balancing competitive costs with high-quality output.
+                        </p>
+</div>
+<!-- Pull Quote -->
+<blockquote class="relative py-12 px-10 my-16 bg-surface-container-low/50 border-l-4 border-primary-container">
+<p class="text-3xl md:text-4xl font-headline font-medium text-white italic leading-tight">
+                            "Nepal isn't just catching up to the global tech race; it's defining a unique hybrid of engineering resilience and cultural agility."
+                        </p>
+</blockquote>
+</section>
+<section class="space-y-8 pt-12" id="stacks">
+<h2 class="text-4xl font-headline font-bold text-white tracking-tight">II. Modern Technology Stacks</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="p-8 bg-surface-container-low rounded-lg transition-all hover:translate-y-[-4px] duration-300">
+<span class="font-label text-primary-container text-[10px] uppercase mb-4 block tracking-[0.2em]">Front-End dominance</span>
+<h3 class="text-xl font-headline font-bold text-white mb-4">React &amp; Next.js</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">The preferred choice for building high-performance, SEO-friendly web applications in the local market.</p>
+</div>
+<div class="p-8 bg-surface-container-low rounded-lg transition-all hover:translate-y-[-4px] duration-300">
+<span class="font-label text-primary-container text-[10px] uppercase mb-4 block tracking-[0.2em]">Robust Back-End</span>
+<h3 class="text-xl font-headline font-bold text-white mb-4">Node.js &amp; Go</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Used for scalable microservices and real-time data processing for global fintech clients.</p>
+</div>
+<div class="p-8 bg-surface-container-low rounded-lg transition-all hover:translate-y-[-4px] duration-300">
+<span class="font-label text-primary-container text-[10px] uppercase mb-4 block tracking-[0.2em]">Mobile Excellence</span>
+<h3 class="text-xl font-headline font-bold text-white mb-4">Flutter &amp; React Native</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Cross-platform development remains the gold standard for startups looking for rapid market entry.</p>
+</div>
+<div class="p-8 bg-surface-container-low rounded-lg transition-all hover:translate-y-[-4px] duration-300">
+<span class="font-label text-primary-container text-[10px] uppercase mb-4 block tracking-[0.2em]">Data &amp; Cloud</span>
+<h3 class="text-xl font-headline font-bold text-white mb-4">AWS &amp; PostgreSQL</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Infrastructure as code and robust relational databases form the backbone of modern Nepali tech stacks.</p>
+</div>
+</div>
+</section>
+<section class="space-y-8 pt-12" id="hiring">
+<h2 class="text-4xl font-headline font-bold text-white tracking-tight">III. What Businesses Should Look For</h2>
+<div class="space-y-6 text-on-surface-variant text-lg leading-[1.8] font-body">
+<p>When scouting for talent in the Nepali market, technical prowess is only the baseline. Businesses must look for the "Product Mindset." A developer who understands why a feature exists is tenfold more valuable than one who only knows how to code it.</p>
+<ul class="space-y-8 mt-10">
+<li class="flex gap-6">
+<span class="text-primary-container font-headline font-bold text-3xl">01</span>
+<div>
+<h4 class="text-white font-bold text-xl mb-2">Architectural Thinking</h4>
+<p class="text-sm">Can the developer justify their choice of database or framework? Look for patterns over syntax.</p>
+</div>
+</li>
+<li class="flex gap-6">
+<span class="text-primary-container font-headline font-bold text-3xl">02</span>
+<div>
+<h4 class="text-white font-bold text-xl mb-2">Communication &amp; Ownership</h4>
+<p class="text-sm">Remote work demands high-fidelity communication. Seek proactive thinkers who don't wait for permission to solve problems.</p>
+</div>
+</li>
+<li class="flex gap-6">
+<span class="text-primary-container font-headline font-bold text-3xl">03</span>
+<div>
+<h4 class="text-white font-bold text-xl mb-2">Adaptability (The T-Shaped Skillset)</h4>
+<p class="text-sm">In a fast-moving market, the ability to jump from a React component to a Docker container is critical.</p>
+</div>
+</li>
+</ul>
+</div>
+</section>
+<section class="space-y-8 pt-12" id="trends">
+<h2 class="text-4xl font-headline font-bold text-white tracking-tight">IV. Trends in SaaS and AI</h2>
+<div class="p-12 bg-surface-container-lowest rounded-xl border border-outline-variant/10 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-container/5 blur-[100px]"></div>
+<div class="relative z-10 space-y-6">
+<p class="text-on-surface-variant text-lg italic leading-relaxed">
+                                "The integration of Generative AI is no longer a luxury in Kathmandu's dev shops—it's the primary workflow. From AI-assisted pair programming to building custom LLM wrappers for international clients, Nepali firms are positioning themselves at the bleeding edge."
+                            </p>
+<div class="pt-6 grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high p-4 rounded">
+<h5 class="text-primary-container font-label text-[10px] uppercase tracking-widest mb-2">Trend Alpha</h5>
+<p class="text-white font-bold">AI-Driven Automation</p>
+</div>
+<div class="bg-surface-container-high p-4 rounded">
+<h5 class="text-primary-container font-label text-[10px] uppercase tracking-widest mb-2">Trend Beta</h5>
+<p class="text-white font-bold">Niche SaaS Verticals</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</article>
+<!-- Right Spacer / Interaction -->
+<aside class="col-span-2 hidden lg:block">
+<div class="sticky top-40 flex flex-col items-center gap-12">
+<div class="flex flex-col items-center gap-6">
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="thumb_up">thumb_up</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+<!-- Related Articles -->
+<section class="max-w-screen-2xl mx-auto px-8 mt-32 border-t border-outline-variant/10 pt-20">
+<h3 class="text-xs font-label uppercase tracking-[0.3em] text-on-surface-variant mb-12">More from The Monolith</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="group cursor-pointer">
+<div class="aspect-[16/10] bg-surface-container-low rounded-lg mb-6 overflow-hidden">
+<img alt="Fintech landscape" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" data-alt="Digital representation of modern fintech landscape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-XTnWOmXTbM-IMXhOQItLtiv-TbCg9vtmEq1KjMqQ1zMdyp8dIZUS-KDOlDm6-cUn7W33Pl-Gp1dsYvxUIn1vpXYRa7ZouvPqkxkWKmWfJsr1bgwQusPrEfK3M7Wjt_EhCwumB3P-452O-fZhowyXXbXfu6Iejs5MHbu-FyqzemOh2lk3yV0iXeTn72HQFwn-UKWzqybCO0d1HNhx3AD0ZT9wpSakt1rlYlSBjwlaD1SZHgZ-FhQnNgRBrTnOsiPeH7IWAHPYhRs"/>
+</div>
+<h4 class="text-xl font-headline font-bold text-white group-hover:text-primary-container transition-colors">The Future of Digital Payments in Southeast Asia</h4>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[16/10] bg-surface-container-low rounded-lg mb-6 overflow-hidden">
+<img alt="Cloud infrastructure" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" data-alt="Abstract glowing network representing cloud infrastructure" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW_Ar0UP9AJTPwly8scpH3nB35pLb4st2scjtH8SH7DnO9k9vQ0HTvRa74ivDuSfJf-4XdnbUrPCGvIG4a4oYGmTGnucVJTAaVjpZv0_1aKMK098b-voZZIMmvPl5KfB5xO7QbYIa33xyHNFUoC6JIGxXHKMryymkNinsT8VXSHXpDNvv585LjjLE2cCEiaXh22kc15x6gpEHAQEd2qqjl9k7x0nPlXBUydi_YAVlAiwgevArPT1whdNhizN35mkWzv9NuLO1DGkc"/>
+</div>
+<h4 class="text-xl font-headline font-bold text-white group-hover:text-primary-container transition-colors">Mastering Cloud-Native Architectures</h4>
+</div>
+<div class="group cursor-pointer">
+<div class="aspect-[16/10] bg-surface-container-low rounded-lg mb-6 overflow-hidden">
+<img alt="Code on screen" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" data-alt="Lines of programming code on a monitor screen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ3QYZGXa25DExCVIyXtriAcFHlh-yBlrJZg5YDKkoppLL-LYJuEopQck8I1Opkrns1N_CCcCkNnmmRRMn2NuaCbvzmEV1iYgUE-7RMdCoeBoJ8G3jG1k2GYuEyZFr7fA-pwxT4PxPTnBWLOmuB-g7Dk5qgkGwe7h_Uc6JClelZwQLDZDgvflSAIUcWX52dcIHLxL64ZrmHYjRFr3GM4D_8aGl_BcZamVKaApn18gjb-nFHcFp6wgoIX9zx3GaHLlTir4gRmTAnUo"/>
+</div>
+<h4 class="text-xl font-headline font-bold text-white group-hover:text-primary-container transition-colors">Clean Code: Engineering Beyond the Syntax</h4>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="max-w-4xl mx-auto px-8 mt-40 text-center">
+<h2 class="text-6xl md:text-8xl font-headline font-black text-white leading-none tracking-tighter mb-12">
+                LET'S BUILD <span class="text-neon">SOMETHING PRECISE.</span>
+</h2>
+<div class="flex flex-col md:flex-row items-center justify-center gap-6 font-headline uppercase tracking-widest text-sm">
+<a class="px-12 py-5 bg-primary-container text-on-primary font-bold rounded-sm transition-transform active:scale-95 duration-300" href="#">
+                    Contact Me
+                </a>
+<a class="px-12 py-5 border border-white/20 text-white font-bold rounded-sm hover:bg-white/5 transition-colors" href="#">
+                    View Portfolio
+                </a>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest py-20 px-8 mt-20 border-t border-outline-variant/10">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 max-w-screen-2xl mx-auto">
+<div class="col-span-1 md:col-span-2 space-y-8">
+<div class="text-2xl font-bold text-white font-headline">NEON MONOLITH</div>
+<p class="text-on-surface-variant font-body text-sm max-w-sm leading-relaxed">
+                    A digital destination for elite engineering practices, modern design philosophy, and the future of technology in South Asia.
+                </p>
+<div class="flex gap-6 text-on-surface-variant">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-container" data-icon="language">language</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-container" data-icon="alternate_email">alternate_email</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-container" data-icon="terminal">terminal</span>
+</div>
+</div>
+<div class="space-y-6">
+<h5 class="text-white font-headline font-bold text-xs uppercase tracking-widest">Navigation</h5>
+<nav class="flex flex-col space-y-4 font-label text-xs uppercase text-white/30">
+<a class="hover:text-white transition-colors" href="#">Portfolio</a>
+<a class="hover:text-white transition-colors" href="#">Articles</a>
+<a class="hover:text-white transition-colors" href="#">Contact</a>
+<a class="hover:text-white transition-colors" href="#">Newsletter</a>
+</nav>
+</div>
+<div class="space-y-6">
+<h5 class="text-white font-headline font-bold text-xs uppercase tracking-widest">Legal</h5>
+<nav class="flex flex-col space-y-4 font-label text-xs uppercase text-white/30">
+<a class="hover:text-white transition-colors" href="#">Privacy</a>
+<a class="hover:text-white transition-colors" href="#">Terms</a>
+<a class="hover:text-white transition-colors" href="#">Cookies</a>
+</nav>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-8 mt-20 pt-10 border-t border-outline-variant/10 flex justify-between items-center">
+<p class="text-[10px] font-label text-white/20 uppercase tracking-widest">© 2024 NEON MONOLITH. ALL RIGHTS RESERVED.</p>
+<div class="flex items-center gap-4 text-primary-container">
+<span class="text-[10px] font-label uppercase tracking-widest">Himalayan Engineering</span>
+<span class="material-symbols-outlined text-sm" data-icon="mountains">mountain_flag</span>
+</div>
+</div>
+</footer>
+</body></html>
