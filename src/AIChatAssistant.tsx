@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Send, X, User, Minimize2, Maximize2, Volume2, VolumeX } from 'lucide-react';
+import { Bot, Send, X, User, Minimize2, Maximize2 } from 'lucide-react';
 import GlassSurface from './GlassSurface';
 
 const MODELS = [
@@ -37,6 +37,12 @@ async function requestAssistantReply(input: string, messages: Message[], model: 
     return data.reply || '';
 }
 
+const isReload = () => {
+    if (typeof performance === 'undefined') return false;
+    const navs = performance.getEntriesByType('navigation');
+    return navs.length > 0 && (navs[0] as PerformanceNavigationTiming).type === 'reload';
+};
+
 export function AIChatAssistant({
     isOpen,
     setIsOpen
@@ -44,32 +50,35 @@ export function AIChatAssistant({
     isOpen: boolean;
     setIsOpen: (open: boolean) => void
 }) {
-    const [isMinimized, setIsMinimized] = useState(false);
+    const [isMinimized, setIsMinimized] = useState(() => {
+        if (isReload()) {
+            sessionStorage.removeItem('sumedh_chat_minimized');
+            return false;
+        }
+        return sessionStorage.getItem('sumedh_chat_minimized') === 'true';
+    });
     const [modelIndex, setModelIndex] = useState(0);
-    const [messages, setMessages] = useState<Message[]>([
-        { role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }
-    ]);
+    const [messages, setMessages] = useState<Message[]>(() => {
+        if (isReload()) {
+            sessionStorage.removeItem('sumedh_chat_messages');
+            return [{ role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }];
+        }
+        const saved = sessionStorage.getItem('sumedh_chat_messages');
+        return saved ? JSON.parse(saved) : [{ role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }];
+    });
+
+    useEffect(() => {
+        sessionStorage.setItem('sumedh_chat_minimized', String(isMinimized));
+    }, [isMinimized]);
+
+    useEffect(() => {
+        sessionStorage.setItem('sumedh_chat_messages', JSON.stringify(messages));
+    }, [messages]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    const [isAutoPlay, setIsAutoPlay] = useState(false);
-
-    const speak = (text: string) => {
-        if (!window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (window.speechSynthesis) window.speechSynthesis.cancel();
-        };
-    }, []);
     const [loadingText, setLoadingText] = useState("Thinking...");
 
     useEffect(() => {
@@ -92,6 +101,50 @@ export function AIChatAssistant({
     const handleSend = async () => {
         if (!input.trim() || isLoading || isTyping) return;
         const userInput = input.trim();
+
+        const rejectInput = (reason: string) => {
+            setMessages(prev => [
+                ...prev,
+                { role: 'user', content: userInput },
+                { role: 'assistant', content: !!reason ? reason : "Input blocked by security protocols." }
+            ]);
+            setInput('');
+        };
+
+        // 1. Length Guardrail (Max 500 chars)
+        if (userInput.length > 500) {
+            return rejectInput("I'm built for concise queries. Please keep your input under 500 characters.");
+        }
+
+        // 2. Jailbreak / DAN Guardrails
+        const jailbreakPatterns = [
+            /ignore (all )?previous (instructions|prompts)/i,
+            /forget (all )?previous/i,
+            /system prompt/i,
+            /do anything now/i,
+            /\bdan\b/i,
+            /developer mode/i,
+            /jailbreak/i,
+            /override (your )?instructions/i
+        ];
+        if (jailbreakPatterns.some(pattern => pattern.test(userInput))) {
+            return rejectInput("I am configured strictly as Sumedh's professional assistant. I cannot override my core instructions, bypass filters, or adopt alternative personas.");
+        }
+
+        // 3. SQLi / XSS Sanitization Guardrails
+        const sqliXssPatterns = [
+            /<script/i,
+            /javascript:/i,
+            /drop\s+table/i,
+            /select\s+.*\s+from/i,
+            /delete\s+from/i,
+            /insert\s+into/i,
+            /union\s+select/i,
+            /1\s*=\s*1/i
+        ];
+        if (sqliXssPatterns.some(pattern => pattern.test(userInput))) {
+            return rejectInput("Input rejected. Security guardrails detected potential unauthorized code, scripting, or query injection patterns.");
+        }
 
         // Obfuscated Rate Limiting: 15/hr, 60/daily
         const STORAGE_KEY = '_sys_tokens_ref';
@@ -177,10 +230,6 @@ export function AIChatAssistant({
                 });
                 await typeDelay(8 + Math.random() * 10);
             }
-
-            if (isAutoPlay && typedResponse) {
-                speak(typedResponse);
-            }
         } catch (error) {
             console.error('Assistant request error:', error);
             setMessages(prev => [...prev, { role: 'assistant', content: "Brain fried. Try later or email Sumedh." }]);
@@ -247,16 +296,6 @@ export function AIChatAssistant({
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <button
-                                            onClick={() => {
-                                                if (isAutoPlay) window.speechSynthesis.cancel();
-                                                setIsAutoPlay(!isAutoPlay);
-                                            }}
-                                            className={`p-2 rounded-full transition-all duration-300 ${isAutoPlay ? 'bg-[#B9FF2C] text-black shadow-[0_0_10px_#B9FF2C]' : 'hover:bg-white/10 text-white/40'}`}
-                                            title={isAutoPlay ? "Voice: ON" : "Voice: OFF"}
-                                        >
-                                            {isAutoPlay ? <Volume2 size={16} /> : <VolumeX size={16} />}
-                                        </button>
-                                        <button
                                             onClick={() => setIsMinimized(!isMinimized)}
                                             className="p-2 hover:bg-white/10 rounded-full text-white/60 transition-colors"
                                             title={isMinimized ? "Maximize" : "Minimize"}
@@ -293,7 +332,13 @@ export function AIChatAssistant({
                                                             {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
                                                         </div>
                                                         <div className={`p-3.5 rounded-2xl text-[13.5px] leading-[1.6] shadow-sm ${msg.role === 'user' ? 'bg-[#B9FF2C]/10 text-white border border-[#B9FF2C]/20 rounded-tr-none' : 'bg-white/5 text-white/90 rounded-tl-none border border-white/10'}`}>
-                                                            {msg.content}
+                                                            {msg.content.split(/(\[.*?\]\(.*?\))/g).map((part, idx) => {
+                                                                const match = part.match(/\[(.*?)\]\((.*?)\)/);
+                                                                if (match) {
+                                                                    return <a key={idx} href={match[2]} className="text-[#B9FF2C] font-semibold underline underline-offset-2 hover:text-white transition-colors">{match[1]}</a>;
+                                                                }
+                                                                return <span key={idx}>{part}</span>;
+                                                            })}
                                                         </div>
                                                     </div>
                                                 </motion.div>

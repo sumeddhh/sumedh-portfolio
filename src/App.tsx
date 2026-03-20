@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import Lenis from 'lenis';
-import { ArrowUpRight, Eye, Linkedin, Mail, Menu, X, Bot } from 'lucide-react';
+import { ArrowUpRight, Eye, Linkedin, Mail, X } from 'lucide-react';
 import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 
@@ -13,9 +13,6 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 const Hyperspeed = lazy(() => import('./Hyperspeed'));
 const DotGrid = lazy(() => import('./DotGrid'));
 const CapabilitiesLogoLoop = lazy(() => import('./CapabilitiesLogoLoop'));
-const AIChatAssistant = lazy(() =>
-  import('./AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
-);
 
 const shouldSkipHeavyAnimations = () =>
   window.innerWidth <= 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -29,11 +26,7 @@ declare global {
 
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [showResume, setShowResume] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [shouldLoadChat, setShouldLoadChat] = useState(false);
 
   // Section refs for reliable navigation
   const sectionRefs = useRef({
@@ -161,17 +154,6 @@ function App() {
       delete window.lenis;
     };
   }, []);
-  // Menu toggle
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-
-  useEffect(() => {
-    if (menuOpen) {
-      gsap.fromTo(menuRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.3 }
-      );
-    }
-  }, [menuOpen]);
 
   const handleViewResume = () => {
     setShowResume(true);
@@ -182,25 +164,6 @@ function App() {
       {/* Grain Overlay */}
       <div className="grain-overlay" />
 
-      {/* Persistent Header */}
-      <Header
-        menuOpen={menuOpen}
-        toggleMenu={toggleMenu}
-        onOpenChat={() => {
-          setShouldLoadChat(true);
-          setIsChatOpen(true);
-        }}
-      />
-
-      {/* AI Chat Assistant */}
-      {shouldLoadChat && (
-        <Suspense fallback={null}>
-          <AIChatAssistant isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
-        </Suspense>
-      )}
-
-      {/* Full Screen Menu */}
-      {menuOpen && <FullScreenMenu menuRef={menuRef} closeMenu={() => setMenuOpen(false)} />}
 
       {/* Main Content */}
       <main className="relative">
@@ -271,118 +234,6 @@ function ProgressIndicator() {
   );
 }
 
-// Header Component
-function Header({ menuOpen, toggleMenu, onOpenChat }: { menuOpen: boolean; toggleMenu: () => void; onOpenChat: () => void }) {
-  return (
-    <header className="fixed top-0 left-0 right-0 z-[1000] px-6 py-5 flex justify-between items-center">
-      <a href="#hero" className="flex items-center">
-        <img src="/favicon.svg" alt="SB Logo" className="w-8 h-8 rounded-sm" />
-      </a>
-      <div className="flex items-center gap-3">
-        <a
-          href="/software-development-nepal"
-          className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
-        >
-          <span className="font-mono text-[10px] uppercase tracking-widest">Articles</span>
-        </a>
-        <button
-          onClick={onOpenChat}
-          aria-label="Open AI chat assistant"
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors group"
-        >
-          <Bot size={16} className="text-[#B9FF2C] group-hover:scale-110 transition-transform" />
-          <span className="hidden md:inline font-mono text-[10px] uppercase tracking-widest">Talk to AI</span>
-        </button>
-        <button
-          onClick={toggleMenu}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/5 transition-colors"
-        >
-          {menuOpen ? <X size={16} /> : <Menu size={16} />}
-          <span className="font-mono text-xs uppercase tracking-widest">Menu</span>
-        </button>
-      </div>
-    </header>
-  );
-}
-
-// Full Screen Menu
-function FullScreenMenu({
-  menuRef,
-  closeMenu
-}: {
-  menuRef: React.RefObject<HTMLDivElement | null>;
-  closeMenu: () => void;
-}) {
-  const menuItems = [
-    { label: 'Home', section: 'hero' as const },
-    { label: 'Work', section: 'work' as const },
-    { label: 'Articles', section: 'articles' as const },
-    { label: 'Capabilities', section: 'capabilities' as const },
-    { label: 'Experience', section: 'experience' as const },
-    { label: 'Contact', section: 'contact' as const },
-  ];
-
-  const socialLinks = [
-    { label: 'LinkedIn', href: 'https://np.linkedin.com/in/sumedh-bajracharya' },
-    { label: 'Email', href: 'mailto:sumedhbajracharya07@gmail.com' },
-  ];
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, section: string) => {
-    if (section === 'articles') {
-      return;
-    }
-
-    closeMenu();
-
-    // Special case for home - scroll to top
-    if (section === 'hero') {
-      e.preventDefault();
-      setTimeout(() => {
-        window.scrollTo({ top: 500, behavior: 'smooth' });
-      }, 300);
-    }
-    // For other sections, let the browser handle anchor navigation naturally
-  };
-
-  return (
-    <div
-      ref={menuRef}
-      className="fixed inset-0 z-[999] bg-[#050505]/60 backdrop-blur-xl flex items-center justify-center"
-    >
-      <div className="text-center">
-        <nav className="mb-16">
-          <ul className="space-y-6">
-            {menuItems.map((item) => (
-              <li key={item.label}>
-                <a
-                  href={item.section === 'articles' ? '/software-development-nepal' : `#${item.section}`}
-                  onClick={(e) => handleNavClick(e, item.section)}
-                  className="font-display text-5xl md:text-7xl font-semibold text-white hover:text-[#B9FF2C] transition-colors"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <div className="flex justify-center gap-8">
-          {socialLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-sm uppercase tracking-widest text-white/60 hover:text-[#B9FF2C] transition-colors link-underline"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 // Subtle Ghost Text Component
 function GhostText() {
   return (
@@ -464,8 +315,8 @@ function HeroSection() {
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=80%',
-          pin: window.innerWidth > 768,
+          end: 'bottom top',
+          pin: false,
           scrub: 1.2,
           onLeaveBack: () => {
             gsap.set([windowEl, headline.children, cta.children], { clearProps: 'all' });
@@ -580,10 +431,9 @@ function SelectedWorkSection() {
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: 'top top',
-          end: '+=80%',
-          pin: window.innerWidth > 768,
-
+          start: 'top 80%',
+          end: 'bottom 20%',
+          pin: false,
           scrub: 1.2,
         }
       });
@@ -720,10 +570,9 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: 'top top',
-          end: '+=80%',
-          pin: window.innerWidth > 768,
-
+          start: 'top 80%',
+          end: 'bottom 20%',
+          pin: false,
           scrub: 1.2,
         }
       });
@@ -1161,7 +1010,7 @@ function ContactSection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative bg-[#050505] h-screen z-[90] overflow-hidden flex items-center justify-center"
+      className="relative bg-[#050505] min-h-screen z-[90] flex items-center justify-center"
     >
       <div className="absolute inset-0 z-0 opacity-[0.7]">
         {shouldLoadHyperspeed ? (

@@ -7,6 +7,7 @@ import {
   PersonStanding,
   Share2,
   ThumbsUp,
+  ArrowLeft,
 } from 'lucide-react';
 
 const stackCards = [
@@ -95,30 +96,6 @@ export default function SoftwareDevelopmentNepalPage() {
         }}
       />
 
-      <nav className="sticky top-0 z-40 border-b border-white/10 bg-[#0c0c0c]/85 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-[1500px] items-center justify-between px-6 py-5 md:px-8">
-          <a href="/" className="flex items-center gap-2">
-            <img src="/favicon.svg" alt="SB Logo" className="h-8 w-8 rounded-sm" />
-          </a>
-          <div className="flex items-center gap-3">
-            <a
-              href="/"
-              className="hidden md:flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
-            >
-              <span className="font-mono text-[10px] uppercase tracking-widest">Portfolio</span>
-            </a>
-            <span className="flex items-center gap-2 rounded-full border border-[#b2f722]/60 bg-[#b2f722]/10 px-4 py-2 text-sm font-medium text-[#b2f722]">
-              <span className="font-mono text-[10px] uppercase tracking-widest">Articles</span>
-            </span>
-            <a
-              href="/#contact"
-              className="flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
-            >
-              <span className="font-mono text-[10px] uppercase tracking-widest">Contact</span>
-            </a>
-          </div>
-        </div>
-      </nav>
 
       <main className="relative z-10 pb-20 pt-10 md:pt-14">
         <header className="mx-auto mb-20 w-full max-w-[1500px] px-6 md:px-8">
