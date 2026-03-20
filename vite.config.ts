@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
   process.env.TAVILY_API_KEY ??= env.TAVILY_API_KEY ?? env.VITE_TAVILY_KEY
 
   return {
-    base: './',
+    base: '/',
     plugins: [netlifyFunctionsDevMiddleware(), inspectAttr(), react()],
     resolve: {
       alias: {
