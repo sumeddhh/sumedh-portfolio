@@ -15,8 +15,20 @@ interface BlogPost {
 
 export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
   const [activeHeading, setActiveHeading] = useState('');
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = height > 0 ? (scrollY / height) * 100 : 0;
+      setScrollProgress(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -109,17 +121,24 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0c0c0c] text-white">
-      {/* Grain Overlay */}
-      <div 
-        aria-hidden="true" 
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
-      />
+    <>
+      <div className="fixed top-0 left-0 w-full h-[3px] bg-white/5 z-[9999]">
+        <div 
+          className="h-full bg-[#B9FF2C] transition-all duration-150 ease-out leading-none"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      <div className="min-h-screen bg-[#0c0c0c] text-white">
+        {/* Grain Overlay */}
+        <div 
+          aria-hidden="true" 
+          className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
+        />
 
-      <main className="relative z-10 pb-20 pt-10 md:pt-14">
-        {/* Header Section - Identical to Static Blog */}
-        <header className="mx-auto mb-20 w-full max-w-[1500px] px-6 md:px-8">
+        <main className="relative z-10 pb-20 pt-10 md:pt-14">
+          {/* Header Section - Identical to Static Blog */}
+          <header className="mx-auto mb-20 w-full max-w-[1500px] px-6 md:px-8">
           <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#111111] px-6 py-14 text-center md:px-10 md:py-20">
             {post.image && (
               <div 
@@ -233,5 +252,6 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
         </div>
       )}
     </div>
+    </>
   );
 }

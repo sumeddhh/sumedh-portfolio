@@ -54,6 +54,18 @@ export default function SoftwareDevelopmentNepalPage() {
   const [liked, setLiked] = useState(false);
   const [likePop, setLikePop] = useState(false);
   const [toast, setToast] = useState('');
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = height > 0 ? (scrollY / height) * 100 : 0;
+      setScrollProgress(progress);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -85,7 +97,14 @@ export default function SoftwareDevelopmentNepalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0c0c0c] text-white">
+    <>
+      <div className="fixed top-0 left-0 w-full h-[3px] bg-white/5 z-[9999]">
+        <div 
+          className="h-full bg-[#B9FF2C] transition-all duration-150 ease-out leading-none"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      <div className="min-h-screen bg-[#0c0c0c] text-white">
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
@@ -316,5 +335,6 @@ export default function SoftwareDevelopmentNepalPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

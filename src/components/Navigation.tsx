@@ -1,6 +1,7 @@
 import React, { useState, Suspense, lazy, useRef, useEffect } from 'react';
 import { Menu, X, Bot } from 'lucide-react';
 import { gsap } from 'gsap';
+import Preloader from './Preloader';
 
 const AIChatAssistant = lazy(() =>
   import('../AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
@@ -197,6 +198,7 @@ export function NavigationShell({ children, isBlogPage }: { children: React.Reac
 
   return (
     <div className="relative bg-[#050505] min-h-screen">
+      <Preloader />
       {/* Global Grain Overlay */}
       <div className="grain-overlay pointer-events-none" />
 
