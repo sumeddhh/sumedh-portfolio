@@ -3,8 +3,11 @@ import { CalendarDays, Clock3, ArrowRight, Plus, Terminal, X, Lock, Trash2, Edit
 import { BLOG_POSTS, type BlogPost as BlogPostStatic } from './lib/blog-data';
 import { supabase } from './lib/supabase';
 import { slugify, type BlogPost } from './lib/blog-utils';
+import Preloader from './components/Preloader';
 
 export default function BlogListPage() {
+  const [loading, setLoading] = useState(true);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const [devMode, setDevMode] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -42,6 +45,7 @@ export default function BlogListPage() {
   const [allPosts, setAllPosts] = useState<(BlogPostStatic | BlogPost)[]>([]);
 
   const fetchPosts = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from('blogs')
       .select('*')
@@ -52,6 +56,7 @@ export default function BlogListPage() {
     } else {
       setAllPosts(BLOG_POSTS);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -157,6 +162,18 @@ export default function BlogListPage() {
     setContent('');
     setCategory('Engineering');
   };
+
+  if (loading || !animationComplete) {
+    return (
+      <Preloader 
+        line1="LINKING_TO_DATABASE..."
+        line2="FETCHING_GRID_RESOURCES"
+        line3="PARSING_ARTICLE_METADATA"
+        bypassSessionStorage={true}
+        onComplete={() => setAnimationComplete(true)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-x-clip">

@@ -6,33 +6,43 @@ const decryptText = (targetText: string, progress: number) => {
   return targetText.split('').map((char, index) => {
     if (char === ' ') return ' ';
     const charProgress = (index / targetText.length);
-    // Add a bit of randomness to how fast each character resolves
     if (progress > charProgress + 0.1) return char;
     return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
   }).join('');
 };
 
-export default function Preloader() {
+interface PreloaderProps {
+  line1?: string;
+  line2?: string;
+  line3?: string;
+  onComplete?: () => void;
+  bypassSessionStorage?: boolean;
+}
+
+export default function Preloader({ 
+  line1 = "SYS_BOOT::PORTFOLIO_ENGINE_V2", 
+  line2 = "INITIALIZING CORE MODULES...", 
+  line3 = "SUMEDH BAJRACHARYA // SOFTWARE COMPONENT",
+  onComplete,
+  bypassSessionStorage = false
+}: PreloaderProps) {
   const [loading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [progress, setProgress] = useState(0);
-  
-  const line1 = "SYS_BOOT::PORTFOLIO_ENGINE_V2";
-  const line2 = "INITIALIZING CORE MODULES...";
-  const line3 = "SUMEDH BAJRACHARYA // SOFTWARE COMPONENT";
   
   const [text1, setText1] = useState('');
   const [text2, setText2] = useState('');
   const [text3, setText3] = useState('');
 
   useEffect(() => {
-    if (sessionStorage.getItem('sumedh_preloader_done')) {
+    if (!bypassSessionStorage && sessionStorage.getItem('sumedh_preloader_done')) {
       setLoading(false);
+      if (onComplete) onComplete();
       return;
     }
 
     let start = Date.now();
-    const duration = 1600; // 1.6s of decryption
+    const duration = 1600;
 
     const animate = () => {
       const now = Date.now();
@@ -50,14 +60,15 @@ export default function Preloader() {
           setFadeOut(true);
           setTimeout(() => {
             setLoading(false);
-            sessionStorage.setItem('sumedh_preloader_done', 'true');
-          }, 500); // 500ms fade transition
-        }, 300); // hold decrypted text briefly
+            if (!bypassSessionStorage) sessionStorage.setItem('sumedh_preloader_done', 'true');
+            if (onComplete) onComplete();
+          }, 500); 
+        }, 300); 
       }
     };
     
     requestAnimationFrame(animate);
-  }, []);
+  }, [line1, line2, line3, onComplete, bypassSessionStorage]);
 
   if (!loading) return null;
 

@@ -1,7 +1,7 @@
-
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import DynamicBlogRenderer from './DynamicBlogRenderer';
+import Preloader from './components/Preloader';
 
 interface BlogDetailHandlerProps {
   slug: string;
@@ -10,6 +10,7 @@ interface BlogDetailHandlerProps {
 export default function BlogDetailHandler({ slug }: BlogDetailHandlerProps) {
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [animationComplete, setAnimationComplete] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -32,18 +33,7 @@ export default function BlogDetailHandler({ slug }: BlogDetailHandlerProps) {
     fetchPost();
   }, [slug]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[#B9FF2C] border-t-transparent rounded-full animate-spin"></div>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#B9FF2C]">Loading Content...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !post) {
+  if (error || (!loading && !post)) {
     return (
       <div className="min-h-screen bg-[#050505] flex items-center justify-center">
         <div className="text-center">
@@ -52,6 +42,18 @@ export default function BlogDetailHandler({ slug }: BlogDetailHandlerProps) {
           <a href="/blog" className="px-8 py-3 rounded-full bg-[#B9FF2C] text-black font-bold">Back to Blog</a>
         </div>
       </div>
+    );
+  }
+
+  if (loading || !animationComplete) {
+    return (
+      <Preloader 
+        line1="GETTING_BLOG_ENTRY..."
+        line2={`FETCHING: ${slug}`}
+        line3="SYNTHESIZING CONTENT..."
+        bypassSessionStorage={true}
+        onComplete={() => setAnimationComplete(true)}
+      />
     );
   }
 
