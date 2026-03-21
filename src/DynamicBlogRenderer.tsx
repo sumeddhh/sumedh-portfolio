@@ -116,6 +116,28 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
             <div>{children}</div>
           </li>
         )
+      },
+      pre: {
+        props: {
+          className: 'relative my-8 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-0',
+        },
+        component: ({ children, ...props }: any) => (
+          <div className="relative group">
+            <div className="absolute top-0 right-0 p-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="w-2 h-2 rounded-full bg-white/10" />
+              <div className="w-2 h-2 rounded-full bg-white/10" />
+              <div className="w-2 h-2 rounded-full bg-white/10" />
+            </div>
+            <pre {...props} className="overflow-x-auto p-6 font-mono text-sm leading-relaxed text-white/90 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              {children}
+            </pre>
+          </div>
+        )
+      },
+      code: {
+        props: {
+          className: 'font-mono text-[0.9em] bg-white/5 px-1.5 py-0.5 rounded text-[#b2f722]/90 break-words',
+        }
       }
     }
   };
@@ -123,135 +145,134 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
   return (
     <>
       <div className="fixed top-0 left-0 w-full h-[3px] bg-white/5 z-[9999]">
-        <div 
+        <div
           className="h-full bg-[#B9FF2C] transition-all duration-150 ease-out leading-none"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
       <div className="min-h-screen bg-[#0c0c0c] text-white">
         {/* Grain Overlay */}
-        <div 
-          aria-hidden="true" 
+        <div
+          aria-hidden="true"
           className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
         />
 
-        <main className="relative z-10 pb-20 pt-10 md:pt-14">
+        <main className="relative z-10 pb-20 pt-[6rem] md:pt-[6rem] max-w-[100vw] overflow-x-hidden ">
           {/* Header Section - Identical to Static Blog */}
           <header className="mx-auto mb-20 w-full max-w-[1500px] px-6 md:px-8">
-          <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#111111] px-6 py-14 text-center md:px-10 md:py-20">
-            {post.image && (
-              <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.07] mix-blend-overlay"
-                style={{ backgroundImage: `url(${post.image})` }}
-              />
-            )}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(178,247,34,0.15),transparent_60%)]" />
-            <div className="relative mx-auto max-w-4xl">
-              <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#b2f722]">{post.category}</span>
-              <h1 className="mt-6 font-display text-4xl font-bold leading-[1.03] tracking-tight md:text-6xl text-white">
-                {post.title}
-              </h1>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[10px] font-mono uppercase tracking-[0.16em] text-white/55">
-                <span className="inline-flex items-center gap-2">
-                  <PersonStanding size={12} />
-                  Sumedh Bajracharya
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <Clock3 size={12} />
-                  {post.read_time}
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <CalendarDays size={12} />
-                  {post.date}
-                </span>
+            <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#111111] px-6 py-14 text-center md:px-10 md:py-20">
+              {post.image && (
+                <div
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.07] mix-blend-overlay"
+                  style={{ backgroundImage: `url(${post.image})` }}
+                />
+              )}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(178,247,34,0.15),transparent_60%)]" />
+              <div className="relative mx-auto max-w-4xl">
+                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#b2f722]">{post.category}</span>
+                <h1 className="mt-6 font-display text-4xl font-bold leading-[1.03] tracking-tight md:text-6xl text-white">
+                  {post.title}
+                </h1>
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-5 text-[10px] font-mono uppercase tracking-[0.16em] text-white/55">
+                  <span className="inline-flex items-center gap-2">
+                    <PersonStanding size={12} />
+                    Sumedh Bajracharya
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <Clock3 size={12} />
+                    {post.read_time}
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <CalendarDays size={12} />
+                    {post.date}
+                  </span>
+                </div>
               </div>
             </div>
+          </header>
+
+          <div className="mx-auto grid w-full max-w-[1500px] grid-cols-12 gap-8 px-6 md:px-8 lg:gap-10">
+            {/* TOC Sidebar - 1:1 with Static */}
+            <aside className="col-span-12 lg:col-span-3">
+              <div className="lg:sticky lg:top-28">
+                <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">Contents</p>
+                <nav className="space-y-4 text-[11px] font-mono uppercase tracking-[0.14em]">
+                  {toc.map((item) => {
+                    const isActive = activeHeading === item.id;
+                    return (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        className={`flex items-center gap-3 transition-all duration-300 ${isActive ? 'text-[#b2f722]' : 'text-white/55 hover:text-white'}`}
+                      >
+                        <span className={`h-px transition-all duration-300 ${isActive ? 'w-8 bg-[#b2f722]' : 'w-4 bg-white/30'}`} />
+                        <span>{item.text}</span>
+                      </a>
+                    );
+                  })}
+                </nav>
+              </div>
+            </aside>
+
+            {/* Article - Matching Static col-span-7 */}
+            <article className="col-span-12 space-y-14 lg:col-span-7">
+              <Markdown options={mdOptions}>{post.content}</Markdown>
+            </article>
+
+            {/* Interaction aside - Matching Static col-span-2 */}
+            <aside className="col-span-12 hidden lg:col-span-2 lg:block">
+              <div className="sticky top-28 flex flex-col gap-4">
+                <button
+                  aria-label="Like article"
+                  onClick={() => setLiked(!liked)}
+                  className={`w-fit rounded-full border border-white/20 p-3 transition-all duration-150 hover:bg-white/10 ${liked ? 'text-[#b2f722] border-[#b2f722]/40 bg-[#b2f722]/5' : 'text-white/70'
+                    }`}
+                >
+                  <ThumbsUp size={16} />
+                </button>
+                <button
+                  aria-label="Share article"
+                  onClick={handleShare}
+                  className="w-fit rounded-full border border-white/20 p-3 text-white/70 transition hover:bg-white/10"
+                >
+                  <Share2 size={16} />
+                </button>
+              </div>
+            </aside>
           </div>
-        </header>
 
-        <div className="mx-auto grid w-full max-w-[1500px] grid-cols-12 gap-8 px-6 md:px-8 lg:gap-10">
-          {/* TOC Sidebar - 1:1 with Static */}
-          <aside className="col-span-12 lg:col-span-3">
-            <div className="lg:sticky lg:top-28">
-              <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">Contents</p>
-              <nav className="space-y-4 text-[11px] font-mono uppercase tracking-[0.14em]">
-                {toc.map((item) => {
-                  const isActive = activeHeading === item.id;
-                  return (
-                    <a 
-                      key={item.id} 
-                      href={`#${item.id}`} 
-                      className={`flex items-center gap-3 transition-all duration-300 ${isActive ? 'text-[#b2f722]' : 'text-white/55 hover:text-white'}`}
-                    >
-                      <span className={`h-px transition-all duration-300 ${isActive ? 'w-8 bg-[#b2f722]' : 'w-4 bg-white/30'}`} />
-                      <span>{item.text}</span>
-                    </a>
-                  );
-                })}
-              </nav>
-            </div>
-          </aside>
-
-          {/* Article - Matching Static col-span-7 */}
-          <article className="col-span-12 space-y-14 lg:col-span-7">
-            <Markdown options={mdOptions}>{post.content}</Markdown>
-          </article>
-
-          {/* Interaction aside - Matching Static col-span-2 */}
-          <aside className="col-span-12 hidden lg:col-span-2 lg:block">
-            <div className="sticky top-28 flex flex-col gap-4">
-              <button
-                aria-label="Like article"
-                onClick={() => setLiked(!liked)}
-                className={`w-fit rounded-full border border-white/20 p-3 transition-all duration-150 hover:bg-white/10 ${
-                  liked ? 'text-[#b2f722] border-[#b2f722]/40 bg-[#b2f722]/5' : 'text-white/70'
-                }`}
+          {/* Footer Build component - Shared aesthetics */}
+          <section className="mx-auto mt-28 w-full max-w-[1200px] px-6 text-center md:px-8">
+            <h2 className="font-display text-5xl font-semibold leading-tight text-white md:text-7xl">
+              Let&apos;s build
+              <br />
+              <span className="text-[#b2f722]">something precise.</span>
+            </h2>
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 md:flex-row">
+              <a
+                href="/#contact"
+                className="px-8 py-3 rounded-full bg-[#b2f722] text-black font-bold flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-[0_0_20px_rgba(178,247,34,0.2)]"
               >
-                <ThumbsUp size={16} />
-              </button>
-              <button
-                aria-label="Share article"
-                onClick={handleShare}
-                className="w-fit rounded-full border border-white/20 p-3 text-white/70 transition hover:bg-white/10"
+                Contact Me
+              </a>
+              <a
+                href="/blog"
+                className="px-8 py-3 rounded-full border border-white/10 bg-white/5 text-white font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
               >
-                <Share2 size={16} />
-              </button>
+                Back to Blog
+              </a>
             </div>
-          </aside>
-        </div>
+          </section>
+        </main>
 
-        {/* Footer Build component - Shared aesthetics */}
-        <section className="mx-auto mt-28 w-full max-w-[1200px] px-6 text-center md:px-8">
-          <h2 className="font-display text-5xl font-semibold leading-tight text-white md:text-7xl">
-            Let&apos;s build 
-            <br />
-            <span className="text-[#b2f722]">something precise.</span>
-          </h2>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 md:flex-row">
-            <a
-              href="/#contact"
-              className="px-8 py-3 rounded-full bg-[#b2f722] text-black font-bold flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-[0_0_20px_rgba(178,247,34,0.2)]"
-            >
-              Contact Me
-            </a>
-            <a
-              href="/blog"
-              className="px-8 py-3 rounded-full border border-white/10 bg-white/5 text-white font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
-            >
-              Back to Blog
-            </a>
+        {/* Toast Notification */}
+        {toast && (
+          <div className="fixed bottom-6 right-6 z-50 rounded-md border border-white/20 bg-black/85 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-[#b2f722] shadow-lg animate-in fade-in slide-in-from-bottom-2">
+            {toast}
           </div>
-        </section>
-      </main>
-
-      {/* Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-md border border-white/20 bg-black/85 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-[#b2f722] shadow-lg animate-in fade-in slide-in-from-bottom-2">
-          {toast}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </>
   );
 }
