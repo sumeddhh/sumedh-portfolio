@@ -20,27 +20,25 @@ export function Header({ menuOpen, toggleMenu, onOpenChat, isBlogPage }: HeaderP
       <a href="/" className="flex items-center gap-2 group">
         <span className="font-display font-bold text-xl text-[#B9FF2C]">SB</span>
       </a>
-      
+
       <div className="flex items-center gap-2 md:gap-3">
         {/* Navigation Links */}
         <a
           href="/"
-          className={`flex items-center px-[18px] py-[10px] rounded-full border transition-all duration-300 font-mono text-[10px] font-bold uppercase tracking-[0.2em] ${
-            !isBlogPage 
-              ? 'bg-[#B9FF2C] text-black border-[#B9FF2C]' 
+          className={`flex items-center px-[18px] py-[10px] rounded-full border transition-all duration-300 font-mono text-[10px] font-bold uppercase tracking-[0.2em] ${!isBlogPage
+              ? 'bg-[#B9FF2C] text-black border-[#B9FF2C]'
               : 'text-white border-white/20 hover:bg-white/5'
-          }`}
+            }`}
         >
           Portfolio
         </a>
-        
+
         <a
           href="/blog"
-          className={`flex items-center px-[18px] py-[10px] rounded-full border transition-all duration-300 font-mono text-[10px] font-bold uppercase tracking-[0.2em] ${
-            isBlogPage 
-              ? 'bg-[#B9FF2C] text-black border-[#B9FF2C]' 
+          className={`flex items-center px-[18px] py-[10px] rounded-full border transition-all duration-300 font-mono text-[10px] font-bold uppercase tracking-[0.2em] ${isBlogPage
+              ? 'bg-[#B9FF2C] text-black border-[#B9FF2C]'
               : 'text-white border-white/20 hover:bg-white/5'
-          }`}
+            }`}
         >
           Blogs
         </a>
@@ -54,7 +52,7 @@ export function Header({ menuOpen, toggleMenu, onOpenChat, isBlogPage }: HeaderP
           <Bot size={16} className="text-[#B9FF2C] group-hover:rotate-12 transition-transform" />
           <span className="hidden lg:inline font-mono text-[10px] uppercase tracking-widest">Talk to AI</span>
         </button>
-        
+
         <button
           onClick={toggleMenu}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -103,8 +101,8 @@ export function FullScreenMenu({
         }
       }
     } else {
-       // Regular navigation for other pages or blog link
-       closeMenu();
+      // Regular navigation for other pages or blog link
+      closeMenu();
     }
   };
 
@@ -155,19 +153,19 @@ const isReload = () => {
 
 export function NavigationShell({ children, isBlogPage }: { children: React.ReactNode; isBlogPage?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  
+
   const [isChatOpen, setIsChatOpen] = useState(() => {
     if (isReload()) {
-        sessionStorage.removeItem('sumedh_chat_open');
-        return false;
+      sessionStorage.removeItem('sumedh_chat_open');
+      return false;
     }
     return sessionStorage.getItem('sumedh_chat_open') === 'true';
   });
-  
+
   const [shouldLoadChat, setShouldLoadChat] = useState(() => {
     if (isReload()) {
-        sessionStorage.removeItem('sumedh_chat_loaded');
-        return false;
+      sessionStorage.removeItem('sumedh_chat_loaded');
+      return false;
     }
     return sessionStorage.getItem('sumedh_chat_loaded') === 'true';
   });
@@ -198,13 +196,13 @@ export function NavigationShell({ children, isBlogPage }: { children: React.Reac
 
   return (
     <div className="relative bg-[#050505] min-h-screen">
-      <Preloader />
+      <Preloader bypassSessionStorage={true} duration={1000} />
       {/* Global Grain Overlay */}
       <div className="grain-overlay pointer-events-none" />
 
-      <Header 
-        menuOpen={menuOpen} 
-        toggleMenu={toggleMenu} 
+      <Header
+        menuOpen={menuOpen}
+        toggleMenu={toggleMenu}
         onOpenChat={() => {
           setShouldLoadChat(true);
           setIsChatOpen(true);

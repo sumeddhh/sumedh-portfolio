@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { CalendarDays, Clock3, ArrowRight, Plus, Terminal, X, Lock, Trash2, Edit3 } from 'lucide-react';
+import { CalendarDays, Clock3, ArrowRight, Plus, Terminal, X, Lock, Trash2, Edit3, Search } from 'lucide-react';
 import { BLOG_POSTS, type BlogPost as BlogPostStatic } from './lib/blog-data';
 import { supabase } from './lib/supabase';
 import { slugify, type BlogPost } from './lib/blog-utils';
@@ -41,6 +41,8 @@ export default function BlogListPage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('Engineering');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const [allPosts, setAllPosts] = useState<(BlogPostStatic | BlogPost)[]>([]);
 
@@ -163,6 +165,16 @@ export default function BlogListPage() {
     setCategory('Engineering');
   };
 
+  const categories = ['All', ...Array.from(new Set(allPosts.map(p => p.category)))];
+  
+  const filteredPosts = allPosts.filter(post => {
+    const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          post.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          ('content' in post && post.content.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
+
   if (loading || !animationComplete) {
     return (
       <Preloader 
@@ -253,13 +265,15 @@ export default function BlogListPage() {
                 </div>
                 <div>
                   <label className="block text-[10px] font-mono uppercase tracking-widest text-white/40 mb-2">Category</label>
-                  <input
-                    type="text"
+                  <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    placeholder="Engineering"
-                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#B9FF2C]/50"
-                  />
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-[14px] text-white focus:outline-none focus:border-[#B9FF2C]/50 appearance-none cursor-pointer"
+                  >
+                    <option value="Engineering" className="bg-[#111]">Engineering</option>
+                    <option value="Editorial Insight" className="bg-[#111]">Editorial Insight</option>
+                    <option value="AI & Security" className="bg-[#111]">AI & Security</option>
+                  </select>
                 </div>
               </div>
               <div>
@@ -285,40 +299,83 @@ export default function BlogListPage() {
           {/* Header */}
           <div className="mb-20">
             <h1 className="font-display text-5xl md:text-8xl font-bold tracking-tight mb-8">
-              Letters on <span onClick={handleMobileDevTrigger} className="text-[#B9FF2C] cursor-pointer selection:bg-transparent">Code</span>
+              Letters on <span onClick={handleMobileDevTrigger} className="text-[#B9FF2C] cursor-pointer selection:bg-transparent uppercase">Code</span>
             </h1>
             <p className="text-white/60 text-lg md:text-xl max-w-2xl leading-relaxed">
               Synthesized thoughts on software engineering, product architecture, and the intersection of human and machine intelligence.
             </p>
           </div>
 
+          {/* Search and Filters */}
+          <div className="mb-12 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+            <div className="relative w-full md:max-w-md group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#B9FF2C] transition-colors" size={18} />
+              <input 
+                type="text"
+                placeholder="Search articles, topics, or code..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-12 pr-6 text-sm text-white focus:outline-none focus:border-[#B9FF2C]/50 transition-all placeholder:text-white/20"
+              />
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-5 py-2.5 rounded-full font-mono text-[10px] uppercase tracking-widest transition-all duration-300 border ${
+                    selectedCategory === cat 
+                      ? 'bg-[#B9FF2C] text-black border-[#B9FF2C] shadow-[0_0_15px_rgba(178,247,34,0.3)]' 
+                      : 'bg-white/5 text-white/50 border-white/10 hover:border-white/30'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Blog Grid */}
           <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12 relative pb-20">
-            {allPosts.map((post, index) => (
-              <div
-                key={post.slug}
-                className="sticky md:static px-4 md:px-0 md:pt-0"
-                style={{
-                  top: `calc(100px + ${index * 40}px)`,
-                  zIndex: index + 10,
-                }}
-              >
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map((post, index) => (
                 <div
-                  className="blog-stack-wrapper"
+                  key={post.slug}
+                  className="sticky md:static px-4 md:px-0 md:pt-0 h-full"
                   style={{
-                    // @ts-ignore
-                    '--card-scale': 0.9 + (index * 0.02)
+                    top: `calc(100px + ${index * 40}px)`,
+                    zIndex: index + 10,
                   }}
                 >
-                  <BlogCard
-                    post={post}
-                    isAuthenticated={isAuthenticated}
-                    onDelete={handleDelete}
-                    onEdit={handleEdit}
-                  />
+                  <div
+                    className="blog-stack-wrapper h-full"
+                    style={{
+                      // @ts-ignore
+                      '--card-scale': 0.9 + (index * 0.02)
+                    }}
+                  >
+                    <BlogCard
+                      post={post}
+                      isAuthenticated={isAuthenticated}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="col-span-12 py-20 text-center">
+                <Terminal size={48} className="mx-auto text-white/10 mb-6" />
+                <p className="font-mono text-white/40 uppercase tracking-[0.2em]">No matching entries found in the local grid.</p>
+                <button 
+                  onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
+                  className="mt-6 text-[#B9FF2C] font-mono text-xs uppercase tracking-widest hover:underline"
+                >
+                  Clear all filters
+                </button>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </main>
@@ -353,7 +410,7 @@ function BlogCard({
   const isDynamic = 'id' in post;
 
   return (
-    <div className="group relative block rounded-[32px] overflow-hidden bg-[#111] border border-white/10 transition-all duration-500 hover:border-[#B9FF2C]/30">
+    <div className="group relative block rounded-[32px] overflow-hidden bg-[#111] border border-white/10 transition-all duration-500 hover:border-[#B9FF2C]/30 h-full">
       {/* Dev Actions Overlay */}
       {isAuthenticated && isDynamic && (
         <div className="absolute top-6 right-6 z-[50] flex gap-2">

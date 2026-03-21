@@ -17,19 +17,21 @@ interface PreloaderProps {
   line3?: string;
   onComplete?: () => void;
   bypassSessionStorage?: boolean;
+  duration?: number;
 }
 
-export default function Preloader({ 
-  line1 = "SYS_BOOT::PORTFOLIO_ENGINE_V2", 
-  line2 = "INITIALIZING CORE MODULES...", 
+export default function Preloader({
+  line1 = "SYS_BOOT::PORTFOLIO_ENGINE_V2",
+  line2 = "INITIALIZING CORE MODULES...",
   line3 = "SUMEDH BAJRACHARYA // SOFTWARE COMPONENT",
   onComplete,
-  bypassSessionStorage = false
+  bypassSessionStorage = false,
+  duration = 1200
 }: PreloaderProps) {
   const [loading, setLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [progress, setProgress] = useState(0);
-  
+
   const [text1, setText1] = useState('');
   const [text2, setText2] = useState('');
   const [text3, setText3] = useState('');
@@ -47,13 +49,12 @@ export default function Preloader({
 
     animStarted.current = true;
     let start = Date.now();
-    const duration = 3500; // 3.5 seconds for a smooth cinematic load
 
     const animate = () => {
       const now = Date.now();
       const p = Math.min(1, (now - start) / duration);
       setProgress(p);
-      
+
       setText1(decryptText(line1, p * 1.5));
       setText2(decryptText(line2, p * 1.5 - 0.2));
       setText3(decryptText(line3, p * 1.5 - 0.4));
@@ -67,11 +68,11 @@ export default function Preloader({
             setLoading(false);
             if (!bypassSessionStorage) sessionStorage.setItem('sumedh_preloader_done', 'true');
             if (onComplete) onComplete();
-          }, 500); 
-        }, 300); 
+          }, 500);
+        }, 300);
       }
     };
-    
+
     requestAnimationFrame(animate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount to prevent reset loops from parent re-renders
@@ -79,7 +80,7 @@ export default function Preloader({
   if (!loading) return null;
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-[99999] bg-[#050505] flex flex-col items-center justify-center font-mono text-[#B9FF2C] tracking-widest text-xs md:text-sm p-6 overflow-hidden transition-opacity duration-500 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
     >
       <div className="grain-overlay pointer-events-none opacity-50" />
@@ -91,9 +92,9 @@ export default function Preloader({
         <p className="min-h-[1.5rem] break-all">{text1}</p>
         <p className="min-h-[1.5rem] break-all opacity-80">{text2}</p>
         <p className="min-h-[1.5rem] break-all text-white font-bold mt-4">{text3}</p>
-        
+
         <div className="w-full h-px bg-white/10 mt-8 relative overflow-hidden">
-          <div 
+          <div
             className="absolute top-0 left-0 h-full bg-[#B9FF2C]"
             style={{ width: `${progress * 100}%` }}
           />

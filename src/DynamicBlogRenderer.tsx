@@ -128,7 +128,7 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
               <div className="w-2 h-2 rounded-full bg-white/10" />
               <div className="w-2 h-2 rounded-full bg-white/10" />
             </div>
-            <pre {...props} className="overflow-x-auto p-6 font-mono text-sm leading-relaxed text-white/90 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+            <pre {...props} className="whitespace-pre-wrap break-all p-6 font-mono text-sm leading-relaxed text-white/90">
               {children}
             </pre>
           </div>
@@ -146,8 +146,11 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
     <>
       <div className="fixed top-0 left-0 w-full h-[3px] bg-white/5 z-[9999]">
         <div
-          className="h-full bg-[#B9FF2C] transition-all duration-150 ease-out leading-none"
-          style={{ width: `${scrollProgress}%` }}
+          className="h-full bg-[#B9FF2C] transition-transform duration-75 ease-out leading-none will-change-transform"
+          style={{ 
+            transform: `scaleX(${scrollProgress / 100})`,
+            transformOrigin: 'left'
+          }}
         />
       </div>
       <div className="min-h-screen bg-[#0c0c0c] text-white">

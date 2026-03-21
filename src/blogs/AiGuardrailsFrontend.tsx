@@ -74,7 +74,7 @@ export default function AiGuardrailsFrontend() {
       />
 
 
-      <main className="relative z-10 pb-20 pt-10 md:pt-14">
+      <main className="relative z-10 pb-20 pt-[6rem] md:pt-[6rem]">
         <header className="mx-auto mb-20 w-full max-w-[1500px] px-6 md:px-8">
           <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#111111] px-6 py-14 text-center md:px-10 md:py-20">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(178,247,34,0.15),transparent_60%)]" />
@@ -149,13 +149,13 @@ export default function AiGuardrailsFrontend() {
               <h2 className="font-display text-4xl font-bold tracking-tight">II. Effective Input Guardrails</h2>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="rounded-md border border-white/10 bg-white/[0.03] p-6 col-span-2">
-                   <div className="flex items-center gap-4 mb-4 text-[#b2f722]">
-                     <ShieldAlert size={24} />
-                     <h3 className="font-display text-2xl font-semibold">Prompt Injection Defense</h3>
-                   </div>
-                   <p className="text-white/70 leading-relaxed">
-                     Modern frontend applications must implement pattern recognition to detect common prompt injection patterns—such as "Ignore previous instructions"—and block them before they reach the inference engine. This reduces the attack surface and prevents unauthorized system override.
-                   </p>
+                  <div className="flex items-center gap-4 mb-4 text-[#b2f722]">
+                    <ShieldAlert size={24} />
+                    <h3 className="font-display text-2xl font-semibold">Prompt Injection Defense</h3>
+                  </div>
+                  <p className="text-white/70 leading-relaxed">
+                    Modern frontend applications must implement pattern recognition to detect common prompt injection patterns—such as "Ignore previous instructions"—and block them before they reach the inference engine. This reduces the attack surface and prevents unauthorized system override.
+                  </p>
                 </div>
               </div>
             </section>
@@ -185,10 +185,10 @@ export default function AiGuardrailsFrontend() {
                   "The biggest challenge for frontend engineers today is maintaining a predictable user experience when the underlying data source is probabilistic. Guardrails are the bridge between AI's variance and the UI's need for stability."
                 </p>
                 <div className="mt-8 p-6 rounded-lg border border-[#b2f722]/10 bg-[#b2f722]/5">
-                   <h4 className="font-mono text-xs uppercase tracking-widest text-[#b2f722] mb-3">Implementation Tip</h4>
-                   <p className="text-sm text-white/80">
-                     Always use a Fallback UI strategy. If an LLM response fails validation (e.g., malformed JSON or invalid schema), provide a graceful degradation path rather than breaking the application state.
-                   </p>
+                  <h4 className="font-mono text-xs uppercase tracking-widest text-[#b2f722] mb-3">Implementation Tip</h4>
+                  <p className="text-sm text-white/80">
+                    Always use a Fallback UI strategy. If an LLM response fails validation (e.g., malformed JSON or invalid schema), provide a graceful degradation path rather than breaking the application state.
+                  </p>
                 </div>
               </div>
             </section>
@@ -199,9 +199,8 @@ export default function AiGuardrailsFrontend() {
               <button
                 aria-label="Like article"
                 onClick={handleLike}
-                className={`w-fit rounded-full border border-white/20 p-3 transition-all duration-150 hover:bg-white/10 ${
-                  liked ? 'text-[#b2f722]' : 'text-white/70'
-                } ${likePop ? 'scale-125' : 'scale-100'}`}
+                className={`w-fit rounded-full border border-white/20 p-3 transition-all duration-150 hover:bg-white/10 ${liked ? 'text-[#b2f722]' : 'text-white/70'
+                  } ${likePop ? 'scale-125' : 'scale-100'}`}
               >
                 <ThumbsUp size={16} />
               </button>
@@ -218,7 +217,7 @@ export default function AiGuardrailsFrontend() {
 
         <section className="mx-auto mt-28 w-full max-w-[1200px] px-6 text-center md:px-8">
           <h2 className="font-display text-5xl font-semibold leading-tight text-white md:text-7xl">
-            Let&apos;s build 
+            Let&apos;s build
             <br />
             <span className="text-[#b2f722]">something precise.</span>
           </h2>
