@@ -70,6 +70,12 @@ export default function SoftwareDevelopmentNepalPage() {
   useEffect(() => {
     const previousTitle = document.title;
     document.title = 'Software Development in Nepal: Trends, Skills, and What Businesses Should Look For';
+    
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Explore the evolving software development landscape in Nepal, covering modern tech stacks, hiring strategies, and emerging AI trends.");
+    }
+
     return () => {
       document.title = previousTitle;
     };
