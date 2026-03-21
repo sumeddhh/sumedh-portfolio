@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://sumedhbajracharya.com.np/sitemap.xml

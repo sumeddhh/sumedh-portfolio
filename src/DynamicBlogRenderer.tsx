@@ -32,7 +32,16 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `${post.title} | Blogs`;
+    document.title = `${post.title} | Sumedh Bajracharya Blog`;
+    
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      // Use excerpt as description if available, otherwise truncate content
+      const desc = 'excerpt' in post && (post as any).excerpt 
+        ? (post as any).excerpt 
+        : post.content.replace(/[#*`]/g, '').slice(0, 160) + '...';
+      metaDesc.setAttribute("content", desc);
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {

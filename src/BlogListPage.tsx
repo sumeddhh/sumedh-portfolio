@@ -62,7 +62,11 @@ export default function BlogListPage() {
   };
 
   useEffect(() => {
-    document.title = 'Blogs | Sumedh Bajracharya';
+    document.title = 'Blog | Sumedh Bajracharya | Engineering & AI Insights';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Synthesized thoughts on software engineering, AI guardrails, and product architecture by Sumedh Bajracharya.");
+    }
     window.scrollTo(0, 0);
     fetchPosts();
 

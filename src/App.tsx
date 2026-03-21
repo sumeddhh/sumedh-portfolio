@@ -101,6 +101,13 @@ function App() {
       });
     };
 
+    // SEO and scroll restoration
+    document.title = "Sumedh Bajracharya | Portfolio | Frontend Engineer in Nepal";
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute("content", "Portfolio of Sumedh Bajracharya, a frontend and software engineer in Nepal focused on React, TypeScript, AI, and high-performance product engineering.");
+    }
+
     return () => {
       delete window.navigateToSection;
     };
