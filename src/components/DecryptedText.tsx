@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSoundFX } from './SoundProvider';
 
 const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
 
@@ -11,7 +10,6 @@ interface DecryptedTextProps {
 
 export default function DecryptedText({ text, className, isHovered }: DecryptedTextProps) {
   const [displayText, setDisplayText] = useState(text);
-  const { playTick } = useSoundFX();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -20,11 +18,6 @@ export default function DecryptedText({ text, className, isHovered }: DecryptedT
       clearInterval(intervalRef.current!);
       
       intervalRef.current = setInterval(() => {
-        // Play sound only when iteration is progressing (i.e., not yet fully decrypted)
-        if (iteration < text.length) {
-          playTick();
-        }
-
         setDisplayText(
           text.split('').map((char, index) => {
             if (char === ' ') return ' ';

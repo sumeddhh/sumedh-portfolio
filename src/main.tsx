@@ -8,8 +8,6 @@ import AiGuardrailsFrontend from './blogs/AiGuardrailsFrontend.tsx'
 import { NavigationShell } from './components/Navigation.tsx'
 import BlogDetailHandler from './BlogDetailHandler.tsx'
 
-import { SoundProvider } from './components/SoundProvider.tsx'
-
 const normalizedPath = window.location.pathname.replace(/\/+$/, '') || '/'
 
 let page;
@@ -39,10 +37,8 @@ if (normalizedPath === '/blog') {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SoundProvider>
-      <NavigationShell isBlogPage={isBlog}>
-        {page}
-      </NavigationShell>
-    </SoundProvider>
+    <NavigationShell isBlogPage={isBlog}>
+      {page}
+    </NavigationShell>
   </StrictMode>,
 )

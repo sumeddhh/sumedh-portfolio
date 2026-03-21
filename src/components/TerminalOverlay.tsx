@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Terminal as TerminalIcon, X, ChevronRight } from 'lucide-react';
-import { useSoundFX } from './SoundProvider';
 
 interface CommandOutput {
   type: 'input' | 'output' | 'error' | 'system';
@@ -10,7 +9,6 @@ interface CommandOutput {
 export default function TerminalOverlay() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
-  const { playSummon } = useSoundFX();
   const [history, setHistory] = useState<CommandOutput[]>([
     { type: 'system', text: 'Sumedh Portfolio OS v2.4.0 (stable)' },
     { type: 'system', text: 'Type "help" to see available commands.' }
@@ -22,10 +20,7 @@ export default function TerminalOverlay() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 't') {
         e.preventDefault();
-        setIsOpen(prev => {
-          if (!prev) playSummon();
-          return !prev;
-        });
+        setIsOpen(prev => !prev);
       }
       if (e.key === 'Escape' && isOpen) {
         setIsOpen(false);
