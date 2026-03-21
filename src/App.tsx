@@ -1010,7 +1010,7 @@ function ContactSection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative bg-[#050505] min-h-screen z-[90] flex items-center justify-center"
+      className="relative bg-[#050505] min-h-screen z-[90] flex items-center justify-center w-full overflow-hidden"
     >
       <div className="absolute inset-0 z-0 opacity-[0.7]">
         {shouldLoadHyperspeed ? (
@@ -1019,11 +1019,11 @@ function ContactSection() {
               effectOptions={{
                 distortion: 'turbulentDistortion',
                 length: 400,
-                roadWidth: 10,
-                islandWidth: 2,
+                roadWidth: 4,
+                islandWidth: 1,
                 lanesPerRoad: 3,
-                fov: 100,
-                fovSpeedUp: 150,
+                fov: 70,
+                fovSpeedUp: 120,
                 speedUp: 2,
                 carLightsFade: 0.4,
                 totalSideLightSticks: 20,
@@ -1042,7 +1042,7 @@ function ContactSection() {
                 carFloorSeparation: [0, 5],
                 colors: {
                   roadColor: 0x080808,
-                  islandColor: 0xffffff,
+                  islandColor: 0x0a0a0a,
                   background: 0x000000,
                   shoulderLines: 0x131318,
                   brokenLines: 0x131318,
