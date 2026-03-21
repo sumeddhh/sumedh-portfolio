@@ -34,7 +34,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsMuted(prev => {
       const next = !prev;
       if (masterGain.current) {
-        masterGain.current.gain.setTargetAtTime(next ? 0 : 0.1, audioCtx.current!.currentTime, 0.05);
+        masterGain.current.gain.setTargetAtTime(next ? 0 : 0.3, audioCtx.current!.currentTime, 0.05);
       }
       return next;
     });
@@ -44,7 +44,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (!isMuted && audioCtx.current && !ambientNode.current) {
       const g = audioCtx.current.createGain();
-      g.gain.value = 0.02; // Super faint
+      g.gain.value = 0.05; // Slightly louder ambient
       g.connect(masterGain.current!);
 
       const osc = audioCtx.current.createOscillator();
@@ -62,6 +62,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // 2. Technical Tick (UI Hover)
   const playTick = useCallback(() => {
     if (isMuted || !audioCtx.current) return;
+    if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
+    
     const osc = audioCtx.current.createOscillator();
     const g = audioCtx.current.createGain();
     
@@ -69,7 +71,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     osc.frequency.setValueAtTime(2400, audioCtx.current.currentTime);
     osc.frequency.exponentialRampToValueAtTime(800, audioCtx.current.currentTime + 0.03);
     
-    g.gain.setValueAtTime(0.02, audioCtx.current.currentTime);
+    g.gain.setValueAtTime(0.06, audioCtx.current.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, audioCtx.current.currentTime + 0.03);
     
     osc.connect(g);
@@ -81,6 +83,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // 3. Technical Summon (Modal/Drawer)
   const playSummon = useCallback(() => {
     if (isMuted || !audioCtx.current) return;
+    if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
+
     const osc = audioCtx.current.createOscillator();
     const g = audioCtx.current.createGain();
     
@@ -88,7 +92,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     osc.frequency.setValueAtTime(80, audioCtx.current.currentTime);
     osc.frequency.exponentialRampToValueAtTime(440, audioCtx.current.currentTime + 0.15);
     
-    g.gain.setValueAtTime(0.05, audioCtx.current.currentTime);
+    g.gain.setValueAtTime(0.15, audioCtx.current.currentTime);
     g.gain.linearRampToValueAtTime(0, audioCtx.current.currentTime + 0.15);
     
     osc.connect(g);
@@ -100,6 +104,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // 4. Glitch/Signal Static (Transition)
   const playGlitch = useCallback(() => {
     if (isMuted || !audioCtx.current) return;
+    if (audioCtx.current.state === 'suspended') audioCtx.current.resume();
+
     const bufferSize = audioCtx.current.sampleRate * 0.1;
     const buffer = audioCtx.current.createBuffer(1, bufferSize, audioCtx.current.sampleRate);
     const data = buffer.getChannelData(0);
@@ -117,7 +123,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     filter.Q.value = 10;
     
     const g = audioCtx.current.createGain();
-    g.gain.setValueAtTime(0.04, audioCtx.current.currentTime);
+    g.gain.setValueAtTime(0.1, audioCtx.current.currentTime);
     g.gain.linearRampToValueAtTime(0, audioCtx.current.currentTime + 0.1);
     
     noise.connect(filter);
