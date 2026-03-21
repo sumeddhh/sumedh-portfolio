@@ -48,7 +48,7 @@ export default function Preloader({
     }
 
     animStarted.current = true;
-    let start = Date.now();
+    const start = Date.now();
 
     const animate = () => {
       const now = Date.now();

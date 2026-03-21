@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import DynamicBlogRenderer from './DynamicBlogRenderer';
 import Preloader from './components/Preloader';
+import type { BlogPost } from './lib/blog-utils';
 
 interface BlogDetailHandlerProps {
   slug: string;
 }
 
 export default function BlogDetailHandler({ slug }: BlogDetailHandlerProps) {
-  const [post, setPost] = useState<any>(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [error, setError] = useState(false);
@@ -55,6 +56,10 @@ export default function BlogDetailHandler({ slug }: BlogDetailHandlerProps) {
         onComplete={() => setAnimationComplete(true)}
       />
     );
+  }
+
+  if (!post) {
+    return null;
   }
 
   return <DynamicBlogRenderer post={post} />;

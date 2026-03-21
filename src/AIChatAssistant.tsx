@@ -64,7 +64,14 @@ export function AIChatAssistant({
             return [{ role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }];
         }
         const saved = sessionStorage.getItem('sumedh_chat_messages');
-        return saved ? JSON.parse(saved) : [{ role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }];
+        if (!saved) {
+            return [{ role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }];
+        }
+        try {
+            return JSON.parse(saved) as Message[];
+        } catch {
+            return [{ role: 'assistant', content: "Hi! I'm Sumedh's Assistant. How can I help you today?" }];
+        }
     });
 
     useEffect(() => {
@@ -106,7 +113,7 @@ export function AIChatAssistant({
             setMessages(prev => [
                 ...prev,
                 { role: 'user', content: userInput },
-                { role: 'assistant', content: !!reason ? reason : "Input blocked by security protocols." }
+                { role: 'assistant', content: reason || "Input blocked by security protocols." }
             ]);
             setInput('');
         };

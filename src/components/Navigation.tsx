@@ -78,7 +78,13 @@ export function FullScreenMenu({
   closeMenu: () => void;
 }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const menuItems = [
+  interface MenuItem {
+    label: string;
+    section: string;
+    href: string;
+  }
+
+  const menuItems: MenuItem[] = [
     { label: 'Home', section: 'hero', href: '/' },
     { label: 'Work', section: 'work', href: '/#work' },
     { label: 'Blogs', section: 'articles', href: '/blog' },
@@ -92,7 +98,7 @@ export function FullScreenMenu({
     { label: 'Email', href: 'mailto:sumedhbajracharya07@gmail.com' },
   ];
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: any) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, item: MenuItem) => {
     if (window.location.pathname === '/' && item.section !== 'articles') {
       e.preventDefault();
       closeMenu();

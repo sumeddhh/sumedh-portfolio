@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
 
-export default function SignalGlitch({ trigger }: { trigger: any }) {
+export default function SignalGlitch({ trigger }: { trigger: unknown }) {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    setActive(true);
-    const timeout = setTimeout(() => setActive(false), 250);
-    return () => clearTimeout(timeout);
+    let mounted = true;
+    const frame = window.requestAnimationFrame(() => {
+      if (mounted) setActive(true);
+    });
+    const timeout = window.setTimeout(() => {
+      if (mounted) setActive(false);
+    }, 250);
+
+    return () => {
+      mounted = false;
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+    };
   }, [trigger]);
 
   if (!active) return null;

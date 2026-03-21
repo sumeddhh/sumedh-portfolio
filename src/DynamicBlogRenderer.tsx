@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, type ReactNode } from 'react';
 import Markdown from 'markdown-to-jsx';
 import { CalendarDays, Clock3, PersonStanding, ThumbsUp, Share2 } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface BlogPost {
   category: string;
   read_time: string;
   image?: string;
+  excerpt?: string;
 }
 
 export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
@@ -37,8 +38,8 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       // Use excerpt as description if available, otherwise truncate content
-      const desc = 'excerpt' in post && (post as any).excerpt 
-        ? (post as any).excerpt 
+      const desc = post.excerpt
+        ? post.excerpt
         : post.content.replace(/[#*`]/g, '').slice(0, 160) + '...';
       metaDesc.setAttribute("content", desc);
     }
@@ -90,7 +91,7 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
         props: {
           className: 'font-display text-4xl font-bold tracking-tight mb-8 mt-16 scroll-mt-32 text-white',
         },
-        component: ({ children, ...props }: any) => {
+        component: ({ children, ...props }: { children?: ReactNode } & Record<string, unknown>) => {
           const content = post.content;
           const headings = content.match(/^#{2}\s+(.+)$/gm) || [];
           const text = typeof children === 'string' ? children : '';
@@ -119,7 +120,7 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
         }
       },
       li: {
-        component: ({ children }: any) => (
+        component: ({ children }: { children?: ReactNode }) => (
           <li className="flex gap-4 text-white/75 text-lg leading-8">
             <span className="h-px w-4 bg-[#b2f722]/40 mt-4 shrink-0" />
             <div>{children}</div>
@@ -130,7 +131,7 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
         props: {
           className: 'relative my-8 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-0',
         },
-        component: ({ children, ...props }: any) => (
+        component: ({ children, ...props }: { children?: ReactNode } & Record<string, unknown>) => (
           <div className="relative group">
             <div className="absolute top-0 right-0 p-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="w-2 h-2 rounded-full bg-white/10" />

@@ -1,9 +1,18 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, type CSSProperties } from 'react';
 import { CalendarDays, Clock3, ArrowRight, Plus, Terminal, X, Lock, Trash2, Edit3, Search } from 'lucide-react';
 import { BLOG_POSTS, type BlogPost as BlogPostStatic } from './lib/blog-data';
 import { supabase } from './lib/supabase';
 import { slugify, type BlogPost } from './lib/blog-utils';
 import Preloader from './components/Preloader';
+
+const pickDefaultBlogImage = (seed: string): string => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+  }
+  const imageNumber = (Math.abs(hash) % 8) + 1;
+  return `/blog_img_${imageNumber}.png`;
+};
 
 export default function BlogListPage() {
   const [loading, setLoading] = useState(true);
@@ -68,7 +77,9 @@ export default function BlogListPage() {
       metaDesc.setAttribute("content", "Synthesized thoughts on software engineering, AI guardrails, and product architecture by Sumedh Bajracharya.");
     }
     window.scrollTo(0, 0);
-    fetchPosts();
+    const fetchTimer = window.setTimeout(() => {
+      void fetchPosts();
+    }, 0);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey && e.key.toLowerCase() === 'd') {
@@ -77,7 +88,10 @@ export default function BlogListPage() {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.clearTimeout(fetchTimer);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const handleAuth = (e: React.FormEvent) => {
@@ -101,7 +115,7 @@ export default function BlogListPage() {
     e.preventDefault();
     if (!title || !content) return;
 
-    const blogData: any = {
+    const blogData: Omit<BlogPost, 'id'> = {
       title,
       slug: slugify(title),
       content,
@@ -111,8 +125,7 @@ export default function BlogListPage() {
     };
 
     if (!editingPostId) {
-      const randomImgNumber = Math.floor(Math.random() * 8) + 1;
-      blogData.image = `/blog_img_${randomImgNumber}.png`;
+      blogData.image = pickDefaultBlogImage(blogData.slug);
     }
 
     let result;
@@ -354,10 +367,7 @@ export default function BlogListPage() {
                 >
                   <div
                     className="blog-stack-wrapper h-full"
-                    style={{
-                      // @ts-ignore
-                      '--card-scale': 0.9 + (index * 0.02)
-                    }}
+                    style={{ '--card-scale': 0.9 + (index * 0.02) } as CSSProperties & Record<'--card-scale', number>}
                   >
                     <BlogCard
                       post={post}
