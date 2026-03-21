@@ -3,7 +3,6 @@ import GlassSurface from './GlassSurface';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import Lenis from 'lenis';
 import { ArrowUpRight, Eye, Linkedin, Mail, X } from 'lucide-react';
 import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
@@ -20,7 +19,6 @@ const shouldSkipHeavyAnimations = () =>
 declare global {
   interface Window {
     navigateToSection?: (sectionId: string) => void;
-    lenis?: Lenis;
   }
 }
 
@@ -96,18 +94,10 @@ function App() {
           targetScroll = (element as HTMLElement).offsetTop - pinnedOffset;
         }
 
-        const lenisInstance = window.lenis;
-        if (lenisInstance?.scrollTo) {
-          lenisInstance.scrollTo(targetScroll, {
-            duration: 1.2,
-            immediate: false
-          });
-        } else {
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-          });
-        }
+        window.scrollTo({
+          top: targetScroll,
+          behavior: 'smooth'
+        });
       });
     };
 
@@ -116,43 +106,17 @@ function App() {
     };
   }, []);
 
-  // Initialize Lenis smooth scroll
+  // ScrollTrigger refresh on mount
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-    });
-
-    // Connect Lenis with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
-    const tickerCallback = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(tickerCallback);
-
-    gsap.ticker.lagSmoothing(0);
-
-    // Store on window for navigation access
-    window.lenis = lenis;
-
-    // Store section refs
+    ScrollTrigger.refresh();
+    
+    // Store section refs for other components
     sectionRefs.current.hero = document.querySelector('#hero');
     sectionRefs.current.about = document.querySelector('#about');
     sectionRefs.current.work = document.querySelector('#work');
     sectionRefs.current.capabilities = document.querySelector('#capabilities');
     sectionRefs.current.experience = document.querySelector('#experience');
     sectionRefs.current.contact = document.querySelector('#contact');
-
-    return () => {
-      gsap.ticker.remove(tickerCallback);
-      lenis.destroy();
-      delete window.lenis;
-    };
   }, []);
 
   const handleViewResume = () => {

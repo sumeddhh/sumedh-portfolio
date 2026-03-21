@@ -265,7 +265,6 @@ export function AIChatAssistant({
                             width: 'min(92vw, 400px)'
                         }}
                         exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                        data-lenis-prevent
                         className="fixed bottom-6 right-6 z-[2000] overflow-hidden"
                     >
                         <GlassSurface
