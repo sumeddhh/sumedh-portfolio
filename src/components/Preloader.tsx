@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
 
@@ -34,15 +34,20 @@ export default function Preloader({
   const [text2, setText2] = useState('');
   const [text3, setText3] = useState('');
 
+  const animStarted = useRef(false);
+
   useEffect(() => {
+    if (animStarted.current) return;
+
     if (!bypassSessionStorage && sessionStorage.getItem('sumedh_preloader_done')) {
       setLoading(false);
       if (onComplete) onComplete();
       return;
     }
 
+    animStarted.current = true;
     let start = Date.now();
-    const duration = 1600;
+    const duration = 3500; // 3.5 seconds for a smooth cinematic load
 
     const animate = () => {
       const now = Date.now();
@@ -68,7 +73,8 @@ export default function Preloader({
     };
     
     requestAnimationFrame(animate);
-  }, [line1, line2, line3, onComplete, bypassSessionStorage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount to prevent reset loops from parent re-renders
 
   if (!loading) return null;
 
