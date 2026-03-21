@@ -2,6 +2,10 @@ import React, { useState, Suspense, lazy, useRef, useEffect } from 'react';
 import { Menu, X, Bot } from 'lucide-react';
 import { gsap } from 'gsap';
 import Preloader from './Preloader';
+import DecryptedText from './DecryptedText';
+import TerminalOverlay from './TerminalOverlay';
+import DataStreamBackground from './DataStreamBackground';
+import SignalGlitch from './SignalGlitch';
 
 const AIChatAssistant = lazy(() =>
   import('../AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
@@ -73,6 +77,7 @@ export function FullScreenMenu({
   menuRef: React.RefObject<HTMLDivElement | null>;
   closeMenu: () => void;
 }) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const menuItems = [
     { label: 'Home', section: 'hero', href: '/' },
     { label: 'Work', section: 'work', href: '/#work' },
@@ -114,14 +119,16 @@ export function FullScreenMenu({
       <div className="text-center w-full max-w-4xl">
         <nav className="mb-16">
           <ul className="space-y-4 md:space-y-8">
-            {menuItems.map((item) => (
+            {menuItems.map((item, index) => (
               <li key={item.label}>
                 <a
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   className="font-display text-4xl md:text-8xl font-bold text-white hover:text-[#B9FF2C] transition-all duration-300 block hover:tracking-tighter"
                 >
-                  {item.label}
+                  <DecryptedText text={item.label} isHovered={hoveredIndex === index} />
                 </a>
               </li>
             ))}
@@ -197,6 +204,9 @@ export function NavigationShell({ children, isBlogPage }: { children: React.Reac
   return (
     <div className="relative bg-[#050505] min-h-screen">
       <Preloader bypassSessionStorage={true} duration={1000} />
+      <TerminalOverlay />
+      <DataStreamBackground />
+      <SignalGlitch trigger={children} />
       {/* Global Grain Overlay */}
       <div className="grain-overlay pointer-events-none" />
 
