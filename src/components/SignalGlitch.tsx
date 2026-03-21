@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useSoundFX } from './SoundProvider';
 
 export default function SignalGlitch({ trigger }: { trigger: any }) {
   const [active, setActive] = useState(false);
+  const { playGlitch } = useSoundFX();
 
   useEffect(() => {
     setActive(true);
+    playGlitch();
     const timeout = setTimeout(() => setActive(false), 250);
     return () => clearTimeout(timeout);
-  }, [trigger]);
+  }, [trigger, playGlitch]);
 
   if (!active) return null;
 

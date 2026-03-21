@@ -1,11 +1,12 @@
 import React, { useState, Suspense, lazy, useRef, useEffect } from 'react';
-import { Menu, X, Bot } from 'lucide-react';
+import { Menu, X, Bot, Volume2, VolumeX } from 'lucide-react';
 import { gsap } from 'gsap';
 import Preloader from './Preloader';
 import DecryptedText from './DecryptedText';
 import TerminalOverlay from './TerminalOverlay';
 import DataStreamBackground from './DataStreamBackground';
 import SignalGlitch from './SignalGlitch';
+import { useSoundFX } from './SoundProvider';
 
 const AIChatAssistant = lazy(() =>
   import('../AIChatAssistant').then((module) => ({ default: module.AIChatAssistant }))
@@ -16,9 +17,11 @@ interface HeaderProps {
   toggleMenu: () => void;
   onOpenChat: () => void;
   isBlogPage?: boolean;
+  isMuted: boolean;
+  toggleMute: () => void;
 }
 
-export function Header({ menuOpen, toggleMenu, onOpenChat, isBlogPage }: HeaderProps) {
+export function Header({ menuOpen, toggleMenu, onOpenChat, isBlogPage, isMuted, toggleMute }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-[1100] px-6 py-5 flex justify-between items-center transition-all duration-300">
       <a href="/" className="flex items-center gap-2 group">
@@ -47,6 +50,18 @@ export function Header({ menuOpen, toggleMenu, onOpenChat, isBlogPage }: HeaderP
           Blogs
         </a>
 
+
+        <button
+          onClick={toggleMute}
+          aria-label={isMuted ? "Unmute sounds" : "Mute sounds"}
+          className="flex items-center gap-2 px-3 py-2 rounded-full border border-white/20 text-white text-sm font-medium hover:bg-white/10 transition-colors bg-black/20 backdrop-blur-sm group"
+        >
+          {isMuted ? (
+            <VolumeX size={16} className="text-white/40" />
+          ) : (
+            <Volume2 size={16} className="text-[#B9FF2C] animate-pulse" />
+          )}
+        </button>
 
         <button
           onClick={onOpenChat}
@@ -159,6 +174,7 @@ const isReload = () => {
 };
 
 export function NavigationShell({ children, isBlogPage }: { children: React.ReactNode; isBlogPage?: boolean }) {
+  const { isMuted, toggleMute } = useSoundFX();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [isChatOpen, setIsChatOpen] = useState(() => {
@@ -218,6 +234,8 @@ export function NavigationShell({ children, isBlogPage }: { children: React.Reac
           setIsChatOpen(true);
         }}
         isBlogPage={isBlogPage}
+        isMuted={isMuted}
+        toggleMute={toggleMute}
       />
 
       {shouldLoadChat && (
