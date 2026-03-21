@@ -171,7 +171,7 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }}
         />
 
-        <main className="relative z-10 pb-20 pt-[6rem] md:pt-[6rem] max-w-[100vw] overflow-x-hidden ">
+        <main className="relative z-10 pb-20 pt-[6rem] md:pt-[6rem]">
           {/* Header Section - Identical to Static Blog */}
           <header className="mx-auto mb-20 w-full max-w-[1500px] px-6 md:px-8">
             <div className="relative overflow-hidden rounded-xl border border-white/10 bg-[#111111] px-6 py-14 text-center md:px-10 md:py-20">
@@ -206,9 +206,8 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
           </header>
 
           <div className="mx-auto grid w-full max-w-[1500px] grid-cols-12 gap-8 px-6 md:px-8 lg:gap-10">
-            {/* TOC Sidebar - 1:1 with Static */}
             <aside className="col-span-12 lg:col-span-3">
-              <div className="lg:sticky lg:top-28">
+              <div className="lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto pr-4 scrollbar-hide">
                 <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">Contents</p>
                 <nav className="space-y-4 text-[11px] font-mono uppercase tracking-[0.14em]">
                   {toc.map((item) => {
@@ -233,9 +232,8 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
               <Markdown options={mdOptions}>{post.content}</Markdown>
             </article>
 
-            {/* Interaction aside - Matching Static col-span-2 */}
             <aside className="col-span-12 hidden lg:col-span-2 lg:block">
-              <div className="sticky top-28 flex flex-col gap-4">
+              <div className="sticky top-32 flex flex-col gap-4">
                 <button
                   aria-label="Like article"
                   onClick={() => setLiked(!liked)}

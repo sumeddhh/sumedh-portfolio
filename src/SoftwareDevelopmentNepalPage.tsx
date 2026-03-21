@@ -156,7 +156,7 @@ export default function SoftwareDevelopmentNepalPage() {
 
           <div className="mx-auto grid w-full max-w-[1500px] grid-cols-12 gap-8 px-6 md:px-8 lg:gap-10">
             <aside className="col-span-12 lg:col-span-3">
-              <div className="lg:sticky lg:top-28">
+              <div className="lg:sticky lg:top-32 lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto pr-4 scrollbar-hide">
                 <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.2em] text-white/70">Contents</p>
                 <nav className="space-y-4 text-[11px] font-mono uppercase tracking-[0.14em]">
                   <a href="#overview" className="flex items-center gap-3 text-[#b2f722]">
@@ -256,7 +256,7 @@ export default function SoftwareDevelopmentNepalPage() {
             </article>
 
             <aside className="col-span-12 hidden lg:col-span-2 lg:block">
-              <div className="sticky top-28 flex flex-col gap-4">
+              <div className="sticky top-32 flex flex-col gap-4">
                 <button
                   aria-label="Like article"
                   onClick={handleLike}
