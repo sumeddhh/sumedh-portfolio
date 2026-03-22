@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Core Pages -->
   <url>
-    <loc>https://sumedhbajracharya.com.np/</loc>
+    <loc>https://www.sumedhbajracharya.com.np/</loc>
     <lastmod>2026-03-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://sumedhbajracharya.com.np/blog</loc>
+    <loc>https://www.sumedhbajracharya.com.np/blog</loc>
     <lastmod>2026-03-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
@@ -16,13 +16,13 @@
 
   <!-- Static Blog Posts -->
   <url>
-    <loc>https://sumedhbajracharya.com.np/blog/software-development-nepal</loc>
+    <loc>https://www.sumedhbajracharya.com.np/blog/software-development-nepal</loc>
     <lastmod>2026-02-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://sumedhbajracharya.com.np/blog/ai-guardrails-on-frontend</loc>
+    <loc>https://www.sumedhbajracharya.com.np/blog/ai-guardrails-on-frontend</loc>
     <lastmod>2026-03-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
