@@ -3,7 +3,7 @@ import GlassSurface from './GlassSurface';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { ArrowUpRight, Eye, Linkedin, Mail, X } from 'lucide-react';
+import { ArrowUpRight, Linkedin, Mail } from 'lucide-react';
 import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import './App.css';
 
@@ -24,7 +24,6 @@ declare global {
 
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
-  const [showResume, setShowResume] = useState(false);
 
   // Section refs for reliable navigation
   const sectionRefs = useRef({
@@ -126,10 +125,6 @@ function App() {
     sectionRefs.current.contact = document.querySelector('#contact');
   }, []);
 
-  const handleViewResume = () => {
-    setShowResume(true);
-  };
-
   return (
     <div ref={mainRef} className="relative bg-[#050505] min-h-screen">
       {/* Grain Overlay */}
@@ -139,9 +134,8 @@ function App() {
       {/* Main Content */}
       <main className="relative">
         <HeroSection />
-        <AboutSection onViewResume={handleViewResume} />
+        <AboutSection />
         <SelectedWorkSection />
-        <ResumeModal open={showResume} onOpenChange={setShowResume} />
         <CapabilitiesSection />
         <ExperienceSection />
         <ContactSection />
@@ -528,7 +522,7 @@ function SelectedWorkSection() {
 }
 
 // About Section
-function AboutSection({ onViewResume }: { onViewResume: () => void }) {
+function AboutSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLDivElement>(null);
@@ -639,15 +633,11 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
             <p className="text-white/60 text-sm">40% LLM operational cost reduction</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button onClick={onViewResume} className="btn-primary flex items-center gap-2">
-              <Eye size={18} />
-              View Resume
-            </button>
             <a
               href="https://np.linkedin.com/in/sumedh-bajracharya"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary flex items-center gap-2"
+              className="btn-primary flex items-center gap-2"
             >
               LinkedIn
               <ArrowUpRight size={16} />
@@ -659,41 +649,7 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
   );
 }
 
-function ResumeModal({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  if (!open) return null;
-
-  return (
-    <div className="fixed inset-0 z-[2000] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="relative bg-[#050505] border border-white/10 w-full max-w-5xl h-[86vh] rounded-lg p-4 md:p-6 shadow-2xl">
-        <button
-          onClick={() => onOpenChange(false)}
-          aria-label="Close resume"
-          className="absolute top-3 right-3 rounded-full border border-white/10 text-white/80 hover:text-white hover:border-white/30 transition-colors p-2"
-        >
-          <X size={18} />
-        </button>
-        <div className="flex flex-col h-full">
-          <h2 className="font-display text-2xl md:text-4xl font-semibold text-white mb-4">
-            Resume
-          </h2>
-          <div className="rounded-[14px] overflow-hidden border border-white/10 bg-black/40 flex-1">
-            <iframe
-              src="/Sumedh_Bajracharya_CV.pdf#view=FitH"
-              title="Sumedh Bajracharya Resume"
-              className="w-full h-full"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// ResumeModal removed for privacy
 
 // Capabilities Section (Flowing)
 function CapabilitiesSection() {
