@@ -370,7 +370,7 @@ function HeroSection() {
         {/* Subheadline & CTA */}
         <div className="mt-6 md:mt-8 relative z-10">
           <p className="text-white/60 text-base md:text-xl mb-4 md:mb-6">
-            Senior Software Engineer II · Web Development · UX
+            Senior Software Engineer III · Web Development · UX
           </p>
           <div ref={ctaRef} className="flex flex-col sm:flex-row gap-3 md:gap-4 py-2 md:py-4">
             <a href="#work" className="btn-primary flex items-center justify-center gap-2 text-base md:text-base">
@@ -431,30 +431,34 @@ function SelectedWorkSection() {
     {
       title: 'Marketing Engine',
       img: '/project_marketing_engine.png',
-      tags: ['ReactFlow', 'Omnichannel', 'AI'],
-      impact: '20% higher conversion.',
-      description: 'Node-based campaign builder with conditional messaging.'
+      tags: ['ReactFlow', 'Metamodel API', 'AI'],
+      impact: '10x faster config.',
+      description: 'No-code automation builder using ReactFlow and Metamodel API for canvas-based UX.',
+      isCensored: true
     },
     {
       title: 'Healthcare AI',
       img: '/project_healthcare_ai.jpg',
-      tags: ['ReactFlow', 'Metamodel API', 'AI'],
-      impact: '10x faster app building.',
-      description: 'No-code healthcare builder via ReactFlow.'
+      tags: ['React', 'Next.js', 'AWS'],
+      impact: 'Zero HIPAA breach.',
+      description: 'Enterprise healthcare platform optimized under strict regulatory workflows.',
+      isCensored: true
     },
     {
-      title: 'Fertility Bot',
-      img: '/project_fertility_bot.jpg',
+      title: 'Care Assistant AI',
+      img: '/project_care_assistant.jpg',
       tags: ['Backend', 'HIPAA', 'LLM'],
       impact: '40% cost reduction.',
-      description: 'HIPAA AI chatbot with context optimization.'
+      description: 'HIPAA-compliant clinical AI assistant with conversation history summarization.',
+      isCensored: true
     },
     {
       title: 'Team Collaboration',
       img: '/project_team_collab.jpg',
       tags: ['Socket.io', 'Architecture', 'Web'],
-      impact: '35% team productivity.',
-      description: 'Real-time collaboration and OKR tracking.'
+      impact: '35% productivity.',
+      description: 'Real-time collaboration hub leveraging Socket.io messaging and OKR tracking.',
+      isCensored: true
     },
   ];
 
@@ -490,6 +494,7 @@ function SelectedWorkSection() {
               showMobileWarning={false}
               showTooltip
               displayOverlayContent
+              isCensored={project.isCensored}
               overlayContent={
                 <div className="p-6 w-full h-full flex flex-col justify-end bg-gradient-to-t from-black/90 to-transparent group-hover:bg-black/60 transition-all duration-300 rounded-[15px]">
                   <div className="transform translate-y-[62px] group-hover:translate-y-0 transition-transform duration-500 ease-out">
@@ -625,7 +630,7 @@ function AboutSection({ onViewResume }: { onViewResume: () => void }) {
             I'm a Senior Software Engineer focused on frontend architecture, full-stack product delivery, and design-to-code execution, with strong attention to performance, accessibility, and interaction quality.
           </p>
           <p className="text-white/70 text-lg leading-relaxed mb-8">
-            I've led enterprise healthcare platforms, delivered 15+ production deployments, and built HIPAA-compliant systems with 99.9% uptime. With 4.5+ years of experience, I specialize in React, Next.js, TypeScript, and AI-powered product workflows.
+            I've led enterprise healthcare platforms, delivered 15+ production deployments, and built HIPAA-compliant systems with 99.9% uptime. With 5+ years of experience, I specialize in React, Next.js, TypeScript, and AI-powered product workflows.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
             <p className="text-white/60 text-sm">15+ production deployments</p>
@@ -779,7 +784,7 @@ function CapabilitiesSection() {
     },
     {
       category: 'AI & Automation',
-      skills: 'Cursor, Claude Code, LLM API Integration, Token Optimization, Intent Recognition'
+      skills: 'Codex, Cursor, Claude Code, LLM API Integration, Token Optimization, Intent Recognition'
     },
     {
       category: 'Design',
@@ -868,9 +873,10 @@ function ExperienceSection() {
   }, []);
 
   const experiences = [
-    { role: 'Sr. Software Engineer II', company: 'GritFeat Solutions', period: '2024–Present', highlight: 'Led frontend architecture and chunk-based AI chat streaming; improved response times by 60% and reduced token costs by 40%.' },
-    { role: 'Sr. Software Engineer I', company: 'GritFeat Solutions', period: '2023', highlight: 'Managed AWS/Azure infrastructure and automated CI/CD with GitHub Actions + Harness, reducing deployment time by 30%.' },
-    { role: 'Software Engineer (Associate through III)', company: 'GritFeat Solutions', period: '2020–2022', highlight: 'Delivered design systems, cut initial load times by 50%, reduced API calls by 70%, and improved feature delivery by 25%.' },
+    { role: 'Sr. Software Engineer III', company: 'GritFeat Solutions', period: '2026–Present', highlight: 'Lead frontend architecture for enterprise healthcare applications using React/Next.js; speaker on AI-assisted engineering workflows.' },
+    { role: 'Sr. Software Engineer II', company: 'GritFeat Solutions', period: '2025', highlight: 'Engineered chunk-based AI chat streaming; architected HIPAA-compliant systems using AWS Cognito and microservices.' },
+    { role: 'Sr. Software Engineer I', company: 'GritFeat Solutions', period: '2024', highlight: 'Managed cloud infrastructure across AWS/Azure and automated CI/CD pipelines (Harness + GitHub Actions).' },
+    { role: 'Software Engineer (Associate through III)', company: 'GritFeat Solutions', period: '2021–2023', highlight: 'Reduced initial load times by 50%, designed comprehensive Storybook design systems, and achieved 80%+ coverage with Jest/Cypress.' },
     { role: 'UX & Full-Stack Intern', company: 'ITGlance', period: '2020', highlight: 'Contributed to JavaScript/Java full-stack workflows for manual record digitization systems.' },
   ];
 
@@ -890,7 +896,7 @@ function ExperienceSection() {
           </div>
         </div>
         <div ref={contentRef}>
-          <div className="font-display !text-[5rem] tracking-tight md:text-5xl font-semibold text-white text-center mb-12">
+          <div className="font-display text-4xl tracking-tight md:text-[5rem] font-semibold text-white text-center mb-12">
             Work <span className="text-[#B9FF2C]">Experience</span>
           </div>
 

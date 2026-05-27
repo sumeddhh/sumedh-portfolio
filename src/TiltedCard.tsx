@@ -1,6 +1,7 @@
 import type { SpringOptions } from 'motion/react';
 import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'motion/react';
+import { Lock } from 'lucide-react';
 
 interface TiltedCardProps {
     imageSrc: React.ComponentProps<'img'>['src'];
@@ -16,6 +17,8 @@ interface TiltedCardProps {
     showTooltip?: boolean;
     overlayContent?: React.ReactNode;
     displayOverlayContent?: boolean;
+    isCensored?: boolean;
+    censoredHoverText?: string;
 }
 
 const springValues: SpringOptions = {
@@ -37,7 +40,9 @@ export default function TiltedCard({
     showMobileWarning = true,
     showTooltip = true,
     overlayContent = null,
-    displayOverlayContent = false
+    displayOverlayContent = false,
+    isCensored = false,
+    censoredHoverText = 'Connect with Sumedh to know more'
 }: TiltedCardProps) {
     const ref = useRef<HTMLElement>(null);
     const x = useMotionValue(0);
@@ -119,14 +124,47 @@ export default function TiltedCard({
                 <motion.img
                     src={imageSrc}
                     alt={altText}
-                    className="absolute top-0 left-0 object-cover rounded-[15px] will-change-transform [transform:translateZ(0)] border border-white/10"
+                    className={`absolute top-0 left-0 object-cover rounded-[15px] will-change-transform [transform:translateZ(0)] border border-white/10 ${isCensored ? 'filter blur-[16px] brightness-[0.3] select-none pointer-events-none' : ''}`}
                     style={{
                         width: imageWidth,
                         height: imageHeight
                     }}
                 />
 
-                {displayOverlayContent && overlayContent && (
+                {isCensored && (
+                    <div className="absolute inset-0 z-[5] flex flex-col items-center justify-center p-4 text-center rounded-[15px] select-none pointer-events-none">
+                        <div className="absolute inset-0 bg-black/45 rounded-[15px] backdrop-blur-[4px] border border-red-500/20 group-hover:border-[#B9FF2C]/30 transition-colors duration-500" />
+                        
+                        <div className="relative z-10 flex flex-col items-center justify-center gap-3 transition-all duration-500 ease-out p-2 w-full">
+                            <div className="w-12 h-12 rounded-full border border-red-500/30 bg-red-950/20 text-red-400 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse group-hover:animate-none group-hover:border-[#B9FF2C]/30 group-hover:bg-[#B9FF2C]/10 group-hover:text-[#B9FF2C] group-hover:shadow-[0_0_15px_rgba(185,255,44,0.2)] transition-colors duration-500">
+                                <Lock size={20} />
+                            </div>
+                            
+                            <div className="text-center">
+                                <span className="font-mono text-[9px] uppercase tracking-[0.25em] text-red-400 group-hover:text-[#B9FF2C] transition-colors duration-500 font-semibold block">
+                                    NDA Secured
+                                </span>
+                            </div>
+
+                            <div className="relative w-full flex flex-col items-center justify-center min-h-[90px]">
+                                <h4 className="font-display text-base font-bold text-white tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:scale-95 absolute">
+                                    {altText}
+                                </h4>
+
+                                <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 scale-95 group-hover:scale-100 flex flex-col items-center justify-center text-center px-1 pointer-events-none">
+                                    <p className="text-white/80 text-[11px] leading-normal font-sans font-medium max-w-[200px]">
+                                        This project is under a non-disclosure agreement.
+                                    </p>
+                                    <p className="font-mono text-[8px] text-[#B9FF2C] font-bold tracking-wider mt-2.5 uppercase">
+                                        Connect with Sumedh to know more
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {displayOverlayContent && overlayContent && !isCensored && (
                     <motion.div className="absolute top-0 left-0 z-[2] will-change-transform [transform:translateZ(30px)] w-full h-full pointer-events-none">
                         {overlayContent}
                     </motion.div>
@@ -143,7 +181,7 @@ export default function TiltedCard({
                         rotate: rotateFigcaption
                     }}
                 >
-                    {captionText}
+                    {isCensored ? censoredHoverText : captionText}
                 </motion.figcaption>
             )}
         </figure>
