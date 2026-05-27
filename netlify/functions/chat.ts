@@ -45,7 +45,7 @@ PROFILE:
 - Education: Master of IT (MIT) from KLUST (2023 - 2026)  
 - Stack: React, Next.js, Node, TS, ReactFlow, AWS, Azure, Codex, GSAP, Tailwind  
 - Certs: AWS Certified Developer - Associate (expected Q3 2026)  
-- Metrics: 15+ deploys, HIPAA systems, 99.9% uptime, 10,000+ active users served  
+- Metrics: 15+ deploys, HIPAA systems, 99.9% uptime, 80%+ test coverage  
 
 RULES:
 - keepittight,2-4 sentncs  

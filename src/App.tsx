@@ -629,7 +629,7 @@ function AboutSection() {
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
             <p className="text-white/60 text-sm">15+ production deployments</p>
             <p className="text-white/60 text-sm">99.9% uptime in healthcare systems</p>
-            <p className="text-white/60 text-sm">10,000+ monthly active healthcare users served</p>
+            <p className="text-white/60 text-sm">80%+ Jest/Cypress test coverage achieved</p>
             <p className="text-white/60 text-sm">40% LLM operational cost reduction</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
