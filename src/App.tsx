@@ -354,10 +354,7 @@ function HeroSection() {
         <div ref={headlineRef} className="mt-auto relative z-10">
           <p className="font-display text-xl md:text-4xl text-white/60 mb-2">Sup, I'm</p>
           <h1 className="font-display text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9]">
-            Sumedh
-          </h1>
-          <h1 className="font-display text-5xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight leading-[0.9]">
-            Bajracharya.
+            Sumedh <br /> Bajracharya.
           </h1>
         </div>
 

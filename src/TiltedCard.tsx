@@ -147,11 +147,11 @@ export default function TiltedCard({
                             </div>
 
                             <div className="relative w-full flex flex-col items-center justify-center min-h-[90px]">
-                                <h4 className="font-display text-base font-bold text-white tracking-wide transition-all duration-300 group-hover:opacity-0 group-hover:scale-95 absolute">
+                                <h4 className="font-display text-base font-bold text-white tracking-wide transition-all duration-300 md:group-hover:opacity-0 md:group-hover:scale-95 md:absolute text-center">
                                     {altText}
                                 </h4>
 
-                                <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 scale-95 group-hover:scale-100 flex flex-col items-center justify-center text-center px-1 pointer-events-none">
+                                <div className="hidden md:flex opacity-0 md:group-hover:opacity-100 transition-all duration-500 scale-95 md:group-hover:scale-100 flex-col items-center justify-center text-center px-1 pointer-events-none">
                                     <p className="text-white/80 text-[11px] leading-normal font-sans font-medium max-w-[200px]">
                                         This project is under a non-disclosure agreement.
                                     </p>
