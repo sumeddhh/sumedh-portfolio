@@ -131,18 +131,48 @@ export default function DynamicBlogRenderer({ post }: { post: BlogPost }) {
         props: {
           className: 'relative my-8 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-0',
         },
-        component: ({ children, ...props }: { children?: ReactNode } & Record<string, unknown>) => (
-          <div className="relative group">
-            <div className="absolute top-0 right-0 p-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="w-2 h-2 rounded-full bg-white/10" />
-              <div className="w-2 h-2 rounded-full bg-white/10" />
-              <div className="w-2 h-2 rounded-full bg-white/10" />
+        component: ({ children, ...props }: { children?: ReactNode } & Record<string, unknown>) => {
+          const getCodeText = (node: ReactNode): string => {
+            if (typeof node === 'string') return node;
+            if (typeof node === 'number') return String(node);
+            if (Array.isArray(node)) return node.map(getCodeText).join('');
+            if (node && typeof node === 'object' && 'props' in node) {
+              return getCodeText((node as any).props.children);
+            }
+            return '';
+          };
+
+          const handleCopyCode = (e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const textToCopy = getCodeText(children);
+            navigator.clipboard.writeText(textToCopy)
+              .then(() => setToast('Code copied to clipboard'))
+              .catch(() => setToast('Failed to copy code'));
+          };
+
+          return (
+            <div className="relative group">
+              <div className="absolute top-4 left-4 flex gap-1.5 z-10">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
+              </div>
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                <button
+                  onClick={handleCopyCode}
+                  className="px-2.5 py-1 bg-white/10 hover:bg-[#b2f722] hover:text-black rounded text-[10px] font-mono uppercase tracking-widest text-white/70 transition-colors cursor-pointer"
+                  title="Copy Code"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre {...props} className="whitespace-pre-wrap break-all p-6 pt-10 font-mono text-sm leading-relaxed text-white/90">
+                {children}
+              </pre>
             </div>
-            <pre {...props} className="whitespace-pre-wrap break-all p-6 font-mono text-sm leading-relaxed text-white/90">
-              {children}
-            </pre>
-          </div>
-        )
+          );
+        }
       },
       code: {
         props: {
