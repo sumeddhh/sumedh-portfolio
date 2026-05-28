@@ -3,8 +3,9 @@ import GlassSurface from './GlassSurface';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { ArrowUpRight, Linkedin, Mail } from 'lucide-react';
+import { ArrowUpRight, Linkedin, Mail, Copy } from 'lucide-react';
 import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import DecryptedText from './components/DecryptedText';
 import './App.css';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -24,6 +25,13 @@ declare global {
 
 function App() {
   const mainRef = useRef<HTMLDivElement>(null);
+  const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    if (!toast) return;
+    const handle = window.setTimeout(() => setToast(''), 3000);
+    return () => window.clearTimeout(handle);
+  }, [toast]);
 
   // Section refs for reliable navigation
   const sectionRefs = useRef({
@@ -138,11 +146,18 @@ function App() {
         <SelectedWorkSection />
         <CapabilitiesSection />
         <ExperienceSection />
-        <ContactSection />
+        <ContactSection setToast={setToast} />
       </main>
 
       {/* Progress Indicator */}
       <ProgressIndicator />
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[9999] rounded-md border border-white/20 bg-black/85 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-[#B9FF2C] shadow-lg animate-in fade-in slide-in-from-bottom-2">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }
@@ -363,18 +378,47 @@ function HeroSection() {
           <p className="text-white/60 text-base md:text-xl mb-4 md:mb-6">
             Senior Software Engineer III · Web Development · UX
           </p>
-          <div ref={ctaRef} className="flex flex-col sm:flex-row gap-3 md:gap-4 py-2 md:py-4">
-            <a href="#work" className="btn-primary flex items-center justify-center gap-2 text-base md:text-base">
-              View work
-              <ArrowUpRight size={18} />
-            </a>
-            <a href="#contact" className="btn-secondary text-base md:text-base text-center">
-              Contact
-            </a>
-          </div>
+          <HeroCTAs ctaRef={ctaRef} />
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroCTAs({ ctaRef }: { ctaRef: React.RefObject<HTMLDivElement | null> }) {
+  const [hoveredBtn, setHoveredBtn] = useState<'work' | 'contact' | null>(null);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    if (window.navigateToSection) {
+      window.navigateToSection(sectionId);
+    } else {
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div ref={ctaRef} className="flex flex-col sm:flex-row gap-3 md:gap-4 py-2 md:py-4">
+      <a
+        href="#work"
+        onClick={(e) => handleNavClick(e, 'work')}
+        onMouseEnter={() => setHoveredBtn('work')}
+        onMouseLeave={() => setHoveredBtn(null)}
+        className="btn-primary flex items-center justify-center gap-2 text-base md:text-base"
+      >
+        <DecryptedText text="View work" isHovered={hoveredBtn === 'work'} />
+        <ArrowUpRight size={18} />
+      </a>
+      <a
+        href="#contact"
+        onClick={(e) => handleNavClick(e, 'contact')}
+        onMouseEnter={() => setHoveredBtn('contact')}
+        onMouseLeave={() => setHoveredBtn(null)}
+        className="btn-secondary text-base md:text-base text-center"
+      >
+        <DecryptedText text="Contact" isHovered={hoveredBtn === 'contact'} />
+      </a>
+    </div>
   );
 }
 
@@ -885,8 +929,7 @@ function ExperienceSection() {
   );
 }
 
-// Contact Section (Flowing)
-function ContactSection() {
+function ContactSection({ setToast }: { setToast: (toast: string) => void }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [shouldLoadHyperspeed, setShouldLoadHyperspeed] = useState(false);
@@ -898,7 +941,7 @@ function ContactSection() {
     if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(content.querySelectorAll('*'),
+      gsap.fromTo(content.querySelectorAll('.contact-animate'),
         { y: 24, opacity: 0 },
         {
           y: 0,
@@ -935,6 +978,14 @@ function ContactSection() {
     observer.observe(section);
     return () => observer.disconnect();
   }, [shouldLoadHyperspeed]);
+
+  const handleCopyEmail = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText('sumedhbajracharya07@gmail.com')
+      .then(() => setToast('Email copied to clipboard'))
+      .catch(() => setToast('Could not copy email'));
+  };
 
   return (
     <section
@@ -989,40 +1040,55 @@ function ContactSection() {
       </div>
       <div
         style={{ borderRadius: '6rem' }}
-        className="window-frame w-[86vw] mx-auto bg-[#050505]/60 backdrop-blur-[10px] p-[6%] text-center relative overflow-hidden z-10">
+        className="window-frame w-[86vw] mx-auto bg-[#050505]/65 backdrop-blur-[12px] p-[6%] text-center relative overflow-hidden z-10">
         {/* Ghost Text */}
         <div aria-hidden="true" className="absolute right-[-2%] top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none">
           <div className="font-display text-[140px] font-bold leading-none tracking-tighter text-lime-300/[0.05] whitespace-nowrap uppercase">
             Contact
           </div>
         </div>
-        <div ref={contentRef}>
-          <h2 className="font-display text-5xl md:text-7xl font-semibold text-white mb-8">
+        
+        <div ref={contentRef} className="w-full max-w-5xl mx-auto">
+          <h2 className="font-display text-5xl md:text-7xl font-semibold text-white mb-6 text-center contact-animate">
             Let's build something<br />
             <span className="text-[#B9FF2C]">precise.</span>
           </h2>
 
-          <div className="flex flex-col md:flex-row justify-center items-center gap-6 mt-12">
-            <a
-              href="mailto:sumedhbajracharya07@gmail.com"
-              className="flex items-center gap-3 text-white/80 hover:text-[#B9FF2C] transition-colors"
-            >
-              <Mail size={20} />
-              <span className="font-mono text-sm">sumedhbajracharya07@gmail.com</span>
-            </a>
+          <div className="flex flex-col md:flex-row justify-center items-center gap-8 mt-12 contact-animate">
+            {/* Direct Email Card with Clipboard Copy */}
+            <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-5 py-3 hover:border-[#B9FF2C]/30 transition-all duration-300">
+              <a
+                href="mailto:sumedhbajracharya07@gmail.com"
+                className="flex items-center gap-3 text-white/80 hover:text-[#B9FF2C] transition-colors"
+              >
+                <Mail size={18} className="text-[#B9FF2C]" />
+                <span className="font-mono text-xs md:text-sm select-all">sumedhbajracharya07@gmail.com</span>
+              </a>
+              <span className="h-4 w-px bg-white/15 mx-1" />
+              <button
+                onClick={handleCopyEmail}
+                className="p-1 hover:text-[#B9FF2C] text-white/40 transition-colors cursor-pointer"
+                title="Copy Email to Clipboard"
+              >
+                <Copy size={14} />
+              </button>
+            </div>
+
+            {/* LinkedIn Profile */}
             <a
               href="https://np.linkedin.com/in/sumedh-bajracharya"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 text-white/80 hover:text-[#B9FF2C] transition-colors"
+              className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-6 py-3 hover:border-[#B9FF2C]/30 hover:text-[#B9FF2C] text-white/80 transition-all duration-300"
             >
-              <Linkedin size={20} />
-              <span className="font-mono text-sm">LinkedIn</span>
+              <Linkedin size={18} className="text-[#B9FF2C]" />
+              <span className="font-mono text-xs md:text-sm">LinkedIn</span>
+              <ArrowUpRight size={14} className="text-white/40" />
             </a>
           </div>
 
-          <div className="mt-24 pt-8 border-t border-white/10">
-            <p className="font-mono text-xs uppercase tracking-widest text-white/40">
+          <div className="mt-24 pt-8 border-t border-white/10 text-center contact-animate">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
               © Sumedh Bajracharya — {new Date().getFullYear()}
             </p>
           </div>

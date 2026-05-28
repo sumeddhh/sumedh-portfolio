@@ -212,7 +212,7 @@ export function NavigationShell({ children, isBlogPage }: { children: React.Reac
       <Preloader bypassSessionStorage={true} duration={1000} />
       <TerminalOverlay />
       <DataStreamBackground />
-      <SignalGlitch trigger={children} />
+      <SignalGlitch trigger={window.location.pathname} />
       {/* Global Grain Overlay */}
       <div className="grain-overlay pointer-events-none" />
 
