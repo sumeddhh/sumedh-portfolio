@@ -128,42 +128,62 @@ export default function BlogListPage() {
       blogData.image = pickDefaultBlogImage(blogData.slug);
     }
 
-    let result;
-    if (editingPostId) {
-      result = await supabase
-        .from('blogs')
-        .update(blogData)
-        .eq('id', editingPostId)
-        .select();
-    } else {
-      result = await supabase
-        .from('blogs')
-        .insert([blogData])
-        .select();
-    }
+    try {
+      const response = await fetch('/.netlify/functions/blog-admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-dev-password': password
+        },
+        body: JSON.stringify({
+          action: editingPostId ? 'update' : 'insert',
+          id: editingPostId || undefined,
+          blogData
+        })
+      });
 
-    if (!result.error && result.data && result.data.length > 0) {
-      fetchPosts();
-      setShowCompose(false);
-      resetForm();
-    } else {
-      console.error('Supabase Error:', result.error);
-      alert('Failed to save: ' + (result.error?.message || 'Update didn\'t apply. Check if the ID exists.'));
+      const resData = await response.json();
+
+      if (response.ok && resData.data && resData.data.length > 0) {
+        fetchPosts();
+        setShowCompose(false);
+        resetForm();
+      } else {
+        console.error('API Error:', resData.error);
+        alert('Failed to save: ' + (resData.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      alert('Failed to save due to network or server error.');
     }
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this blog? This action cannot be undone.')) return;
 
-    const { error } = await supabase
-      .from('blogs')
-      .delete()
-      .eq('id', id);
+    try {
+      const response = await fetch('/.netlify/functions/blog-admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-dev-password': password
+        },
+        body: JSON.stringify({
+          action: 'delete',
+          id
+        })
+      });
 
-    if (!error) {
-      setAllPosts(prev => prev.filter(p => !('id' in p) || p.id !== id));
-    } else {
-      alert('Failed to delete: ' + error.message);
+      const resData = await response.json();
+
+      if (response.ok) {
+        setAllPosts(prev => prev.filter(p => !('id' in p) || p.id !== id));
+      } else {
+        alert('Failed to delete: ' + (resData.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      alert('Failed to delete due to network or server error.');
     }
   };
 

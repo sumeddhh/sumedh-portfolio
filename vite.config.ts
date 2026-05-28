@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react"
 import { defineConfig, loadEnv, type Plugin } from "vite"
 import { inspectAttr } from 'kimi-plugin-inspect-react'
 import { handler as chatHandler } from "./netlify/functions/chat"
+import { handler as blogAdminHandler } from "./netlify/functions/blog-admin"
 
 function netlifyFunctionsDevMiddleware(): Plugin {
   return {
@@ -41,6 +42,40 @@ function netlifyFunctionsDevMiddleware(): Plugin {
           res.end(JSON.stringify({ error: "Local middleware error" }))
         }
       })
+
+      server.middlewares.use("/.netlify/functions/blog-admin", async (req, res) => {
+        try {
+          const chunks: Uint8Array[] = []
+          for await (const chunk of req) {
+            if (typeof chunk === "string") {
+              chunks.push(Buffer.from(chunk))
+            } else {
+              chunks.push(chunk)
+            }
+          }
+
+          const body = Buffer.concat(chunks.map((chunk) => Buffer.from(chunk))).toString("utf8")
+          const result = await blogAdminHandler({
+            httpMethod: req.method,
+            headers: req.headers as Record<string, string>,
+            body: body || undefined,
+          })
+
+          res.statusCode = result.statusCode ?? 200
+          const headers = result.headers ?? { "Content-Type": "application/json" }
+          Object.entries(headers).forEach(([key, value]) => {
+            if (value !== undefined) {
+              res.setHeader(key, value)
+            }
+          })
+          res.end(result.body ?? "")
+        } catch (error) {
+          console.error("Local blog-admin middleware error:", error)
+          res.statusCode = 500
+          res.setHeader("Content-Type", "application/json")
+          res.end(JSON.stringify({ error: "Local middleware error" }))
+        }
+      })
     },
   }
 }
@@ -52,6 +87,7 @@ export default defineConfig(({ mode }) => {
   // Make server-side middleware able to read local .env values.
   process.env.GROQ_API_KEY ??= env.GROQ_API_KEY ?? env.VITE_GROQ_API_KEY
   process.env.TAVILY_API_KEY ??= env.TAVILY_API_KEY ?? env.VITE_TAVILY_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY ??= env.SUPABASE_SERVICE_ROLE_KEY
 
   return {
     base: '/',
