@@ -1099,6 +1099,7 @@ class App {
   }
 
   init() {
+    if (this.disposed) return;
     this.initPasses();
     const options = this.options;
     this.road.init();
@@ -1187,10 +1188,16 @@ class App {
   }
 
   render(delta: number) {
-    this.composer.render(delta);
+    if (this.disposed) return;
+    try {
+      this.composer.render(delta);
+    } catch {
+      // Suppress render errors if WebGL context is lost/disposed
+    }
   }
 
   dispose() {
+    if (this.disposed) return;
     this.disposed = true;
 
     if (this.scene) {
@@ -1212,14 +1219,22 @@ class App {
     }
 
     if (this.renderer) {
-      this.renderer.dispose();
-      this.renderer.forceContextLoss();
+      try {
+        this.renderer.dispose();
+        this.renderer.forceContextLoss();
+      } catch {
+        // Suppress error if context was already lost
+      }
       if (this.renderer.domElement && this.renderer.domElement.parentNode) {
         this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
       }
     }
     if (this.composer) {
-      this.composer.dispose();
+      try {
+        this.composer.dispose();
+      } catch {
+        // Suppress composer disposal errors
+      }
     }
 
     window.removeEventListener('resize', this.onWindowResize);
@@ -1305,13 +1320,21 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
       options.distortion = distortions[options.distortion];
     }
 
+    let isCancelled = false;
     const myApp = new App(container, options);
     appRef.current = myApp;
-    myApp.loadAssets().then(myApp.init);
+
+    myApp.loadAssets().then(() => {
+      if (!isCancelled && appRef.current === myApp && !myApp.disposed) {
+        myApp.init();
+      }
+    });
 
     return () => {
+      isCancelled = true;
       if (appRef.current) {
         appRef.current.dispose();
+        appRef.current = null;
       }
     };
   }, [effectOptions]);

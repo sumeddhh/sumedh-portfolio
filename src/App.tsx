@@ -278,17 +278,21 @@ function HeroSection() {
         { scale: 1, opacity: 1, duration: 0.9, ease: 'power3.out' }
       );
 
-      loadTl.fromTo(headline.children,
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
-        '-=0.5'
-      );
+      if (headline.children.length > 0) {
+        loadTl.fromTo(headline.children,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
+          '-=0.5'
+        );
+      }
 
-      loadTl.fromTo(cta.children,
-        { y: 18, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 },
-        '-=0.3'
-      );
+      if (cta.children.length > 0) {
+        loadTl.fromTo(cta.children,
+          { y: 18, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.1 },
+          '-=0.3'
+        );
+      }
 
       // Scroll-driven exit animation
       const scrollTl = gsap.timeline({
@@ -299,7 +303,10 @@ function HeroSection() {
           pin: false,
           scrub: 1.2,
           onLeaveBack: () => {
-            gsap.set([windowEl, headline.children, cta.children], { clearProps: 'all' });
+            const targets: (Element | HTMLElement)[] = [windowEl];
+            if (headline.children.length > 0) targets.push(...Array.from(headline.children));
+            if (cta.children.length > 0) targets.push(...Array.from(cta.children));
+            gsap.set(targets, { clearProps: 'all' });
             loadTl.progress(1);
           }
         }
@@ -376,7 +383,7 @@ function HeroSection() {
         {/* Subheadline & CTA */}
         <div className="mt-6 md:mt-8 relative z-10">
           <p className="text-white/60 text-base md:text-xl mb-4 md:mb-6">
-            Senior Software Engineer III · Web Development · UX
+            Software Engineer · Web Development · UX
           </p>
           <HeroCTAs ctaRef={ctaRef} />
         </div>
@@ -595,17 +602,23 @@ function AboutSection() {
         0
       );
 
-      scrollTl.fromTo(text.querySelector('h2'),
-        { y: '-10vh', opacity: 0 },
-        { y: 0, opacity: 1, ease: 'none' },
-        0.06
-      );
+      const heading = text.querySelector('h2');
+      if (heading) {
+        scrollTl.fromTo(heading,
+          { y: '-10vh', opacity: 0 },
+          { y: 0, opacity: 1, ease: 'none' },
+          0.06
+        );
+      }
 
-      scrollTl.fromTo(text.querySelectorAll('p, a, button'),
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
-        0.12
-      );
+      const textItems = text.querySelectorAll('p, a, button');
+      if (textItems.length > 0) {
+        scrollTl.fromTo(textItems,
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, stagger: 0.02, ease: 'none' },
+          0.12
+        );
+      }
 
       // Exit (70%-100%)
       scrollTl.fromTo(portrait,
@@ -662,16 +675,16 @@ function AboutSection() {
             About
           </h2>
           <p className="text-white/70 text-lg leading-relaxed mb-6">
-            I'm a Senior Software Engineer focused on frontend architecture, full-stack product delivery, and design-to-code execution, with strong attention to performance, accessibility, and interaction quality.
+            I'm a software engineer with 5+ years of experience building modern web applications across frontend and backend technologies. My background spans product development, UI engineering, and user experience design, bridging technical implementation with thoughtful product decisions.
           </p>
           <p className="text-white/70 text-lg leading-relaxed mb-8">
-            I've led enterprise healthcare platforms, delivered 15+ production deployments, and built HIPAA-compliant systems with 99.9% uptime. With 5+ years of experience, I specialize in React, Next.js, TypeScript, and AI-powered product workflows.
+            Over the years I've worked with startups and international clients, collaborated with distributed teams, mentored engineers, and contributed to technical decision-making. Outside work, I enjoy photography, cinematography, video editing, aquascaping, and plant care.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
-            <p className="text-white/60 text-sm">15+ production deployments</p>
-            <p className="text-white/60 text-sm">99.9% uptime in healthcare systems</p>
-            <p className="text-white/60 text-sm">80%+ Jest/Cypress test coverage achieved</p>
-            <p className="text-white/60 text-sm">40% LLM operational cost reduction</p>
+            <p className="text-white/60 text-sm">Software Engineer @ Flockjay</p>
+            <p className="text-white/60 text-sm">5+ Years Software Engineering</p>
+            <p className="text-white/60 text-sm">Frontend Architecture & Design Systems</p>
+            <p className="text-white/60 text-sm">Full-Stack & Performance Optimization</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <a
@@ -705,35 +718,41 @@ function CapabilitiesSection() {
     if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(content.querySelector('h2'),
-        { y: 24, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 80%',
-            end: 'top 55%',
-            scrub: true,
+      const heading = content.querySelector('h2');
+      if (heading) {
+        gsap.fromTo(heading,
+          { y: 24, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 80%',
+              end: 'top 55%',
+              scrub: true,
+            }
           }
-        }
-      );
+        );
+      }
 
-      gsap.fromTo(content.querySelectorAll('.capability-block'),
-        { y: 32, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 70%',
-            end: 'top 30%',
-            scrub: true,
+      const blocks = content.querySelectorAll('.capability-block');
+      if (blocks.length > 0) {
+        gsap.fromTo(blocks,
+          { y: 32, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 70%',
+              end: 'top 30%',
+              scrub: true,
+            }
           }
-        }
-      );
+        );
+      }
     }, section);
 
     return () => ctx.revert();
@@ -805,9 +824,9 @@ function CapabilitiesSection() {
           </div>
         </div>
         <div ref={contentRef}>
-          <div className="font-display text-4xl md:text-[5rem] font-semibold text-white text-center mb-24">
+          <h2 className="font-display text-4xl md:text-[5rem] font-semibold text-white text-center mb-24">
             Stacks & <span className="text-[#B9FF2C]">Capabilities</span>
-          </div>
+          </h2>
 
           <div className="grid md:grid-cols-2 gap-x-16 gap-y-10 mt-10">
             {capabilities.map((cap) => (
@@ -850,31 +869,71 @@ function ExperienceSection() {
     if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(content.querySelectorAll('.experience-item'),
-        { x: '6vw', opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 70%',
-            end: 'top 30%',
-            scrub: true,
+      const items = content.querySelectorAll('.experience-item');
+      if (items.length > 0) {
+        gsap.fromTo(items,
+          { x: '6vw', opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 70%',
+              end: 'top 30%',
+              scrub: true,
+            }
           }
-        }
-      );
+        );
+      }
     }, section);
 
     return () => ctx.revert();
   }, []);
 
   const experiences = [
-    { role: 'Sr. Software Engineer III', company: 'GritFeat Solutions', period: '2026–Present', highlight: 'Lead frontend architecture for enterprise healthcare applications using React/Next.js; speaker on AI-assisted engineering workflows.' },
-    { role: 'Sr. Software Engineer II', company: 'GritFeat Solutions', period: '2025', highlight: 'Engineered chunk-based AI chat streaming; architected HIPAA-compliant systems using AWS Cognito and microservices.' },
-    { role: 'Sr. Software Engineer I', company: 'GritFeat Solutions', period: '2024', highlight: 'Managed cloud infrastructure across AWS/Azure and automated CI/CD pipelines (Harness + GitHub Actions).' },
-    { role: 'Software Engineer (Associate through III)', company: 'GritFeat Solutions', period: '2021–2023', highlight: 'Reduced initial load times by 50%, designed comprehensive Storybook design systems, and achieved 80%+ coverage with Jest/Cypress.' },
-    { role: 'UX & Full-Stack Intern', company: 'ITGlance', period: '2020', highlight: 'Contributed to JavaScript/Java full-stack workflows for manual record digitization systems.' },
+    {
+      role: 'Software Engineer',
+      company: 'Flockjay · Kathmandu, Nepal (Remote)',
+      period: 'August 2026 – Present',
+      summary: 'Joined Flockjay to build and scale product experiences for a global customer base, working closely with product, design, and engineering teams in a fast-paced startup environment.',
+      highlights: [
+        'Building and shipping production-ready features across modern frontend technologies.',
+        'Collaborating with cross-functional teams to improve product quality, usability, and performance.',
+        'Driving technical decisions that balance engineering quality with product outcomes.',
+        'Contributing to scalable frontend architecture, developer experience, and engineering best practices.',
+        'Working asynchronously with distributed teams across multiple time zones.'
+      ],
+      tech: ['React', 'TypeScript', 'Tailwind CSS', 'Git', 'REST APIs']
+    },
+    {
+      role: 'Software Engineer',
+      company: 'GritFeat Solutions',
+      period: 'May 2021 – July 2026',
+      summary: 'Started as a junior engineer and grew into a senior contributor over five years, helping deliver web products from concept to production while mentoring teammates and improving engineering practices.',
+      highlights: [
+        'Developed and maintained modern web applications for international clients.',
+        'Built reusable UI systems and scalable frontend architectures.',
+        'Worked across both frontend and backend to deliver end-to-end product features.',
+        'Collaborated closely with designers, product owners, and stakeholders throughout the development lifecycle.',
+        'Improved application performance, accessibility, and overall user experience.',
+        'Mentored junior engineers through code reviews, technical guidance, and day-to-day collaboration.',
+        'Participated in hiring by reviewing resumes, conducting technical interviews, and evaluating engineering candidates.',
+        'Helped shape engineering standards and development workflows within the team.'
+      ],
+      tech: ['React', 'Next.js', 'Vue', 'TypeScript', 'JavaScript', 'Node.js', 'Express', 'PostgreSQL', 'MongoDB', 'Tailwind CSS', 'Git']
+    },
+    {
+      role: 'UX & Full-Stack Intern',
+      company: 'ITGlance',
+      period: '2020',
+      summary: 'Contributed to JavaScript/Java full-stack workflows for manual record digitization systems.',
+      highlights: [
+        'Worked across UX and full-stack development on record digitization systems.',
+        'Built and supported features using JavaScript and Java.'
+      ],
+      tech: ['JavaScript', 'Java']
+    }
   ];
 
   return (
@@ -893,31 +952,48 @@ function ExperienceSection() {
           </div>
         </div>
         <div ref={contentRef}>
-          <div className="font-display text-4xl tracking-tight md:text-[5rem] font-semibold text-white text-center mb-12">
+          <div className="font-display text-4xl tracking-tight md:text-[5rem] font-semibold text-white text-center mb-16">
             Work <span className="text-[#B9FF2C]">Experience</span>
           </div>
 
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-0 top-0 w-px h-full bg-white/10" />
-
-            <div className="space-y-8">
+          <div className="relative max-w-4xl mx-auto">
+            <div className="space-y-12">
               {experiences.map((exp, i) => (
-                <div key={i} className="experience-item relative pl-8">
+                <div key={i} className="experience-item relative pl-8 border-l border-white/10 group">
                   {/* Timeline dot */}
-                  <div className="absolute left-0 top-2 w-2 h-2 -translate-x-1/2 rounded-full bg-[#B9FF2C]" />
+                  <div className="absolute left-0 top-2 w-2.5 h-2.5 -translate-x-1/2 rounded-full bg-[#B9FF2C] shadow-[0_0_10px_rgba(185,255,44,0.5)]" />
 
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
                     <div>
-                      <h3 className="font-display text-xl md:text-2xl font-semibold text-white">
+                      <h3 className="font-display text-2xl font-bold text-white group-hover:text-[#B9FF2C] transition-colors">
                         {exp.role}
                       </h3>
-                      <p className="text-white/60 mt-1">{exp.company}</p>
-                      <p className="text-white/50 mt-2 text-sm md:text-base">{exp.highlight}</p>
+                      <p className="text-[#B9FF2C]/90 font-mono text-sm font-semibold mt-0.5">{exp.company}</p>
                     </div>
-                    <span className="font-mono text-sm text-white/50 mt-2 md:mt-0">
+                    <span className="font-mono text-xs text-white/50 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full w-fit">
                       {exp.period}
                     </span>
+                  </div>
+
+                  <p className="text-white/70 text-sm md:text-base leading-relaxed mb-4">
+                    {exp.summary}
+                  </p>
+
+                  <ul className="space-y-2 mb-5">
+                    {exp.highlights.map((h, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 text-white/60 text-xs md:text-sm">
+                        <span className="text-[#B9FF2C] text-xs mt-1">▸</span>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {exp.tech.map((t) => (
+                      <span key={t} className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-white/70">
+                        {t}
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -941,20 +1017,23 @@ function ContactSection({ setToast }: { setToast: (toast: string) => void }) {
     if (shouldSkipHeavyAnimations()) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(content.querySelectorAll('.contact-animate'),
-        { y: 24, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.08,
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 80%',
-            end: 'top 50%',
-            scrub: true,
+      const items = content.querySelectorAll('.contact-animate');
+      if (items.length > 0) {
+        gsap.fromTo(items,
+          { y: 24, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.08,
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 80%',
+              end: 'top 50%',
+              scrub: true,
+            }
           }
-        }
-      );
+        );
+      }
     }, section);
 
     return () => ctx.revert();
