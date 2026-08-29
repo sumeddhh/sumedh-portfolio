@@ -115,7 +115,7 @@ export default function AboutSection() {
             Over the years I've worked with startups and international clients, collaborated with distributed teams, mentored engineers, and contributed to technical decision-making. Outside work, I enjoy photography, cinematography, video editing, aquascaping, and plant care.
           </p>
           <div className="mb-8 grid sm:grid-cols-2 gap-2">
-            <p className="text-white/60 text-sm">Software Engineer @ Flockjay</p>
+            <p className="text-white/60 text-sm">Frontend Engineer @ Flockjay</p>
             <p className="text-white/60 text-sm">5+ Years Software Engineering</p>
             <p className="text-white/60 text-sm">Frontend Architecture & Design Systems</p>
             <p className="text-white/60 text-sm">Full-Stack & Performance Optimization</p>

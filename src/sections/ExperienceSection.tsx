@@ -38,7 +38,7 @@ export default function ExperienceSection() {
 
   const experiences = [
     {
-      role: 'Software Engineer',
+      role: 'Frontend Engineer',
       company: 'Flockjay · Kathmandu, Nepal (Remote)',
       period: 'August 2026 – Present',
       summary: 'Joined Flockjay to build and scale product experiences for a global customer base, working closely with product, design, and engineering teams in a fast-paced startup environment.',
