@@ -4,8 +4,12 @@ import { Bot, Send, X, User, Minimize2, Maximize2 } from 'lucide-react';
 import GlassSurface from './GlassSurface';
 
 const MODELS = [
-    'llama-3.3-70b-versatile',
-    'llama-3.1-8b-instant'
+    'openai/gpt-oss-120b',
+    'openai/gpt-oss-20b',
+    'groq/compound',
+    'groq/compound-mini',
+    'qwen/qwen3.8-27b',
+    'qwen/qwen3.6-27b'
 ];
 
 interface Message {

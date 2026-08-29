@@ -12,7 +12,15 @@ interface NetlifyEvent {
   body?: string | null;
 }
 
-const MODELS = new Set(['llama-3.3-70b-versatile', 'llama-3.1-8b-instant']);
+const DEFAULT_MODEL = 'openai/gpt-oss-120b';
+const MODELS = new Set([
+  DEFAULT_MODEL,
+  'openai/gpt-oss-20b',
+  'groq/compound',
+  'groq/compound-mini',
+  'qwen/qwen3.8-27b',
+  'qwen/qwen3.6-27b'
+]);
 const GROQ_TIMEOUT_MS = 7500;
 const TAVILY_TIMEOUT_MS = 2500;
 
@@ -159,7 +167,7 @@ export const handler = async (event: NetlifyEvent) => {
       };
     }
 
-    const model = payload.model && MODELS.has(payload.model) ? payload.model : 'llama-3.3-70b-versatile';
+    const model = payload.model && MODELS.has(payload.model) ? payload.model : DEFAULT_MODEL;
 
     const history = (payload.messages ?? []).filter(
       (msg): msg is IncomingMessage =>
